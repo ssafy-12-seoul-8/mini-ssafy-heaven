@@ -1,0 +1,18 @@
+stages:
+  - triggers
+
+trigger_fe:
+  stage: triggers
+  trigger:
+    include: fe/.gitlab-ci.yml
+  rules:
+    - changes:
+        - fe/*
+
+trigger_be:
+  stage: triggers
+  trigger:
+    include: be/.gitlab-ci.yml
+  rules:
+    - changes:
+        - be/*
