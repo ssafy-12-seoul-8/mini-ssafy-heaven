@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mini_ssafy_heaven.dao.RoomDao">
+  <insert id="save" useGeneratedKeys="true" keyProperty="room.id">
+    INSERT INTO rooms (title, status, created_at, updated_at) VALUES (#{room.title}, #{room.status}, #{createdAt}, #{updatedAt});
+  </insert>
+</mapper>
