@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: local
   config:
     import: optional:file:.env[.properties]
   datasource:
@@ -6,3 +8,9 @@ spring:
     url: jdbc:mysql://localhost:${MYSQL_LOCAL_PORT}/${MYSQL_DATABASE}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
+springdoc:
+  swagger-ui:
+    path: /docs
+    operations-sorter: alpha
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

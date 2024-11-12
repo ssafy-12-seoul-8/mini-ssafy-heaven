@@ -3,7 +3,7 @@ name: mini-ssafy-heaven-be
 services:
   mysql-local:
     image: mysql:8.0
-    container_name: mysql-local
+    container_name: mini-ssafy-local
     ports:
       - ${MYSQL_LOCAL_PORT}:3306
     volumes:
@@ -16,7 +16,7 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
   mysql-test:
     image: mysql:8.0
-    container_name: mysql-test
+    container_name: mini-ssafy-test
     ports:
       - ${MYSQL_TEST_PORT}:3306
     volumes:
