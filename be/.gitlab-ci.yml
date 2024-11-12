@@ -1,0 +1,32 @@
+stages:
+	- setup-db
+	- build
+
+setup-db:
+	image: docker:latest
+	stage: setup-db
+	services:
+		- docker:dind
+	before_script:
+		- echo [INFO] docker login attempt..
+		- docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
+		- echo [INFO] docker login success!
+		- echo [INFO] env file loading..
+		- echo "$BUILD_ENV" > ".env"
+		- echo [INFO] env file loaded!
+	script:
+		- echo [INFO] docker compose up..
+		- docker compose up -d
+		- echo [INFO] docker compose built!
+	after_script:
+		- echo [INFO] docker logout..
+		- docker logout
+		- echo [INFO] docker logout success!
+
+build:
+	stage: build
+	script:
+		- echo [INFO] grant gradle access
+		- chmox +x gradlew
+		- echo [INFO] gradle access granted!
+		- ./gradlew build
