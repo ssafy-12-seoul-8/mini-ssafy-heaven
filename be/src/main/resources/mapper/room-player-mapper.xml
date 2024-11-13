@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mini_ssafy_heaven.dao.RoomPlayerDao">
+  <select id="existsByMemberId" resultType="boolean">
+  	SELECT IF(COUNT(*)=1, true, false)
+  	FROM room_players
+  	WHERE id=#{id};
+  </select>
+  <insert id="save" useGeneratedKeys="true" keyProperty="roomPlayer.id">
+    INSERT INTO room_players (score, role, member_id, room_id, created_at, updated_at)
+    VALUES (#{roomPlayer.score}, #{roomPlayer.role}, #{roomPlayer.memberId}, #{roomPlayer.roomId}, #{createdAt}, #{updatedAt});
+  </insert>
+</mapper>
