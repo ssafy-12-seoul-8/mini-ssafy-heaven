@@ -1,5 +1,6 @@
 package com.mini_ssafy_heaven.global.exception;
 
+import java.util.NoSuchElementException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,16 @@ public class GlobalExceptionHandler {
     ErrorResponse response = new ErrorResponse(exception.getMessage());
 
     return ResponseEntity.badRequest()
+        .body(response);
+  }
+
+  @ExceptionHandler(NoSuchElementException.class)
+  public ResponseEntity<ErrorResponse> handleNoSuchElement(NoSuchElementException exception) {
+    log.warn(exception.getMessage());
+
+    ErrorResponse response = new ErrorResponse(exception.getMessage());
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(response);
   }
 
