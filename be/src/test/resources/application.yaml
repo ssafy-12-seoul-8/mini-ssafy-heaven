@@ -6,3 +6,10 @@ spring:
     url: jdbc:mysql://localhost:${MYSQL_TEST_PORT}/${MYSQL_DATABASE}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_TEST_PASSWORD}
+  flyway:
+    locations: classpath:db/migration, classpath:db/data
+mybatis:
+  type-aliases-package: com.mini_ssafy_heaven.domain
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/**/*.xml
