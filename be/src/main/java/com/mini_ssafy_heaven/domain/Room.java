@@ -1,8 +1,10 @@
 package com.mini_ssafy_heaven.domain;
 
 import org.apache.commons.lang3.StringUtils;
+
 import com.mini_ssafy_heaven.domain.enums.RoomStatus;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

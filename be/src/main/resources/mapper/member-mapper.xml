@@ -4,6 +4,10 @@
   <select id="existsById" resultType="boolean">
   	SELECT IF(COUNT(*)=1, true, false)
   	FROM members
-  	WHERE id=#{id}
+  	WHERE id=#{id};
   </select>
+  <insert id="addMember" useGeneratedKeys="true" keyProperty="member">
+  	INSERT INTO members
+  	VALUES (#{member.username}, #{member.password}, #{member.nickname});
+  </insert>
 </mapper>
