@@ -1,14 +1,15 @@
 package com.mini_ssafy_heaven.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.mini_ssafy_heaven.domain.RoomPlayer.RoomPlayerBuilder;
+import com.mini_ssafy_heaven.domain.enums.RoomPlayerRole;
+import com.mini_ssafy_heaven.fixture.BaseFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import com.mini_ssafy_heaven.domain.RoomPlayer.RoomPlayerBuilder;
-import com.mini_ssafy_heaven.domain.enums.RoomPlayerRole;
-import com.mini_ssafy_heaven.fixture.BaseFixture;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class RoomPlayerTest {

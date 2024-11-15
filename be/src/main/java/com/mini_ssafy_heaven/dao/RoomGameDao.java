@@ -1,10 +1,13 @@
 package com.mini_ssafy_heaven.dao;
 
-import org.apache.ibatis.annotations.Param;
 import com.mini_ssafy_heaven.domain.RoomGame;
+import org.apache.ibatis.annotations.Param;
 
 public interface RoomGameDao {
-  
-  int save(@Param("roomGame") RoomGame roomGame);
+
+  int save(
+      @Param("roomGame")
+      RoomGame roomGame
+  );
 
 }
