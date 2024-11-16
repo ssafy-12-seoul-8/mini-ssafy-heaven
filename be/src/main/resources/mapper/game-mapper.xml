@@ -9,4 +9,8 @@
   		#{id}
   	</foreach>
   </select>
+	<select id="findAll">
+		SELECT id, title, description, max_round
+		FROM games;
+	</select>
 </mapper>
