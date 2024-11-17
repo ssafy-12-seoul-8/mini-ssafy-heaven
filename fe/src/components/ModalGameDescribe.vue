@@ -73,7 +73,7 @@ const onConfirm = () => {
 }
 
 const validateRound = (round) => {
-  if (!round) {
+  if (round == 0) {
     roundWarnMessage.value = '라운드가 설정되지 않았습니다!'
 
     return false
