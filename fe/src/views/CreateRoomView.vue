@@ -2,7 +2,7 @@
   <div id="create-room-view" class="h-full flex flex-col items-center justify-center overflow-auto">
     <span v-if="failMessage" class="text-red-700 text-lg">{{ failMessage }}</span>
     <CreateRoomInput v-show="isWaitingForInput" :roomInfo="roomInfo" @getReady="getReady" />
-    <ContainerSelectGames v-show="isReadyForGameSet" @moveBack="unReady" @submit="dispatchCreate" />
+    <SelectGamesContainer v-show="isReadyForGameSet" @moveBack="unReady" @submit="dispatchCreate" />
     <LoaderBox v-if="loaderOpen" title="입력 완료!" :message="status.message" />
   </div>
 </template>
@@ -10,7 +10,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import CreateRoomInput from '@/components/CreateRoomInput.vue'
-import ContainerSelectGames from '@/components/SelectGamesContainer.vue'
+import SelectGamesContainer from '@/components/SelectGamesContainer.vue'
 import { isInput, isReady, RoomStatus } from '@/constants/RoomStatus'
 import { useGameStore } from '@/stores/games'
 import { storeToRefs } from 'pinia'
