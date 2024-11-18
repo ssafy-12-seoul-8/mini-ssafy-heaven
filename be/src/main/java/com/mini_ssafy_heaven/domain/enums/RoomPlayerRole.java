@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum RoomPlayerRole {
   MANAGER("방장"),
   PLAYER("플레이어");
-  
+
   private final String role;
 
 }

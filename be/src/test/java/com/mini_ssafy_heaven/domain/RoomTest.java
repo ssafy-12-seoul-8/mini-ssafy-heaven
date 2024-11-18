@@ -2,6 +2,11 @@ package com.mini_ssafy_heaven.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+
+import com.mini_ssafy_heaven.domain.Room.RoomBuilder;
+import com.mini_ssafy_heaven.domain.enums.RoomStatus;
+import com.mini_ssafy_heaven.fixture.BaseFixture;
+import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -10,10 +15,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import com.mini_ssafy_heaven.domain.Room.RoomBuilder;
-import com.mini_ssafy_heaven.domain.enums.RoomStatus;
-import com.mini_ssafy_heaven.fixture.BaseFixture;
-import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class RoomTest {
@@ -39,7 +41,8 @@ class RoomTest {
 
       // then
       assertThat(room).hasFieldOrPropertyWithValue("title", title)
-          .hasFieldOrPropertyWithValue("status", RoomStatus.CREATING);
+          .hasFieldOrPropertyWithValue("capacity", 5)
+          .hasFieldOrPropertyWithValue("status", RoomStatus.CREATING.getStatus());
     }
 
     @ParameterizedTest
@@ -70,6 +73,38 @@ class RoomTest {
       // then
       assertThatIllegalArgumentException().isThrownBy(create)
           .withMessage(RoomErrorCode.EXCESSIVE_TITLE_LENGTH.getMessage());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1})
+    void 인원_제한이_양수가_아니면_방_생성을_실패한다(int invalidCapacity) {
+      // given
+      RoomBuilder builder = Room.builder()
+          .title(title)
+          .capacity(invalidCapacity);
+
+      // when
+      ThrowingCallable create = builder::build;
+
+      // then
+      assertThatIllegalArgumentException().isThrownBy(create)
+          .withMessage(RoomErrorCode.POSITIVE_CAPACITY_REQUIRED.getMessage());
+    }
+
+    @Test
+    void 인원_제한이_5인을_넘어가면_방_생성을_실패한다() {
+      // given
+      int over5 = BaseFixture.getRandomInt(6, 100);
+      RoomBuilder builder = Room.builder()
+          .title(title)
+          .capacity(over5);
+
+      // when
+      ThrowingCallable create = builder::build;
+
+      // then
+      assertThatIllegalArgumentException().isThrownBy(create)
+          .withMessage(RoomErrorCode.EXCESSIVE_CAPACITY.getMessage());
     }
 
   }
