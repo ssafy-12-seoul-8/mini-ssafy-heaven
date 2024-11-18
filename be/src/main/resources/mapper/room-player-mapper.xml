@@ -10,4 +10,9 @@
     INSERT INTO room_players (score, role, member_id, room_id, created_at, updated_at)
     VALUES (#{roomPlayer.score}, #{roomPlayer.role}, #{roomPlayer.memberId}, #{roomPlayer.roomId}, #{createdAt}, #{updatedAt});
   </insert>
+  <select id="countPlayersByRoomId">
+    SELECT COUNT(*)
+    FROM room_players
+    WHERE room_id=#{roomId};
+  </select>
 </mapper>
