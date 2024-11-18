@@ -1,5 +1,7 @@
 package com.mini_ssafy_heaven.domain.enums;
 
+import java.util.Arrays;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,4 +13,11 @@ public enum RoomStatus {
   PLAYING("게임 중");
 
   private final String status;
+
+  public static RoomStatus get(String status) {
+    return Arrays.stream(RoomStatus.values())
+        .filter(roomStatus -> Objects.equals(status, roomStatus.status))
+        .findFirst()
+        .orElse(CREATING);
+  }
 }

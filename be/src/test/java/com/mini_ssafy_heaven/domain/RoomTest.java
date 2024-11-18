@@ -42,7 +42,7 @@ class RoomTest {
       // then
       assertThat(room).hasFieldOrPropertyWithValue("title", title)
           .hasFieldOrPropertyWithValue("capacity", 5)
-          .hasFieldOrPropertyWithValue("status", RoomStatus.CREATING.getStatus());
+          .hasFieldOrPropertyWithValue("status", RoomStatus.CREATING);
     }
 
     @ParameterizedTest
