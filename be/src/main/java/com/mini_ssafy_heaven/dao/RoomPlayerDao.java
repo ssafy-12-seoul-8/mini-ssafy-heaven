@@ -12,4 +12,6 @@ public interface RoomPlayerDao {
       RoomPlayer roomPlayer
   );
 
+  int countPlayersByRoomId(Long roomId);
+
 }
