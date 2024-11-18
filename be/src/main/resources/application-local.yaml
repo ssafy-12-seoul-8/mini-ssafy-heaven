@@ -3,3 +3,9 @@ client:
 spring:
   flyway:
     locations: classpath:db/migration, classpath:db/data
+logging:
+  level:
+    com:
+      mini_ssafy_heaven:
+        dao: trace
+    root: info
