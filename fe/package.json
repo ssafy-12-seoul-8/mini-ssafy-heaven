@@ -11,9 +11,13 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.0.0",
+    "axios": "^1.7.7",
     "pinia": "^2.2.6",
+    "sockjs-client": "^1.6.1",
     "vue": "^3.5.12",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.4.5",
+    "websocket": "^1.0.35"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
