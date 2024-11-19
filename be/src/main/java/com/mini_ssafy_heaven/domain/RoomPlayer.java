@@ -18,11 +18,7 @@ public class RoomPlayer {
   private final RoomPlayerRole role;
 
   @Builder
-  private RoomPlayer(
-      Long id,
-      Long memberId,
-      Long roomId,RoomPlayerRole role
-  ) {
+  private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role) {
     this.id = id;
     this.memberId = memberId;
     this.roomId = roomId;
@@ -35,6 +31,13 @@ public class RoomPlayer {
         .memberId(memberId)
         .roomId(roomId)
         .role(RoomPlayerRole.MANAGER)
+        .build();
+  }
+
+  public static RoomPlayer createPlayer(Long memberId, Long roomId) {
+    return RoomPlayer.builder()
+        .memberId(memberId)
+        .roomId(roomId)
         .build();
   }
 
