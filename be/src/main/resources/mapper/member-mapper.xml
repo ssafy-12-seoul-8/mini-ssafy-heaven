@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mini_ssafy_heaven.dao.MemberDao">
-  <select id="existsById" resultType="boolean">
-  	SELECT IF(COUNT(*)=1, true, false)
-  	FROM members
-  	WHERE id=#{id}
-  </select>
+	<select id="existsById" resultType="boolean">
+		SELECT IF(COUNT(*)=1, true, false)
+		FROM members
+		WHERE id=#{id};
+	</select>
+	<select id="existsByUserName">
+		SELECT IF(COUNT(*)=1, true, false)
+		FROM members
+		WHERE username=#{username};
+	</select>
+	<insert id="addMember" useGeneratedKeys="true"
+		keyProperty="member.id">
+		INSERT INTO members (username, password, nickname, role,created_at,
+		updated_at)
+		VALUES (#{member.username}, #{member.password}, #{member.nickname},
+		#{member.role},#{createdAt}, #{updatedAt});
+	</insert>
 </mapper>
