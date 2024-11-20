@@ -4,4 +4,9 @@
   <insert id="save" useGeneratedKeys="true" keyProperty="room.id">
     INSERT INTO rooms (title, status, created_at, updated_at) VALUES (#{room.title}, #{room.status}, #{createdAt}, #{updatedAt});
   </insert>
+  <select id="existsById">
+  	SELECT IF(COUNT(*)=1, true, false)
+  	FROM rooms
+  	WHERE id=#{id}
+  </select>
 </mapper>

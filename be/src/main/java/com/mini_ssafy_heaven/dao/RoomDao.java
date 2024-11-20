@@ -5,9 +5,8 @@ import org.apache.ibatis.annotations.Param;
 
 public interface RoomDao {
 
-  int save(
-      @Param("room")
-      Room room
-  );
+  int save(@Param("room") Room room);
+
+  boolean existsById(Long id);
 
 }
