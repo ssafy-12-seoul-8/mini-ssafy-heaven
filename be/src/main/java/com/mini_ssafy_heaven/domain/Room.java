@@ -18,14 +18,24 @@ public class Room {
   private final Integer capacity;
   private final RoomStatus status;
 
-  @Builder
   private Room(Long id, String title, Integer capacity, RoomStatus status) {
+    this(id, title, capacity, status, null);
+  }
+
+  @Builder
+  private Room(
+      Long id,
+      String title,
+      Integer capacity,
+      RoomStatus status,
+      String statusString
+  ) {
     validate(title, capacity);
 
     this.id = id;
     this.title = title;
     this.capacity = Objects.nonNull(capacity) ? capacity : MAX_CAPACITY;
-    this.status = Objects.nonNull(status) ? status : RoomStatus.CREATING;
+    this.status = Objects.nonNull(status) ? status : RoomStatus.get(statusString);
   }
 
   public boolean isManagedBy(Long memberId) {

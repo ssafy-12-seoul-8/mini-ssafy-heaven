@@ -12,6 +12,8 @@ public interface RoomPlayerDao {
 
   int countByRoomId(Long roomId);
 
+  int countPlayersByRoomId(Long roomId);
+
   Optional<RoomPlayer> findByRoomAndMember(
     @Param("roomId") Long roomId,
     @Param("memberId") Long memberId

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mini_ssafy_heaven.dao.RoomDao">
 	<resultMap id="roomConstructor" type="Room">
 		<constructor>
@@ -15,6 +16,20 @@
 		(#{room.title}, #{room.status}, #{room.capacity}, #{createdAt},
 		#{updatedAt});
 	</insert>
+	<select id="selectAll">
+    	SELECT r.id, r.title, r.capacity, m.nickname AS 'manager'
+    	FROM rooms r
+    	JOIN room_players rp ON r.id = rp.room_id
+    	JOIN members m ON rp.member_id = m.id
+    	WHERE rp.role = 'MANAGER'
+    	<if test="cursor != null || cursor > 0">
+      		<![CDATA[
+        		AND r.id < #{cursor}
+      		]]>
+    	</if>
+    	ORDER BY 1 DESC
+    	LIMIT #{size};
+  	</select>
 	<select id="existsById">
 		SELECT IF(COUNT(*)=1, true, false)
 		FROM rooms

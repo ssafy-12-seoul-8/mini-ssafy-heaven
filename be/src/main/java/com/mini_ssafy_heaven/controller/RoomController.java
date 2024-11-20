@@ -2,13 +2,17 @@ package com.mini_ssafy_heaven.controller;
 
 import com.mini_ssafy_heaven.doc.RoomDocument;
 import com.mini_ssafy_heaven.dto.request.CreateRoomRequest;
+import com.mini_ssafy_heaven.dto.request.ScrollRequest;
+import com.mini_ssafy_heaven.dto.response.BasicRoomResponse;
 import com.mini_ssafy_heaven.dto.request.UpdateRoomStatusRequest;
 import com.mini_ssafy_heaven.dto.response.CreateRoomResponse;
+import com.mini_ssafy_heaven.dto.response.ScrollResponse;
 import com.mini_ssafy_heaven.service.RoomService;
 import jakarta.servlet.http.HttpSession;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +41,15 @@ public class RoomController implements RoomDocument {
     return ResponseEntity.created(uri)
         .body(response);
   }
+
+  @Override
+  @GetMapping
+  public ResponseEntity<ScrollResponse<BasicRoomResponse>> getAll(ScrollRequest request) {
+    ScrollResponse<BasicRoomResponse> response = roomService.getAll(request);
+
+    return ResponseEntity.ok(response);
+  }
+
 
   @Override
   @PostMapping("/{id}")

@@ -32,7 +32,12 @@
 		WHERE
 		room_id=#{roomId}
 	</select>
-	<select id="findByRoomAndMember" resultMap="roomPlayerConstructor">
+	<select id="countPlayersByRoomId">
+		SELECT COUNT(*)
+		FROM room_players
+		WHERE room_id=#{roomId};
+	</select>
+		<select id="findByRoomAndMember" resultMap="roomPlayerConstructor">
 		SELECT *
 		FROM room_players
 		WHERE room_id=#{roomId} AND member_id=#{memberId}

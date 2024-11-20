@@ -36,7 +36,7 @@ class RoomPlayerTest {
       // then
       assertThat(manager).hasFieldOrPropertyWithValue("memberId", memberId)
           .hasFieldOrPropertyWithValue("roomId", roomId)
-          .hasFieldOrPropertyWithValue("role", RoomPlayerRole.MANAGER.getRole());
+          .hasFieldOrPropertyWithValue("role", RoomPlayerRole.MANAGER);
     }
 
     @Test
@@ -50,7 +50,22 @@ class RoomPlayerTest {
       RoomPlayer roomPlayer = builder.build();
 
       // then
-      assertThat(roomPlayer.getRole()).isEqualTo(RoomPlayerRole.PLAYER.getRole());
+      assertThat(roomPlayer.getRole()).isEqualTo(RoomPlayerRole.PLAYER);
+    }
+
+    @Test
+    void 한글_문자열로_방_플레이어의_역할을_정할_수_있다() {
+      // given
+      RoomPlayerBuilder builder = RoomPlayer.builder()
+          .roleString(RoomPlayerRole.MANAGER.getRole())
+          .roomId(roomId)
+          .memberId(memberId);
+
+      // when
+      RoomPlayer roomPlayer = builder.build();
+
+      // then
+      assertThat(roomPlayer.getRole()).isEqualTo(RoomPlayerRole.MANAGER);
     }
 
   }

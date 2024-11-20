@@ -14,13 +14,17 @@ public class RoomPlayer {
   private final Integer score;
   private final RoomPlayerRole role;
 
+  private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role) {
+    this(id, memberId, roomId, role, null);
+  }
+
   @Builder
-  private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role, Integer score) {
+  private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role, String roleString) {
     this.id = id;
     this.memberId = memberId;
     this.roomId = roomId;
     this.score = Objects.isNull(score) ? 0 : score;
-    this.role = Objects.isNull(role) ? RoomPlayerRole.PLAYER : role;
+    this.role = Objects.isNull(role) ? RoomPlayerRole.get(roleString) : role;
   }
 
   public static RoomPlayer createManager(Long memberId, Long roomId) {
