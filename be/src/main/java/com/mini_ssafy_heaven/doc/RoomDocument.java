@@ -2,6 +2,7 @@ package com.mini_ssafy_heaven.doc;
 
 import com.mini_ssafy_heaven.doc.example.RoomErrorExample;
 import com.mini_ssafy_heaven.dto.request.CreateRoomRequest;
+import com.mini_ssafy_heaven.dto.request.UpdateRoomStatusRequest;
 import com.mini_ssafy_heaven.dto.response.CreateRoomResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,5 +35,9 @@ public interface RoomDocument {
   @Operation(summary = "방 참여")
   @ApiResponses(@ApiResponse(responseCode = "201", description = "CREATED"))
   ResponseEntity<Void> join(Long roomId, HttpSession session);
+
+  @Operation(summary = "방 상태 갱신")
+  @ApiResponse(responseCode = "204", description = "NO CONTENT")
+  ResponseEntity<Void> updateStatus(Long id, UpdateRoomStatusRequest request, HttpSession session);
 
 }
