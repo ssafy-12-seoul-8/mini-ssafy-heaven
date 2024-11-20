@@ -7,9 +7,8 @@ public interface RoomPlayerDao {
 
   boolean existsByMemberId(Long id);
 
-  int save(
-      @Param("roomPlayer")
-      RoomPlayer roomPlayer
-  );
+  int save(@Param("roomPlayer") RoomPlayer roomPlayer);
+
+  int countByRoomId(Long roomId);
 
 }
