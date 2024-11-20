@@ -13,17 +13,30 @@ public class RoomPlayer {
   private final Long memberId;
   private final Long roomId;
   private final Integer score;
-
-  @Getter(AccessLevel.NONE)
   private final RoomPlayerRole role;
 
-  @Builder
   private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role) {
+    return RoomPlayer.builder()
+        .id(id)
+        .memberId(memberId)
+        .roomId(roomId)
+        .role(role)
+        .build();
+  }
+
+  @Builder
+  private RoomPlayer(
+      Long id,
+      Long memberId,
+      Long roomId,
+      RoomPlayerRole role,
+      String roleString
+  ) {
     this.id = id;
     this.memberId = memberId;
     this.roomId = roomId;
     this.score = 0;
-    this.role = Objects.isNull(role) ? RoomPlayerRole.PLAYER : role;
+    this.role = Objects.isNull(role) ? RoomPlayerRole.get(roleString) : role;
   }
 
   public static RoomPlayer createManager(Long memberId, Long roomId) {
@@ -39,10 +52,6 @@ public class RoomPlayer {
         .memberId(memberId)
         .roomId(roomId)
         .build();
-  }
-
-  public String getRole() {
-    return role.getRole();
   }
 
   public boolean hasSameId(Long roomPlayerId) {

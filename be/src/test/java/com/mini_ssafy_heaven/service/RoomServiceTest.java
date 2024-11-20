@@ -5,13 +5,20 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import com.mini_ssafy_heaven.dao.RoomDao;
+import com.mini_ssafy_heaven.dao.RoomGameDao;
 import com.mini_ssafy_heaven.dao.RoomPlayerDao;
 import com.mini_ssafy_heaven.domain.Room;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
 import com.mini_ssafy_heaven.dto.request.CreateRoomGameDto;
 import com.mini_ssafy_heaven.dto.request.CreateRoomRequest;
+import com.mini_ssafy_heaven.dto.request.ScrollRequest;
+import com.mini_ssafy_heaven.dto.response.BasicRoomResponse;
 import com.mini_ssafy_heaven.dto.response.CreateRoomResponse;
+import com.mini_ssafy_heaven.dto.response.ScrollResponse;
 import com.mini_ssafy_heaven.fixture.BaseFixture;
+import com.mini_ssafy_heaven.fixture.RoomFixture;
+import com.mini_ssafy_heaven.fixture.RoomGameFixture;
+import com.mini_ssafy_heaven.fixture.RoomPlayerFixture;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +47,9 @@ class RoomServiceTest {
 
   @Autowired
   RoomDao roomDao;
+
+  @Autowired
+  RoomGameDao roomGameDao;
 
   String title;
   Integer capacity;
@@ -137,6 +147,41 @@ class RoomServiceTest {
       // then
       assertThatIllegalArgumentException().isThrownBy(create)
           .withMessage(RoomErrorCode.GAME_NOT_AVAILABLE.getMessage());
+    }
+
+  }
+
+  @Nested
+  class 방_전체_조회_서비스_테스트 {
+
+    Room room;
+
+    @BeforeEach
+    void setUp() {
+      room = RoomFixture.createAllRandom();
+
+      roomDao.save(room);
+
+      RoomPlayer manager = RoomPlayerFixture.createManager(room.getId(), loginId);
+
+      roomPlayerDao.save(manager);
+
+      // TODO: 게임 구현 후 수정
+      List.of(RoomGameFixture.createWithRoomAndGame(room.getId(), 1L))
+          .forEach(roomGameDao::save);
+    }
+
+    // TODO: 회원 생성 구현 이후 디벨롭
+    @Test
+    void 방_전체_조회를_성공한다() {
+      // given
+      ScrollRequest request = new ScrollRequest(null, null);
+
+      // when
+      ScrollResponse<BasicRoomResponse> response = roomService.getAll(request);
+
+      // then
+      assertThat(response.nextCursor()).isEqualTo(room.getId());
     }
 
   }

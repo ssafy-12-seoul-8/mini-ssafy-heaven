@@ -5,4 +5,10 @@
     INSERT INTO room_games (current_round, round_limit, room_id, game_id, created_at, updated_at)
     VALUES (#{roomGame.currentRound}, #{roomGame.roundLimit}, #{roomGame.roomId}, #{roomGame.gameId}, #{createdAt}, #{updatedAt});
   </insert>
+  <select id="findTitlesByRoomId">
+    SELECT g.title
+    FROM room_games rg
+    JOIN games g ON rg.game_id = g.id
+    WHERE rg.room_id = #{roomId}
+  </select>
 </mapper>

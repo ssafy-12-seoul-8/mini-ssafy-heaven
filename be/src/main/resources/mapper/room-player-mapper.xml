@@ -18,4 +18,9 @@
 		FROM room_players
 		WHERE room_id=#{roomId}
 	</select>
+	<select id="countPlayersByRoomId">
+    	SELECT COUNT(*)
+    	FROM room_players
+    	WHERE room_id=#{roomId};
+    </select>
 </mapper>
