@@ -61,7 +61,8 @@ const unReady = () => {
 const dispatchCreate = () => {
   status.value = RoomStatus.CREATING
   loaderOpen.value = true
-  const roomGames = selectedGames.value.map((game) => ({ id: game.id, maxRound: game.round }))
+  const roomGames = selectedGames.value.map((game) => ({ id: game.id, roundLimit: game.round }))
+
   const request = {
     title: roomInfo.value.title,
     capacity: roomInfo.value.capacity,
@@ -71,7 +72,7 @@ const dispatchCreate = () => {
   roomApi
     .create(request)
     .then((res) => createRoom(res.data.id))
-    .then(() => roomSocket.enter(roomInfo.value.id))
+    .then(() => joinRoom())
     .then(() => confirmCreation())
     .then(() => router.replace({ name: 'room', params: { id: roomInfo.value.id } }))
     .catch((err) => handleFailCreate(err))
@@ -80,6 +81,14 @@ const dispatchCreate = () => {
 const createRoom = (id) => {
   roomInfo.value.id = id
   status.value = RoomStatus.ENTERING
+}
+
+const joinRoom = () => {
+  const body = {
+    nickname: 'test', // TODO: 회원 구현 후 수정
+  }
+
+  roomSocket.enter(roomInfo.value.id, body)
 }
 
 const confirmCreation = () => {
