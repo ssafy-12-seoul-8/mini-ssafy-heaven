@@ -45,4 +45,8 @@ public class RoomPlayer {
     return role.getRole();
   }
 
+  public boolean hasSameId(Long roomPlayerId) {
+    return this.id.equals(roomPlayerId);
+  }
+
 }

@@ -11,6 +11,7 @@ import com.mini_ssafy_heaven.domain.RoomPlayer;
 import com.mini_ssafy_heaven.dto.request.CreateRoomGameDto;
 import com.mini_ssafy_heaven.dto.request.CreateRoomRequest;
 import com.mini_ssafy_heaven.dto.response.CreateRoomResponse;
+import com.mini_ssafy_heaven.global.annotation.Lock;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
+
+  private static final int MAX_PLAYERS = 5;
 
   private final RoomDao roomDao;
   private final MemberDao memberDao;
@@ -52,6 +55,25 @@ public class RoomServiceImpl implements RoomService {
         .forEach(roomGameDao::save);
 
     return new CreateRoomResponse(room.getId());
+  }
+
+  @Override
+  @Transactional
+  @Lock("PLAYER-JOIN")
+  public void join(Long roomId, Long loginId) {
+    validateRoom(roomId);
+
+    int count = roomPlayerDao.countByRoomId(roomId);
+
+    if (count >= MAX_PLAYERS) {
+      throw new IllegalStateException(RoomErrorCode.FULL_ROOM.getMessage());
+    }
+
+    validatePlayerNotJoined(loginId);
+
+    RoomPlayer roomPlayer = RoomPlayer.createPlayer(loginId, roomId);
+
+    roomPlayerDao.save(roomPlayer);
   }
 
   private void validatePlayerNotJoined(Long loginId) {
@@ -85,6 +107,12 @@ public class RoomServiceImpl implements RoomService {
         .gameId(game.id())
         .roundLimit(game.roundLimit())
         .build();
+  }
+
+  private void validateRoom(Long roomId) {
+    if (!roomDao.existsById(roomId)) {
+      throw new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage());
+    }
   }
 
 }

@@ -7,4 +7,6 @@ public interface RoomService {
 
   CreateRoomResponse create(CreateRoomRequest request, Long loginId);
 
+  void join(Long roomId, Long loginId);
+
 }

@@ -13,7 +13,9 @@ public enum RoomErrorCode {
   POSITIVE_CAPACITY_REQUIRED("방 인원 제한은 양수여야 합니다."),
   EXCESSIVE_CAPACITY("방 인원 제한은 최대 5인입니다."),
   EMPTY_GAMES("선택된 게임이 없습니다."),
-  GAME_NOT_AVAILABLE("유효하지 않은 게임이 포함되어 있습니다.");
+  GAME_NOT_AVAILABLE("유효하지 않은 게임이 포함되어 있습니다."),
+  UNEXPECTED_EMPTY_ROOM("해당 방이 존재하지 않습니다."),
+  FULL_ROOM("방의 정원이 전부 찼습니다.");
 
   private final String message;
 
