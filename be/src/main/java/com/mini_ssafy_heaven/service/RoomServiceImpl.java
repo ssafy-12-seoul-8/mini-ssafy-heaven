@@ -10,6 +10,7 @@ import com.mini_ssafy_heaven.domain.RoomGame;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
 import com.mini_ssafy_heaven.dto.request.CreateRoomGameDto;
 import com.mini_ssafy_heaven.dto.request.CreateRoomRequest;
+import com.mini_ssafy_heaven.dto.request.UpdateRoomStatusRequest;
 import com.mini_ssafy_heaven.dto.response.CreateRoomResponse;
 import com.mini_ssafy_heaven.global.annotation.Lock;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
@@ -38,6 +39,7 @@ public class RoomServiceImpl implements RoomService {
   public CreateRoomResponse create(CreateRoomRequest request, Long loginId) {
     validatePlayerNotJoined(loginId);
     validateGames(request.roomGames());
+    System.out.println(request);
 
     Room room = Room.builder()
         .title(request.title())
@@ -76,6 +78,21 @@ public class RoomServiceImpl implements RoomService {
     roomPlayerDao.save(roomPlayer);
   }
 
+  @Override
+  @Transactional
+  public void updateStatus(Long id, UpdateRoomStatusRequest request, Long loginId) {
+    Room room = roomDao.findById(id)
+        .orElseThrow(
+          () -> new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage())
+        );
+
+    validateManager(loginId, room.getId());
+
+    Room updated = room.updateStatus(request.status());
+
+    roomDao.update(updated);
+  }
+
   private void validatePlayerNotJoined(Long loginId) {
     if (!memberDao.existsById(loginId)) {
       throw new NoSuchElementException(RoomErrorCode.LOGIN_USER_NOT_EXISTS.getMessage());
@@ -112,6 +129,15 @@ public class RoomServiceImpl implements RoomService {
   private void validateRoom(Long roomId) {
     if (!roomDao.existsById(roomId)) {
       throw new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage());
+    }
+  }
+
+  private void validateManager(Long memberId, Long roomId) {
+    RoomPlayer roomPlayer = roomPlayerDao.findByRoomAndMember(roomId, memberId)
+        .orElseThrow(() -> new NoSuchElementException(RoomErrorCode.NOT_JOINED.getMessage()));
+
+    if (!roomPlayer.isManager()) {
+      throw new IllegalArgumentException(RoomErrorCode.NOT_A_MANAGER.getMessage());
     }
   }
 
