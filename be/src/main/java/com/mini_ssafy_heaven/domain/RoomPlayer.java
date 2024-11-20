@@ -14,12 +14,19 @@ public class RoomPlayer {
   private final Integer score;
   private final RoomPlayerRole role;
 
-  private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role) {
-    this(id, memberId, roomId, role, null);
+  private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role, Integer score) {
+    this(id, memberId, roomId, score, role, null);
   }
 
   @Builder
-  private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role, String roleString) {
+  private RoomPlayer(
+    Long id,
+    Long memberId,
+    Long roomId,
+    Integer score,
+    RoomPlayerRole role,
+    String roleString
+  ) {
     this.id = id;
     this.memberId = memberId;
     this.roomId = roomId;
