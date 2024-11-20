@@ -12,8 +12,8 @@ import com.mini_ssafy_heaven.dto.query.SimpleRoomDto;
 import com.mini_ssafy_heaven.dto.request.CreateRoomGameDto;
 import com.mini_ssafy_heaven.dto.request.CreateRoomRequest;
 import com.mini_ssafy_heaven.dto.request.ScrollRequest;
-import com.mini_ssafy_heaven.dto.response.BasicRoomResponse;
 import com.mini_ssafy_heaven.dto.request.UpdateRoomStatusRequest;
+import com.mini_ssafy_heaven.dto.response.BasicRoomResponse;
 import com.mini_ssafy_heaven.dto.response.CreateRoomResponse;
 import com.mini_ssafy_heaven.dto.response.RoomGameTitleDto;
 import com.mini_ssafy_heaven.dto.response.ScrollResponse;
@@ -44,7 +44,6 @@ public class RoomServiceImpl implements RoomService {
   public CreateRoomResponse create(CreateRoomRequest request, Long loginId) {
     validatePlayerNotJoined(loginId);
     validateGames(request.roomGames());
-    System.out.println(request);
 
     Room room = Room.builder()
         .title(request.title())
