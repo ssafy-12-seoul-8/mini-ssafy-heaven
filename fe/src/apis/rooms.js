@@ -1,3 +1,4 @@
+import { MessageType } from '@/constants/MessageType'
 import { http, stomp } from './instance'
 
 const baseRoomPath = 'api/rooms'
@@ -8,9 +9,10 @@ export const roomApi = {
 }
 
 export const roomSocket = {
-  enter: (id, onConnect, onError) => {
+  enter: (id, body, onConnect, onError) => {
     const onEnter = () => {
-      stomp.subscribe(id)
+      stomp.subscribe(id, (res) => console.log(res, JSON.parse(res.body)))
+      stomp.send(id, MessageType.ENTER.lower, body)
 
       if (onConnect) {
         onConnect()
