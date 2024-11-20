@@ -9,14 +9,14 @@
       <span v-if="passWordWarnMessage" class="text-red-700">{{ passWordWarnMessage }}</span>
     </div>
     <div>
-      <BaseInput name="passWordCheck" label="비밀번호 확인" v-model="passWordCheck" />
+      <BaseInput name="passWordCheck" label="비밀번호 확인" :password = "true" v-model="passWordCheck" />
       <span v-if="passWordCheckWarnMessage" class="text-red-700">{{ passWordCheckWarnMessage }}</span>
     </div>
     <div>
       <BaseInput name="nickName" label="닉네임" v-model="nickName" />
       <span v-if="nickNameWarnMessage" class="text-red-700">{{ nickNameWarnMessage }}</span>
     </div>
-    <BaseButton />
+    <BaseButton @click="submitToGetReady"/>
   </div>
 </template>
 
