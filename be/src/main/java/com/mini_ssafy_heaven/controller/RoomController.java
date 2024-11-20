@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +24,8 @@ public class RoomController implements RoomDocument {
   @Override
   @PostMapping
   public ResponseEntity<CreateRoomResponse> create(
-      @RequestBody
-      CreateRoomRequest request,
-      HttpSession session
+    @RequestBody CreateRoomRequest request,
+    HttpSession session
   ) {
     // TODO: 로그인 기능 생성 후 실 사용자로 바꾸기
     Long loginId = 1L;
@@ -35,4 +35,17 @@ public class RoomController implements RoomDocument {
     return ResponseEntity.created(uri)
         .body(response);
   }
+
+  @Override
+  @PostMapping("/{id}")
+  public ResponseEntity<Void> join(@PathVariable("id") Long id, HttpSession session) {
+    // TODO: 로그인 기능 생성 후 실 사용자로 바꾸기
+    Long loginId = 1L;
+
+    roomService.join(id, loginId);
+
+    return ResponseEntity.noContent()
+        .build();
+  }
+
 }
