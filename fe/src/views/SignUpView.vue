@@ -41,10 +41,10 @@ const memberInfo = ref({ // mock
 const emit = defineEmits(['getReady'])
 
 onMounted(() => {
-  userName.value = memberInfo.userName
-  passWord.value = memberInfo.passWord
-  passWordCheck.value = memberInfo.passWordCheck
-  nickName.value = memberInfo.nickName
+  userName.value = memberInfo.value.userName
+  passWord.value = memberInfo.value.passWord
+  passWordCheck.value = memberInfo.value.passWordCheck
+  nickName.value = memberInfo.value.nickName
 })
 
 const submitToGetReady = () => {
