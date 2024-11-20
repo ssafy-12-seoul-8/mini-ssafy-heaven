@@ -1,5 +1,11 @@
 <template>
-  <h1>Home View</h1>
+  <div class="flex flex-col">
+    <BaseLogo></BaseLogo>
+    <BaseButton>입장하기</BaseButton>
+  </div>
 </template>
 
-<script setup></script>
+<script setup>
+import BaseButton from '@/components/BaseButton.vue'
+import BaseLogo from '@/components/BaseLogo.vue'
+</script>
