@@ -24,7 +24,7 @@ public class RedisLockAspect {
   private final LockProperties lockProperties;
 
   @Around("@annotation(com.mini_ssafy_heaven.global.annotation.Lock) && args(id, ..)")
-  public Object lock(ProceedingJoinPoint joinPoint, Long id) {
+  public Object lock(ProceedingJoinPoint joinPoint, Long id) throws Throwable {
     Lock lockAnnotation = getAnnotation(joinPoint);
     String key = lockAnnotation.value() + ":" + id;
     Long waitTime =
@@ -37,8 +37,8 @@ public class RedisLockAspect {
       boolean locked = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
 
       return doLock(locked, key, joinPoint);
-    } catch (Throwable e) {
-      log.debug("error occurred {}", e);
+    } catch (InterruptedException e) {
+      log.debug("error occurred", e);
 
       throw new RuntimeException(e);
     } finally {
