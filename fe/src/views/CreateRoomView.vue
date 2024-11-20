@@ -37,7 +37,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (status.value.name !== RoomStatus.WAITING.name) {
+  if (roomInfo.value.id && status.value.name !== RoomStatus.WAITING.name) {
     // TODO: 방 삭제 이후 fetch 추가
     console.log('방 삭제')
   }
@@ -71,8 +71,10 @@ const dispatchCreate = () => {
   roomApi
     .create(request)
     .then((res) => createRoom(res.data.id))
-    .then(() => joinRoom())
-    .catch((err) => handleFailCreate(err.response.data.message))
+    .then(() => roomSocket.enter(roomInfo.value.id))
+    .then(() => confirmCreation())
+    .then(() => router.replace({ name: 'room', params: { id: roomInfo.value.id } }))
+    .catch((err) => handleFailCreate(err))
 }
 
 const createRoom = (id) => {
@@ -80,17 +82,19 @@ const createRoom = (id) => {
   status.value = RoomStatus.ENTERING
 }
 
-const joinRoom = () => {
-  roomSocket.enter(roomInfo.value.id, onEnter)
-}
-
-const onEnter = () => {
+const confirmCreation = () => {
   status.value = RoomStatus.WAITING
-  router.replace({ name: 'room', params: { id: roomInfo.value.id } })
+  const request = {
+    status: status.value.name,
+  }
+
+  return roomApi.confirmCreation(roomInfo.value.id, request)
 }
 
-const handleFailCreate = (message) => {
-  failMessage.value = message
+const handleFailCreate = (error) => {
+  console.error(error.respopnse)
+
+  failMessage.value = error.response.data.message
   loaderOpen.value = false
   status.value = RoomStatus.READY_FOR_GAME_SELECTION
 }
