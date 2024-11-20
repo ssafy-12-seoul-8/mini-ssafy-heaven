@@ -11,9 +11,6 @@ public interface RoomDao {
 
   boolean existsById(Long id);
 
-  List<SimpleRoomDto> selectAll(
-      Long cursor,
-      Integer size
-  );
+  List<SimpleRoomDto> selectAll(Long cursor, Integer size);
 
 }

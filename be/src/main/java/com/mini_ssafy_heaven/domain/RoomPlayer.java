@@ -2,7 +2,6 @@ package com.mini_ssafy_heaven.domain;
 
 import com.mini_ssafy_heaven.domain.enums.RoomPlayerRole;
 import java.util.Objects;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,22 +15,11 @@ public class RoomPlayer {
   private final RoomPlayerRole role;
 
   private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role) {
-    return RoomPlayer.builder()
-        .id(id)
-        .memberId(memberId)
-        .roomId(roomId)
-        .role(role)
-        .build();
+    this(id, memberId, roomId, role, null);
   }
 
   @Builder
-  private RoomPlayer(
-      Long id,
-      Long memberId,
-      Long roomId,
-      RoomPlayerRole role,
-      String roleString
-  ) {
+  private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role, String roleString) {
     this.id = id;
     this.memberId = memberId;
     this.roomId = roomId;
