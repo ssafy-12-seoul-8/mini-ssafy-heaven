@@ -11,7 +11,7 @@
     VALUES (#{room.title}, #{room.status}, #{createdAt}, #{updatedAt});
   </insert>
   <select id="selectAll">
-    SELECT r.id, r.title, r.capacity, m.nickname AS 'manager'
+    SELECT r.id, r.title, r.capacity, m.nickname, r.status
     FROM rooms r
     JOIN room_players rp ON r.id = rp.room_id
     JOIN members m ON rp.member_id = m.id

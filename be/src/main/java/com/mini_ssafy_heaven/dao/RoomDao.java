@@ -7,14 +7,8 @@ import org.apache.ibatis.annotations.Param;
 
 public interface RoomDao {
 
-  int save(
-      @Param("room")
-      Room room
-  );
+  int save(@Param("room") Room room);
 
-  List<SimpleRoomDto> selectAll(
-      Long cursor,
-      Integer size
-  );
+  List<SimpleRoomDto> selectAll(@Param("cursor") Long cursor, @Param("size") Integer size);
 
 }
