@@ -187,8 +187,12 @@ public class RoomServiceImpl implements RoomService {
   }
 
   private void validateRoom(Long roomId) {
-    if (!roomDao.existsById(roomId)) {
-      throw new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage());
+    Room room = roomDao.findById(roomId)
+        .orElseThrow(
+            () -> new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage()));
+
+    if (room.isInGame()) {
+      throw new IllegalStateException(RoomErrorCode.ROOM_IN_GAME.getMessage());
     }
   }
 
