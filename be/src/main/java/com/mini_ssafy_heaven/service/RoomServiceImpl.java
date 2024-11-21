@@ -5,9 +5,11 @@ import com.mini_ssafy_heaven.dao.MemberDao;
 import com.mini_ssafy_heaven.dao.RoomDao;
 import com.mini_ssafy_heaven.dao.RoomGameDao;
 import com.mini_ssafy_heaven.dao.RoomPlayerDao;
+import com.mini_ssafy_heaven.domain.Member;
 import com.mini_ssafy_heaven.domain.Room;
 import com.mini_ssafy_heaven.domain.RoomGame;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
+import com.mini_ssafy_heaven.dto.query.RoomPlayerNameDto;
 import com.mini_ssafy_heaven.dto.query.SimpleRoomDto;
 import com.mini_ssafy_heaven.dto.request.CreateRoomGameDto;
 import com.mini_ssafy_heaven.dto.request.CreateRoomRequest;
@@ -15,9 +17,11 @@ import com.mini_ssafy_heaven.dto.request.ScrollRequest;
 import com.mini_ssafy_heaven.dto.request.UpdateRoomStatusRequest;
 import com.mini_ssafy_heaven.dto.response.BasicRoomResponse;
 import com.mini_ssafy_heaven.dto.response.CreateRoomResponse;
+import com.mini_ssafy_heaven.dto.response.RoomDetailResponse;
 import com.mini_ssafy_heaven.dto.response.RoomGameTitleDto;
 import com.mini_ssafy_heaven.dto.response.ScrollResponse;
 import com.mini_ssafy_heaven.global.annotation.Lock;
+import com.mini_ssafy_heaven.global.exception.code.MemberErrorCode;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -107,6 +111,30 @@ public class RoomServiceImpl implements RoomService {
     Room updated = room.updateStatus(request.status());
 
     roomDao.update(updated);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public RoomDetailResponse getDetail(Long id, Long loginId) {
+    Member member = memberDao.findById(loginId)
+        .orElseThrow(
+          () -> new NoSuchElementException(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())
+        );
+    Room room = roomDao.findById(id)
+        .orElseThrow(
+          () -> new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage())
+        );
+    List<RoomPlayerNameDto> players = roomPlayerDao.findAllByRoomId(room.getId());
+
+    players.stream()
+        .filter(
+          player -> player.memberId()
+              .equals(member.getId())
+        )
+        .findFirst()
+        .orElseThrow(() -> new NoSuchElementException(RoomErrorCode.NOT_JOINED.getMessage()));
+
+    return RoomDetailResponse.from(room, players);
   }
 
   private void validatePlayerNotJoined(Long loginId) {
