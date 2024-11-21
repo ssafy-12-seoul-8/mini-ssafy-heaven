@@ -19,9 +19,9 @@
       >
         <PlayerCard v-if="!isInLeft(index)" :player="player" />
       </div>
-      <div class="grow flex flex-col justify-between">
-        <LeaderBoard />
-        <button class="mb-8">{{ isReady ? '취소' : '준비' }}</button>
+      <div class="grow flex flex-col justify-between items-center">
+        <LeaderBoard class="w-11/12" />
+        <BaseButton>{{ isReady ? '취소' : '준비' }}</BaseButton>
       </div>
     </div>
   </div>
@@ -31,6 +31,7 @@
 import { ref } from 'vue'
 import LeaderBoard from './LeaderBoard.vue'
 import PlayerCard from './PlayerCard.vue'
+import BaseButton from './BaseButton.vue'
 
 const isReady = ref(false)
 const { roomPlayers } = defineProps({

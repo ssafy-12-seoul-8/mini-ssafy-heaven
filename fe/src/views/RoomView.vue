@@ -2,7 +2,7 @@
   <div class="h-full w-full">
     <ChatBox />
     <div id="player-list-container-wrapper" class="w-screen h-5/6 absolute left-0">
-      <PlayerList :room-players="dummyPlayers" />
+      <PlayerList :room-players="roomPlayers" />
     </div>
   </div>
 </template>
@@ -14,7 +14,7 @@ import { useRoomPlayerStore } from '@/stores/roomPlayers'
 import { storeToRefs } from 'pinia'
 
 const roomPlayerStore = useRoomPlayerStore()
-const { dummyPlayers } = storeToRefs(roomPlayerStore)
+const { roomPlayers } = storeToRefs(roomPlayerStore)
 </script>
 
 <style>

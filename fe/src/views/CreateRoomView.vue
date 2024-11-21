@@ -1,5 +1,8 @@
 <template>
-  <div id="create-room-view" class="h-full flex flex-col items-center justify-center overflow-auto">
+  <div
+    id="create-room-view"
+    class="h-full flex flex-col items-center justify-center overflow-auto w-11/12"
+  >
     <span v-if="failMessage" class="text-red-700 text-lg">{{ failMessage }}</span>
     <CreateRoomInput v-show="isWaitingForInput" :roomInfo="roomInfo" @getReady="getReady" />
     <SelectGamesContainer v-show="isReadyForGameSet" @moveBack="unReady" @submit="dispatchCreate" />
