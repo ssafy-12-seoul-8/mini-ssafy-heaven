@@ -18,6 +18,11 @@
 		VALUES (#{member.username}, #{member.password}, #{member.nickname},
 		#{member.role},#{createdAt}, #{updatedAt});
 	</insert>
+	<select id="findById">
+		SELECT *
+		FROM members
+		WHERE id=#{id}
+	</select>
 	<select id="getPassWord" resultType="String">
 		SELECT password
 		FROM members

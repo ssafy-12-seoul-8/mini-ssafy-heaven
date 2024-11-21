@@ -1,35 +1,32 @@
 <template>
-  <div class="flex flex-col gap-10">
+  <div class="flex flex-col gap-28 w-full items-center">
     <!-- TODO: 인풋 컴포넌트 구현 후 교체 -->
-    <div class="flex flex-col gap-4">
-      <label for="title">방 제목</label>
-      <input
-        class="border-8"
-        name="title"
-        type="text"
-        :value="title"
-        @change="title = $event.target.value"
-      />
+    <div class="flex flex-col gap-4 w-full items-center">
+      <BaseInput name="방 제목" label="방 제목" v-model="title" class="w-5/6 m-auto" />
       <span v-if="titleWarnMessage" class="text-red-700">{{ titleWarnMessage }}</span>
     </div>
-    <div class="flex flex-col gap-4">
-      <label for="limit">인원 제한</label>
-      <input
-        class="border-8"
-        name="limit"
-        type="number"
-        min="0"
-        :value="capacity"
-        @change="capacity = $event.target.value"
+    <div class="flex flex-col gap-4 w-full items-center">
+      <BaseInput
+        name="인원 제한"
+        label="인원 제한"
+        v-model="capacity"
+        number
+        class="w-1/2 m-auto"
       />
       <span v-if="capacityWarnMessage" class="text-red-700">{{ capacityWarnMessage }}</span>
     </div>
-    <button @click="submitToGetReady">다음</button>
+    <div class="flex gap-8">
+      <BaseButton @click="moveBack" type="white"> 목록으로 돌아가기 </BaseButton>
+      <BaseButton @click="submitToGetReady"> 다음 </BaseButton>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import BaseInput from './BaseInput.vue'
+import BaseButton from './BaseButton.vue'
+import router from '@/router'
 
 const title = ref()
 const capacity = ref()
@@ -47,6 +44,10 @@ onMounted(() => {
   title.value = roomInfo.title
   capacity.value = roomInfo.capacity
 })
+
+const moveBack = () => {
+  router.go('/rooms')
+}
 
 const submitToGetReady = () => {
   const titleValidated = validateTitle(title.value)

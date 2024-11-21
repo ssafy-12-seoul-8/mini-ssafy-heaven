@@ -8,6 +8,14 @@ spring:
     url: jdbc:mysql://localhost:${MYSQL_LOCAL_PORT}/${MYSQL_DATABASE}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+lock:
+  wait-time: 2000
+  lease-time: 5000
 springdoc:
   swagger-ui:
     path: /docs

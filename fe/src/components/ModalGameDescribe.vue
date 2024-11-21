@@ -29,13 +29,13 @@
         <span class="text-red-700 text-lg">{{ roundWarnMessage }}</span>
       </div>
       <!-- TODO: 버튼 구현 후 교체 -->
-      <div id="modal-button-wrapper" class="flex justify-center items-center gap-4">
-        <button id="confirm-button" @click="onConfirm">
-          {{ game.isSelected ? '수정하기' : '추가하기' }}
-        </button>
-        <button id="cancel-button" @click="$emit('cancel')">
-          {{ game.isSelected ? '취소하기' : '돌아가기' }}
-        </button>
+      <div id="modal-button-wrapper" class="flex justify-center items-center gap-4 text-lg">
+        <BaseButton @click="onConfirm" size="w-32">{{
+          game.isSelected ? '수정하기' : '추가하기'
+        }}</BaseButton>
+        <BaseButton @click="$emit('cancel')" type="white" size="w-32">{{
+          game.isSelected ? '취소하기' : '돌아가기'
+        }}</BaseButton>
       </div>
     </div>
   </div>
@@ -43,6 +43,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import BaseButton from './BaseButton.vue'
 
 const round = ref(0)
 const roundWarnMessage = ref()
