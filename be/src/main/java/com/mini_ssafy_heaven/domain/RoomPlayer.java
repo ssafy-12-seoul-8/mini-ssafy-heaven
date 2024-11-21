@@ -2,7 +2,6 @@ package com.mini_ssafy_heaven.domain;
 
 import com.mini_ssafy_heaven.domain.enums.RoomPlayerRole;
 import java.util.Objects;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,14 +14,12 @@ public class RoomPlayer {
   private final Integer score;
   private final RoomPlayerRole role;
 
+  private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role) {
+    this(id, memberId, roomId, role, null);
+  }
+
   @Builder
-  private RoomPlayer(
-      Long id,
-      Long memberId,
-      Long roomId,
-      RoomPlayerRole role,
-      String roleString
-  ) {
+  private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role, String roleString) {
     this.id = id;
     this.memberId = memberId;
     this.roomId = roomId;
@@ -36,6 +33,17 @@ public class RoomPlayer {
         .roomId(roomId)
         .role(RoomPlayerRole.MANAGER)
         .build();
+  }
+
+  public static RoomPlayer createPlayer(Long memberId, Long roomId) {
+    return RoomPlayer.builder()
+        .memberId(memberId)
+        .roomId(roomId)
+        .build();
+  }
+
+  public boolean hasSameId(Long roomPlayerId) {
+    return this.id.equals(roomPlayerId);
   }
 
 }

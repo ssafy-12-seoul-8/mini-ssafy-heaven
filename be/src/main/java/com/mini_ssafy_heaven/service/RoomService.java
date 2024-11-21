@@ -12,4 +12,6 @@ public interface RoomService {
 
   ScrollResponse<BasicRoomResponse> getAll(ScrollRequest request);
 
+  void join(Long roomId, Long loginId);
+
 }

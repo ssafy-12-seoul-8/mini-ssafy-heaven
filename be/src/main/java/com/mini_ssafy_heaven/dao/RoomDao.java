@@ -9,6 +9,8 @@ public interface RoomDao {
 
   int save(@Param("room") Room room);
 
+  boolean existsById(Long id);
+
   List<SimpleRoomDto> selectAll(@Param("cursor") Long cursor, @Param("size") Integer size);
 
 }

@@ -24,4 +24,9 @@
     ORDER BY 1 DESC
     LIMIT #{size};
   </select>
+  <select id="existsById">
+  	SELECT IF(COUNT(*)=1, true, false)
+  	FROM rooms
+  	WHERE id=#{id}
+  </select>
 </mapper>
