@@ -46,7 +46,7 @@ onMounted(() => {
 })
 
 const moveBack = () => {
-  router.go('/rooms')
+  router.replace('/rooms')
 }
 
 const submitToGetReady = () => {
