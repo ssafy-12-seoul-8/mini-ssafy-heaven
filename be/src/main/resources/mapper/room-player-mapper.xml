@@ -43,9 +43,10 @@
 		WHERE room_id=#{roomId} AND member_id=#{memberId}
 	</select>
 	<select id="findAllByRoomId">
-		SELECT m.nickname, rp.score, m.score
+		SELECT m.id, m.nickname, rp.score, m.score, dense_rank() OVER (ORDER BY rp.score DESC)
 		FROM room_players rp
 		JOIN members m ON m.id=rp.member_id
 		WHERE rp.room_id=#{roomId}
+		ORDER BY rp.created_at
 	</select>
 </mapper>
