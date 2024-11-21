@@ -18,4 +18,9 @@
 		VALUES (#{member.username}, #{member.password}, #{member.nickname},
 		#{member.role},#{createdAt}, #{updatedAt});
 	</insert>
+	<select id="getPassWord" resultType="String">
+		SELECT password
+		FROM members
+		WHERE username=#{username};
+	</select>
 </mapper>

@@ -9,6 +9,7 @@ public interface MemberDao {
 
   boolean existsByUserName(String username);
 
-  int addMember(@Param("member")
-  Member member);
+  int addMember(@Param("member") Member member);
+
+  String getPassWord(String username);
 }
