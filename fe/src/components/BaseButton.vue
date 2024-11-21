@@ -17,7 +17,7 @@ const props = defineProps({
   },
   size: {
     type: String,
-    default: 'w-48'
+    default: 'w-48',
   },
 })
 // white로 주면 색 변경
@@ -29,7 +29,7 @@ const buttonColor = computed(() => {
 })
 // size 입력으로 너비 조절
 const buttonSize = computed(() => {
-  const validSizes = ["w-24", "w-32", "w-48", "w-64"]; // 유효한 너비
-  return validSizes.includes(props.size) ? props.size : "w-48";
+  const validSizes = ['w-24', 'w-32', 'w-48', 'w-64'] // 유효한 너비
+  return validSizes.includes(props.size) ? props.size : 'w-48'
 })
 </script>

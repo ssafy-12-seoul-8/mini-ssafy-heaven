@@ -1,7 +1,7 @@
 <template>
   <Container>
-      <router-view />
-    </Container>
+    <router-view />
+  </Container>
 </template>
 
 <script setup>
@@ -18,7 +18,7 @@ import Container from './components/BaseContainer.vue'
 }
 
 body {
-  background-image: url("/src/assets/BackGroundImg.png");
+  background-image: url('/src/assets/BackGroundImg.png');
   background-size: cover;
 }
 </style>
