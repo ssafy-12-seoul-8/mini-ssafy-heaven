@@ -8,9 +8,14 @@ import com.mini_ssafy_heaven.dao.RoomPlayerDao;
 import com.mini_ssafy_heaven.domain.Room;
 import com.mini_ssafy_heaven.domain.RoomGame;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
+import com.mini_ssafy_heaven.dto.query.SimpleRoomDto;
 import com.mini_ssafy_heaven.dto.request.CreateRoomGameDto;
 import com.mini_ssafy_heaven.dto.request.CreateRoomRequest;
+import com.mini_ssafy_heaven.dto.request.ScrollRequest;
+import com.mini_ssafy_heaven.dto.response.BasicRoomResponse;
 import com.mini_ssafy_heaven.dto.response.CreateRoomResponse;
+import com.mini_ssafy_heaven.dto.response.RoomGameTitleDto;
+import com.mini_ssafy_heaven.dto.response.ScrollResponse;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -54,6 +59,18 @@ public class RoomServiceImpl implements RoomService {
     return new CreateRoomResponse(room.getId());
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public ScrollResponse<BasicRoomResponse> getAll(ScrollRequest request) {
+    List<SimpleRoomDto> rooms = roomDao.selectAll(request.cursor(), request.size());
+    List<BasicRoomResponse> list = rooms.stream()
+        .map(this::buildBasicRoom)
+        .toList();
+    Long nextCursor = getNextCursor(rooms);
+
+    return ScrollResponse.from(list, nextCursor);
+  }
+
   private void validatePlayerNotJoined(Long loginId) {
     if (!memberDao.existsById(loginId)) {
       throw new NoSuchElementException(RoomErrorCode.LOGIN_USER_NOT_EXISTS.getMessage());
@@ -85,6 +102,22 @@ public class RoomServiceImpl implements RoomService {
         .gameId(game.id())
         .roundLimit(game.roundLimit())
         .build();
+  }
+
+  private BasicRoomResponse buildBasicRoom(SimpleRoomDto room) {
+    int playerCount = roomPlayerDao.countPlayersByRoomId(room.id());
+    List<RoomGameTitleDto> roomGames = roomGameDao.findTitlesByRoomId(room.id());
+
+    return BasicRoomResponse.from(room, playerCount, roomGames);
+  }
+
+  private Long getNextCursor(List<SimpleRoomDto> rooms) {
+    if (rooms.isEmpty()) {
+      return 0L;
+    }
+
+    return rooms.get(rooms.size() - 1)
+        .id();
   }
 
 }
