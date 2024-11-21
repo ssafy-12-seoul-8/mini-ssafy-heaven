@@ -1,5 +1,8 @@
 <template>
-  <div id="create-room-view" class="h-full flex flex-col items-center justify-center overflow-auto">
+  <div
+    id="create-room-view"
+    class="h-full flex flex-col items-center justify-center overflow-auto w-11/12"
+  >
     <span v-if="failMessage" class="text-red-700 text-lg">{{ failMessage }}</span>
     <CreateRoomInput v-show="isWaitingForInput" :roomInfo="roomInfo" @getReady="getReady" />
     <SelectGamesContainer v-show="isReadyForGameSet" @moveBack="unReady" @submit="dispatchCreate" />
@@ -37,7 +40,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (status.value.name !== RoomStatus.WAITING.name) {
+  if (roomInfo.value.id && status.value.name !== RoomStatus.WAITING.name) {
     // TODO: 방 삭제 이후 fetch 추가
     console.log('방 삭제')
   }
@@ -61,7 +64,8 @@ const unReady = () => {
 const dispatchCreate = () => {
   status.value = RoomStatus.CREATING
   loaderOpen.value = true
-  const roomGames = selectedGames.value.map((game) => ({ id: game.id, maxRound: game.round }))
+  const roomGames = selectedGames.value.map((game) => ({ id: game.id, roundLimit: game.round }))
+
   const request = {
     title: roomInfo.value.title,
     capacity: roomInfo.value.capacity,
@@ -72,7 +76,9 @@ const dispatchCreate = () => {
     .create(request)
     .then((res) => createRoom(res.data.id))
     .then(() => joinRoom())
-    .catch((err) => handleFailCreate(err.response.data.message))
+    .then(() => confirmCreation())
+    .then(() => router.replace({ name: 'room', params: { id: roomInfo.value.id } }))
+    .catch((err) => handleFailCreate(err))
 }
 
 const createRoom = (id) => {
@@ -81,16 +87,26 @@ const createRoom = (id) => {
 }
 
 const joinRoom = () => {
-  roomSocket.enter(roomInfo.value.id, onEnter)
+  const body = {
+    nickname: 'test', // TODO: 회원 구현 후 수정
+  }
+
+  roomSocket.enter(roomInfo.value.id, body)
 }
 
-const onEnter = () => {
+const confirmCreation = () => {
   status.value = RoomStatus.WAITING
-  router.replace({ name: 'room', params: { id: roomInfo.value.id } })
+  const request = {
+    status: status.value.name,
+  }
+
+  return roomApi.confirmCreation(roomInfo.value.id, request)
 }
 
-const handleFailCreate = (message) => {
-  failMessage.value = message
+const handleFailCreate = (error) => {
+  console.error(error.respopnse)
+
+  failMessage.value = error.response.data.message
   loaderOpen.value = false
   status.value = RoomStatus.READY_FOR_GAME_SELECTION
 }

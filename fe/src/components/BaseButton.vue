@@ -1,6 +1,6 @@
 <template>
   <button
-    class="'cursor-pointer transition-all px-6 py-2 rounded-lg border-b-[4px] w-48 hover:brightness-110 hover:-translate-y-[1px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]'"
+    class="'cursor-pointer transition-all px-6 py-2 rounded-lg border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]'"
     :class="[buttonColor, buttonSize]"
     :style="{ height: '50px' }"
   >
@@ -23,7 +23,7 @@ const props = defineProps({
 // white로 주면 색 변경
 const buttonColor = computed(() => {
   if (props.type === 'white') {
-    return 'bg-white text-sky-400'
+    return 'bg-slate-50 text-sky-400'
   }
   return 'bg-sky-400 text-white border-sky-500'
 })

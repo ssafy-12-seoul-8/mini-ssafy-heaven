@@ -7,8 +7,8 @@
     </div>
     <div class="w-full flex justify-end">{{ selectedGames?.length }} / 3</div>
     <div id="create-room-button-wrapper" class="flex gap-8 mt-4">
-      <button @click="$emit('moveBack')">이전으로</button>
-      <button @click="$emit('submit')">방 만들기</button>
+      <BaseButton @click="$emit('moveBack')" type="white">이전으로</BaseButton>
+      <BaseButton @click="$emit('submit')">방 만들기</BaseButton>
     </div>
   </div>
 </template>
@@ -17,6 +17,7 @@
 import GameList from './GameList.vue'
 import { useGameStore } from '@/stores/games'
 import { storeToRefs } from 'pinia'
+import BaseButton from './BaseButton.vue'
 
 const gameStore = useGameStore()
 const { unSelectedGames, selectedGames } = storeToRefs(gameStore)

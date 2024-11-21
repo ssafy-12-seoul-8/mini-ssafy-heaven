@@ -6,6 +6,9 @@ export const http = axios.create({
   baseURL: import.meta.env.VITE_REST_API_URL,
 })
 
+const SUBSCRIBE_PREFIX = '/game/'
+const PUBLISH_PREFIX = '/app/'
+
 const onDebug = (str) => console.log(str)
 const getSocketClient = () => {
   const client = new Client({
@@ -34,6 +37,7 @@ export const stomp = {
         onConnect()
       }
     }
+
     client.onStompError = (frame) => {
       console.error(frame.body)
 
@@ -44,8 +48,13 @@ export const stomp = {
 
     client.activate()
   },
-  subscribe: (id) => {
-    client.subscribe(`/sub/game/${id}`)
-    client.subscribe(`/sub/chat/${id}`)
+  subscribe: (id, onReceive) => {
+    client.subscribe(`${SUBSCRIBE_PREFIX}${id}`, onReceive)
+  },
+  send: (id, command, body) => {
+    client.publish({
+      destination: `${PUBLISH_PREFIX}${id}/${command}`,
+      body: JSON.stringify(body),
+    })
   },
 }

@@ -1,6 +1,7 @@
 package com.mini_ssafy_heaven.dao;
 
 import com.mini_ssafy_heaven.domain.Member;
+import java.util.Optional;
 import org.apache.ibatis.annotations.Param;
 
 public interface MemberDao {
@@ -9,6 +10,8 @@ public interface MemberDao {
 
   boolean existsByUserName(String username);
 
-  int addMember(@Param("member")
-  Member member);
+  int addMember(@Param("member") Member member);
+
+  Optional<Member> findById(Long id);
+
 }

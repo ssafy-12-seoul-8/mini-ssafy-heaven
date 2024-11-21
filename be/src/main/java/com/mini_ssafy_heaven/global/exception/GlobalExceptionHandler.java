@@ -44,6 +44,16 @@ public class GlobalExceptionHandler {
         .body(response);
   }
 
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<ErrorResponse> handleIllegalState(IllegalStateException exception) {
+    log.warn(exception.getMessage());
+
+    ErrorResponse response = new ErrorResponse(exception.getMessage());
+
+    return ResponseEntity.unprocessableEntity()
+        .body(response);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleUnhandledException(Exception exception) {
     log.error(exception.getMessage(), exception);
