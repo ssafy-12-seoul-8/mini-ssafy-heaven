@@ -58,7 +58,7 @@ public class RoomController implements RoomDocument {
     HttpSession session
   ) {
     // TODO: 로그인 기능 생성 후 실 사용자로 바꾸기
-    Long loginId = 2L;
+    Long loginId = 1L;
     RoomDetailResponse response = roomService.getDetail(id, loginId);
 
     return ResponseEntity.ok(response);
