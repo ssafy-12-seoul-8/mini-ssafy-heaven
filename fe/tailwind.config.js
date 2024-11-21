@@ -6,7 +6,7 @@ export default {
       colors: {
         'main-skyblue': '#98DBF2',
       },
-    }
+    },
   },
   plugins: [],
 }
