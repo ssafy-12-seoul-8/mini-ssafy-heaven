@@ -16,4 +16,9 @@ import Container from './components/BaseContainer.vue'
   font-weight: 400;
   font-style: normal;
 }
+
+body {
+  background-image: url('/src/assets/BackGroundImg.png');
+  background-size: cover;
+}
 </style>
