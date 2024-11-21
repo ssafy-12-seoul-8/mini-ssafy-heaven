@@ -2,26 +2,48 @@
 <!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mini_ssafy_heaven.dao.RoomDao">
-  <insert
-    id="save"
-    useGeneratedKeys="true"
-    keyProperty="room.id"
-  >
-    INSERT INTO rooms (title, status, created_at, updated_at)
-    VALUES (#{room.title}, #{room.status}, #{createdAt}, #{updatedAt});
-  </insert>
-  <select id="selectAll">
-    SELECT r.id, r.title, r.capacity, m.nickname, r.status
-    FROM rooms r
-    JOIN room_players rp ON r.id = rp.room_id
-    JOIN members m ON rp.member_id = m.id
-    WHERE rp.role = 'MANAGER'
-    <if test="cursor != null || cursor > 0">
-      <![CDATA[
-        AND r.id < #{cursor}
-      ]]>
-    </if>
-    ORDER BY 1 DESC
-    LIMIT #{size};
-  </select>
+	<resultMap id="roomConstructor" type="Room">
+		<constructor>
+			<idArg column="id" javaType="long" />
+			<arg column="title" javaType="string" />
+			<arg column="capacity" javaType="int" />
+			<arg column="status"
+				javaType="com.mini_ssafy_heaven.domain.enums.RoomStatus" />
+		</constructor>
+	</resultMap>
+	<insert id="save" useGeneratedKeys="true" keyProperty="room.id">
+		INSERT INTO rooms (title, status, capacity, created_at, updated_at) VALUES
+		(#{room.title}, #{room.status}, #{room.capacity}, #{createdAt},
+		#{updatedAt});
+	</insert>
+	<select id="selectAll">
+    	SELECT r.id, r.title, r.capacity, m.nickname AS 'manager'
+    	FROM rooms r
+    	JOIN room_players rp ON r.id = rp.room_id
+    	JOIN members m ON rp.member_id = m.id
+    	WHERE rp.role = 'MANAGER'
+    	<if test="cursor != null || cursor > 0">
+      		<![CDATA[
+        		AND r.id < #{cursor}
+      		]]>
+    	</if>
+    	ORDER BY 1 DESC
+    	LIMIT #{size};
+  	</select>
+	<select id="existsById">
+		SELECT IF(COUNT(*)=1, true, false)
+		FROM rooms
+		WHERE id=#{id}
+	</select>
+	<select id="findById" resultMap="roomConstructor">
+		SELECT *
+		FROM rooms
+		WHERE id=#{id}
+	</select>
+	<update id="update">
+		UPDATE rooms
+		SET title=#{room.title}, status=#{room.status},
+		capacity=#{room.capacity}, updated_at=#{updatedAt}
+		WHERE id=#{room.id}
+	</update>
 </mapper>

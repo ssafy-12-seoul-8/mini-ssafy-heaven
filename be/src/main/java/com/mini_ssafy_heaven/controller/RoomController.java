@@ -4,6 +4,7 @@ import com.mini_ssafy_heaven.doc.RoomDocument;
 import com.mini_ssafy_heaven.dto.request.CreateRoomRequest;
 import com.mini_ssafy_heaven.dto.request.ScrollRequest;
 import com.mini_ssafy_heaven.dto.response.BasicRoomResponse;
+import com.mini_ssafy_heaven.dto.request.UpdateRoomStatusRequest;
 import com.mini_ssafy_heaven.dto.response.CreateRoomResponse;
 import com.mini_ssafy_heaven.dto.response.ScrollResponse;
 import com.mini_ssafy_heaven.service.RoomService;
@@ -12,6 +13,8 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +30,8 @@ public class RoomController implements RoomDocument {
   @Override
   @PostMapping
   public ResponseEntity<CreateRoomResponse> create(
-      @RequestBody
-      CreateRoomRequest request,
-      HttpSession session
+    @RequestBody CreateRoomRequest request,
+    HttpSession session
   ) {
     // TODO: 로그인 기능 생성 후 실 사용자로 바꾸기
     Long loginId = 1L;
@@ -46,6 +48,35 @@ public class RoomController implements RoomDocument {
     ScrollResponse<BasicRoomResponse> response = roomService.getAll(request);
 
     return ResponseEntity.ok(response);
+  }
+
+
+  @Override
+  @PostMapping("/{id}")
+  public ResponseEntity<Void> join(@PathVariable("id") Long id, HttpSession session) {
+    // TODO: 로그인 기능 생성 후 실 사용자로 바꾸기
+    Long loginId = 1L;
+
+    roomService.join(id, loginId);
+
+    return ResponseEntity.noContent()
+        .build();
+  }
+
+  @Override
+  @PatchMapping("/{id}")
+  public ResponseEntity<Void> updateStatus(
+    @PathVariable("id") Long id,
+    @RequestBody UpdateRoomStatusRequest request,
+    HttpSession session
+  ) {
+    // TODO: 로그인 기능 생성 후 실 사용자로 바꾸
+    Long loginId = 1L;
+
+    roomService.updateStatus(id, request, loginId);
+
+    return ResponseEntity.noContent()
+        .build();
   }
 
 }

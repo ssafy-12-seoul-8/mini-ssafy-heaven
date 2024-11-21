@@ -1,18 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mini_ssafy_heaven.dao.RoomPlayerDao">
-  <select id="existsByMemberId" resultType="boolean">
-  	SELECT IF(COUNT(*)=1, true, false)
-  	FROM room_players
-  	WHERE id=#{id};
-  </select>
-  <insert id="save" useGeneratedKeys="true" keyProperty="roomPlayer.id">
-    INSERT INTO room_players (score, role, member_id, room_id, created_at, updated_at)
-    VALUES (#{roomPlayer.score}, #{roomPlayer.role}, #{roomPlayer.memberId}, #{roomPlayer.roomId}, #{createdAt}, #{updatedAt});
-  </insert>
-  <select id="countPlayersByRoomId">
-    SELECT COUNT(*)
-    FROM room_players
-    WHERE room_id=#{roomId};
-  </select>
+	<resultMap id="roomPlayerConstructor" type="RoomPlayer">
+		<constructor>
+			<idArg column="id" javaType="long" />
+			<arg column="member_id" javaType="long" />
+			<arg column="room_id" javaType="long" />
+			<arg column="role" javaType="com.mini_ssafy_heaven.domain.enums.RoomPlayerRole" />
+			<arg column="score" javaType="int" />
+		</constructor>
+	</resultMap>
+	<select id="existsByMemberId" resultType="boolean">
+		SELECT IF(COUNT(*)=1,
+		true, false)
+		FROM room_players
+		WHERE id=#{id};
+	</select>
+	<insert id="save" useGeneratedKeys="true"
+		keyProperty="roomPlayer.id">
+		INSERT INTO room_players (score, role, member_id, room_id,
+		created_at,
+		updated_at)
+		VALUES (#{roomPlayer.score}, #{roomPlayer.role},
+		#{roomPlayer.memberId},
+		#{roomPlayer.roomId}, #{createdAt},
+		#{updatedAt});
+	</insert>
+	<select id="countByRoomId">
+		SELECT COUNT(*)
+		FROM room_players
+		WHERE
+		room_id=#{roomId}
+	</select>
+	<select id="countPlayersByRoomId">
+		SELECT COUNT(*)
+		FROM room_players
+		WHERE room_id=#{roomId};
+	</select>
+	<select id="findByRoomAndMember" resultMap="roomPlayerConstructor">
+		SELECT *
+		FROM room_players
+		WHERE room_id=#{roomId} AND member_id=#{memberId}
+	</select>
+	<select id="findAllByRoomId">
+		SELECT m.nickname, rp.score, m.score
+		FROM room_players rp
+		JOIN members m ON m.id=rp.member_id
+		WHERE rp.room_id=#{roomId}
+	</select>
 </mapper>
