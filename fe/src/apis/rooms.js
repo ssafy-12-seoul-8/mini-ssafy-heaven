@@ -1,4 +1,4 @@
-import { MessageType } from '@/constants/MessageType'
+import { MessageType, getMessageType } from '@/constants/MessageType'
 import { http, stomp } from './instance'
 
 const baseRoomPath = 'api/rooms'
@@ -8,10 +8,17 @@ export const roomApi = {
   confirmCreation: (id, request) => http.patch(`${baseRoomPath}/${id}`, request),
 }
 
+const parseSocketMessage = (res) => {
+  const data = JSON.parse(res.body)
+  const type = getMessageType(data.type)
+
+  type.action(data.payload)
+}
+
 export const roomSocket = {
   enter: (id, body, onConnect, onError) => {
     const onEnter = () => {
-      stomp.subscribe(id, (res) => console.log(res, JSON.parse(res.body)))
+      stomp.subscribe(id, (res) => parseSocketMessage(res))
       stomp.send(id, MessageType.ENTER.lower, body)
 
       if (onConnect) {
