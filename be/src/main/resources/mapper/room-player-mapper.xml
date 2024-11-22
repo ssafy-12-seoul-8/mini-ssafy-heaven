@@ -15,7 +15,7 @@
 		SELECT IF(COUNT(*)=1,
 		true, false)
 		FROM room_players
-		WHERE id=#{id};
+		WHERE member_id=#{memberId};
 	</select>
 	<insert id="save" useGeneratedKeys="true"
 		keyProperty="roomPlayer.id">

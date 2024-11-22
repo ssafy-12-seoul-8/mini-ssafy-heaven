@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 public interface RoomPlayerDao {
 
-  boolean existsByMemberId(Long id);
+  boolean existsByMemberId(Long memberId);
 
   int save(@Param("roomPlayer") RoomPlayer roomPlayer);
 
