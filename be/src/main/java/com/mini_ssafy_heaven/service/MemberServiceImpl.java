@@ -1,14 +1,15 @@
 package com.mini_ssafy_heaven.service;
 
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.mini_ssafy_heaven.dao.MemberDao;
 import com.mini_ssafy_heaven.domain.Member;
 import com.mini_ssafy_heaven.dto.request.CreateMemberRequest;
 import com.mini_ssafy_heaven.dto.response.CreateMemberResponse;
+import com.mini_ssafy_heaven.dto.response.GuestLoginResponse;
 import com.mini_ssafy_heaven.global.exception.code.MemberErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,16 @@ public class MemberServiceImpl implements MemberService {
     memberDao.addMember(member);
 
     return new CreateMemberResponse(member.getId());
+  }
+
+  @Override
+  @Transactional
+  public GuestLoginResponse loginGuest() {
+    Member guest = Member.createGuest();
+
+    memberDao.addMember(guest);
+
+    return GuestLoginResponse.from(guest);
   }
 
   // 아이디 중복확인
