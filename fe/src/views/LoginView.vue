@@ -46,7 +46,7 @@ const loginGuest = () => {
 }
 
 const afterGuestLogin = (data) => {
-  updateMe(data.id, data.nickname)
+  updateMe(data.nickname)
 }
 
 const moveToMain = () => {

@@ -20,6 +20,7 @@ import { storeToRefs } from 'pinia'
 import { roomApi, roomSocket } from '@/apis/rooms'
 import LoaderBox from '@/components/LoaderBox.vue'
 import { useRouter } from 'vue-router'
+import { useMemberStore } from '@/stores/members'
 
 const roomInfo = ref({
   title: '',
@@ -31,6 +32,8 @@ const failMessage = ref()
 const isWaitingForInput = computed(() => RoomStatus.isInput(status.value.name))
 const isReadyForGameSet = computed(() => RoomStatus.isReady(status.value.name))
 const gameStore = useGameStore()
+const memberStore = useMemberStore()
+const { myNickname } = storeToRefs(memberStore)
 const { fetchAllGames } = gameStore
 const { selectedGames } = storeToRefs(gameStore)
 const router = useRouter()
@@ -88,7 +91,7 @@ const createRoom = (id) => {
 
 const joinRoom = () => {
   const body = {
-    nickname: 'test', // TODO: 회원 구현 후 수정
+    nickname: myNickname.value,
   }
 
   roomSocket.enter(roomInfo.value.id, body)
