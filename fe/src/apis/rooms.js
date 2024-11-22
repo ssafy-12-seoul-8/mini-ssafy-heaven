@@ -7,6 +7,7 @@ export const roomApi = {
   create: (request) => http.post(baseRoomPath, request),
   confirmCreation: (id, request) => http.patch(`${baseRoomPath}/${id}`, request),
   getDetail: (id) => http.get(`${baseRoomPath}/${id}`),
+  join: (id) => http.post(`${baseRoomPath}/${id}`),
 }
 
 const parseSocketMessage = (res) => {
