@@ -21,7 +21,10 @@
       </div>
       <div class="grow flex flex-col justify-between items-center">
         <LeaderBoard class="w-11/12" />
-        <BaseButton @click="onClickReady" :disabled="disabled">{{ buttonText }}</BaseButton>
+        <div class="flex flex-col gap-4 justify-center items-center">
+          <BaseButton @click="onClickReady" :disabled="disabled">{{ readyButtonText }}</BaseButton>
+          <BaseButton @click="onClickExit" type="white">나가기</BaseButton>
+        </div>
       </div>
     </div>
   </div>
@@ -46,7 +49,7 @@ const isManager = computed(
   () => manager.value && manager.value.memberId === currentPlayer.value.memberId,
 )
 const disabled = computed(() => isManager.value && !isPossibleToStart.value)
-const buttonText = computed(() => {
+const readyButtonText = computed(() => {
   if (isManager.value) {
     return isPossibleToStart.value ? '시작하기' : '대기 중'
   }
@@ -54,7 +57,7 @@ const buttonText = computed(() => {
   return isReady.value ? '취소' : '준비'
 })
 
-const emit = defineEmits(['ready'])
+const emit = defineEmits(['ready', 'exit'])
 
 const isInLeft = (index) => {
   return index === 0 || index === 2 || index === 4
@@ -62,6 +65,10 @@ const isInLeft = (index) => {
 
 const onClickReady = () => {
   emit('ready', currentPlayer.value.memberId)
+}
+
+const onClickExit = () => {
+  emit('exit', currentPlayer.value.memberId, currentPlayer.value.nickname)
 }
 </script>
 

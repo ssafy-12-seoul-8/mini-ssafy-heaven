@@ -5,7 +5,7 @@
       <ChatBox />
     </div>
     <div id="player-list-container-wrapper" class="w-screen h-5/6 absolute left-0">
-      <PlayerList @ready="toggleReady" />
+      <PlayerList @ready="toggleReady" @exit="handleExit" />
     </div>
   </div>
 </template>
@@ -59,6 +59,17 @@ const toggleReady = (memberId) => {
   }
 
   roomSocket.ready(currentRoom.value.id, request)
+}
+
+const handleExit = (memberId, nickname) => {
+  const request = {
+    memberId: memberId,
+    nickname: nickname,
+  }
+
+  roomSocket.exit(currentRoom.value.id, request)
+
+  router.replace('/rooms')
 }
 </script>
 
