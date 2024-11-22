@@ -5,9 +5,11 @@ import com.mini_ssafy_heaven.dao.RoomGameDao;
 import com.mini_ssafy_heaven.dao.RoomPlayerDao;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
 import com.mini_ssafy_heaven.dto.query.RoomPlayerNameDto;
+import com.mini_ssafy_heaven.dto.request.ChatRequest;
 import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
+import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
@@ -80,6 +82,11 @@ public class RoomSocketServiceImpl implements RoomSocketService {
     List<RoomPlayerNameDto> newPlayers = roomPlayerDao.findAllWithNamesByRoomId(roomId);
 
     return ExitResponse.from(request.nickname(), newPlayers);
+  }
+
+  @Override
+  public ChatResponse chat(ChatRequest request) {
+    return ChatResponse.from(request.nickname(), request.chat());
   }
 
   private void deleteRoom(Long roomId) {
