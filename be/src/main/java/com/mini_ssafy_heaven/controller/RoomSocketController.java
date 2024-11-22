@@ -1,8 +1,10 @@
 package com.mini_ssafy_heaven.controller;
 
 import com.mini_ssafy_heaven.dto.request.EnterRequest;
+import com.mini_ssafy_heaven.dto.request.ReadyRequest;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.MessageResponse;
+import com.mini_ssafy_heaven.dto.response.ReadyResponse;
 import com.mini_ssafy_heaven.global.annotation.StompController;
 import com.mini_ssafy_heaven.service.RoomSocketService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,12 @@ public class RoomSocketController {
     EnterRequest request
   ) {
     return roomSocketService.enter(id, request);
+  }
+
+  @MessageMapping("/{id}/ready")
+  @SendTo("/game/{id}")
+  public MessageResponse<ReadyResponse> toggleReady(@DestinationVariable("id") Long id, ReadyRequest request) {
+    return roomSocketService.toggleReady(id, request);
   }
 
 }
