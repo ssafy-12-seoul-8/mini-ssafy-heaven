@@ -2,7 +2,7 @@
   <div class="h-full w-full">
     <div class="h-full w-full flex flex-col justify-between">
       <RoomContents />
-      <ChatBox />
+      <ChatBox :player="currentPlayer" />
     </div>
     <div id="player-list-container-wrapper" class="w-screen h-5/6 absolute left-0">
       <PlayerList @ready="toggleReady" @exit="handleExit" />
@@ -27,11 +27,16 @@ const { params } = useRoute()
 const roomPlayerStore = useRoomPlayerStore()
 const roomStore = useRoomStore()
 const { currentRoom } = storeToRefs(roomStore)
+const { currentPlayer } = storeToRefs(roomPlayerStore)
 const { updatePlayers } = roomPlayerStore
 const { fetchRoomDetail } = roomStore
 
 onMounted(() => {
   validatePlayer()
+
+  if (!roomSocket.connected()) {
+    roomSocket.enter(params.id)
+  }
 })
 
 const validatePlayer = () => {

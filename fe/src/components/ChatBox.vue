@@ -13,22 +13,45 @@
         <input
           class="z-50 w-11/12 pl-4 rounded-xl caret-main-skyblue focus:outline-none border-main-skyblue border"
           :value="text"
-          @change="text = event.target.value"
+          @change="text = $event.target.value"
+          @keyup.prevent.enter="sendChat"
         />
-        <button>보내기</button>
+        <button @click="sendChat">보내기</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { roomSocket } from '@/apis/rooms'
 import { useChatStore } from '@/stores/chats'
+import { useRoomStore } from '@/stores/rooms'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 
+const { player } = defineProps({
+  player: {
+    type: Object,
+    required: true,
+  },
+})
 const text = ref('')
 const chatStore = useChatStore()
+const roomStore = useRoomStore()
 const { chats } = storeToRefs(chatStore)
+
+const { currentRoom } = storeToRefs(roomStore)
+
+const sendChat = () => {
+  const request = {
+    nickname: player.nickname,
+    chat: text.value,
+  }
+
+  roomSocket.chat(currentRoom.value.id, request)
+
+  text.value = ''
+}
 </script>
 
 <style>
