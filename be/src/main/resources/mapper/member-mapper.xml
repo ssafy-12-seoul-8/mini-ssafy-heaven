@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mini_ssafy_heaven.dao.MemberDao">
+	<resultMap id="memberConstructor" type="Member">
+		<constructor>
+			<idArg column="id" javaType="long" />
+			<arg column="username" javaType="long" />
+			<arg column="password" javaType="long" />
+			<arg column="nickname" javaType="String" />
+			<arg column="role" javaType="com.mini_ssafy_heaven.domain.enums.MemberRole" />
+			<arg column="score" javaType="int" />
+		</constructor>
+	</resultMap>
 	<select id="existsById" resultType="boolean">
 		SELECT IF(COUNT(*)=1, true, false)
 		FROM members
@@ -18,13 +28,18 @@
 		VALUES (#{member.username}, #{member.password}, #{member.nickname},
 		#{member.role},#{createdAt}, #{updatedAt});
 	</insert>
-	<select id="findById">
+	<select id="findById" resultMap="memberConstructor">
 		SELECT *
 		FROM members
 		WHERE id=#{id}
 	</select>
 	<select id="getPassWord" resultType="String">
 		SELECT password
+		FROM members
+		WHERE username=#{username};
+	</select>
+	<select id="getMemberInfo" resultType="Member">
+		SELECT *
 		FROM members
 		WHERE username=#{username};
 	</select>

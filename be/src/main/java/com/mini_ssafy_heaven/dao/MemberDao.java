@@ -16,4 +16,6 @@ public interface MemberDao {
 
   String getPassWord(String username);
 
+  Optional<Member> getMemberInfo(String username);
+
 }
