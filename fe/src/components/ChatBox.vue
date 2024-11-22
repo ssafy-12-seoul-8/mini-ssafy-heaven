@@ -4,13 +4,8 @@
       id="chat-box-wrapper"
       class="flex flex-col justify-center h-full items-center bg-slate-400 mx-auto mb-4 rounded-lg gap-2"
     >
-      <div id="chat-contents-container" class="h-5/6 gap-1 w-11/12">
-        <div
-          id="chat-contents"
-          class="flex flex-col-reverse h-full"
-          v-for="(chat, index) in chats"
-          :key="index"
-        >
+      <div id="chat-contents-container" class="h-5/6 gap-1 w-11/12 flex flex-col-reverse">
+        <div id="chat-contents" v-for="(chat, index) in chats" :key="index">
           {{ chat }}
         </div>
       </div>
