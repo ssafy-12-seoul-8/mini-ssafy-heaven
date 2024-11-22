@@ -24,7 +24,6 @@ public class MemberController implements MemberDocument {
   @Override
   @PostMapping
   public ResponseEntity<CreateMemberResponse> addMember(@RequestBody CreateMemberRequest request) {
-
     CreateMemberResponse response = memberService.addMember(request);
     URI uri = URI.create("/api/members/" + response.id());
 
@@ -39,7 +38,7 @@ public class MemberController implements MemberDocument {
     URI uri = URI.create("/api/members/" + response.id());
 
     session.setAttribute("loginId", response.id());
-    session.setMaxInactiveInterval(60 * 60 * 24);
+    session.setMaxInactiveInterval(60 * 60 * 24 * 365);
 
     return ResponseEntity.created(uri)
         .body(response);
