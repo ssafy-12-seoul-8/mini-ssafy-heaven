@@ -18,6 +18,7 @@ const parseSocketMessage = (res) => {
 }
 
 export const roomSocket = {
+  connected: () => stomp.connected,
   enter: (id, body, onConnect, onError) => {
     const onEnter = () => {
       stomp.subscribe(id, (res) => parseSocketMessage(res))
@@ -35,4 +36,5 @@ export const roomSocket = {
     stomp.send(id, MessageType.EXIT.lower, body)
     stomp.disconnect()
   },
+  chat: (id, body) => stomp.send(id, MessageType.TALK.lower, body),
 }
