@@ -58,5 +58,6 @@ export const stomp = {
       body: JSON.stringify(body),
     })
   },
+  connected: client.connected,
   disconnect: () => client.deactivate(),
 }
