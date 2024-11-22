@@ -1,8 +1,10 @@
 package com.mini_ssafy_heaven.controller;
 
 import com.mini_ssafy_heaven.dto.request.EnterRequest;
+import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
+import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.MessageResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
 import com.mini_ssafy_heaven.global.annotation.StompController;
@@ -38,6 +40,17 @@ public class RoomSocketController {
     ReadyResponse response = roomSocketService.toggleReady(id, request);
 
     return MessageResponse.ready(response);
+  }
+
+  @MessageMapping("/{id}/exit")
+  @SendTo("/game/{id}")
+  public MessageResponse<ExitResponse> exitRoom(
+    @DestinationVariable("id") Long id,
+    ExitRequest request
+  ) {
+    ExitResponse response = roomSocketService.exit(id, request);
+
+    return MessageResponse.exit(response);
   }
 
 }
