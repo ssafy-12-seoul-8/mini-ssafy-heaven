@@ -29,7 +29,7 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
   redis-local:
     image: redis:7.2.4-alpine
-    container_name: redis-local
+    container_name: mini-ssafy-redis-local
     ports:
       - ${REDIS_PORT}:6379
     volumes:
