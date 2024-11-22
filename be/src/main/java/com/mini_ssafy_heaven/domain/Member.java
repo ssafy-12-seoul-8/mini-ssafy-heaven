@@ -1,9 +1,12 @@
 package com.mini_ssafy_heaven.domain;
 
 import com.mini_ssafy_heaven.domain.enums.MemberRole;
+import com.mini_ssafy_heaven.domain.enums.RandomUserAdjective;
+import com.mini_ssafy_heaven.domain.enums.RandomUserAnimal;
 import com.mini_ssafy_heaven.global.exception.code.MemberErrorCode;
 import io.micrometer.common.util.StringUtils;
 import java.util.Objects;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -39,6 +42,25 @@ public class Member {
     this.nickname = nickname;
     this.role = Objects.isNull(role) ? MemberRole.NORMAL : role;
     this.score = score;
+  }
+
+  public static Member createGuest() {
+    String uuid = UUID.randomUUID()
+        .toString();
+    String lowTime = uuid.substring(0, 8);
+    RandomUserAdjective adjective = RandomUserAdjective.getRandom();
+    RandomUserAnimal animal = RandomUserAnimal.getRandom();
+    String username = adjective.getUsername() + animal.getUsername() + lowTime;
+    String nickname = adjective.getNickname() + " " + animal.getNickname();
+    String password = uuid.substring(8, uuid.length());
+
+    return Member.builder()
+        .username(username)
+        .password(password)
+        .nickname(nickname)
+        .role(MemberRole.GUEST)
+        .score(0)
+        .build();
   }
 
   private void validateName(String name) {
