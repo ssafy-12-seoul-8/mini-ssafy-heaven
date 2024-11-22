@@ -14,7 +14,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import CreateRoomInput from '@/components/CreateRoomInput.vue'
 import SelectGamesContainer from '@/components/SelectGamesContainer.vue'
-import { isInput, isReady, RoomStatus } from '@/constants/RoomStatus'
+import { RoomStatus } from '@/constants/RoomStatus'
 import { useGameStore } from '@/stores/games'
 import { storeToRefs } from 'pinia'
 import { roomApi, roomSocket } from '@/apis/rooms'
@@ -28,8 +28,8 @@ const roomInfo = ref({
 const status = ref(RoomStatus.INPUT_INFO)
 const loaderOpen = ref(false)
 const failMessage = ref()
-const isWaitingForInput = computed(() => isInput(status.value.name))
-const isReadyForGameSet = computed(() => isReady(status.value.name))
+const isWaitingForInput = computed(() => RoomStatus.isInput(status.value.name))
+const isReadyForGameSet = computed(() => RoomStatus.isReady(status.value.name))
 const gameStore = useGameStore()
 const { fetchAllGames } = gameStore
 const { selectedGames } = storeToRefs(gameStore)
