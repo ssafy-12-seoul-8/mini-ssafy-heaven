@@ -1,5 +1,7 @@
 package com.mini_ssafy_heaven.service;
 
+import com.mini_ssafy_heaven.dao.RoomDao;
+import com.mini_ssafy_heaven.dao.RoomGameDao;
 import com.mini_ssafy_heaven.dao.RoomPlayerDao;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
 import com.mini_ssafy_heaven.dto.query.RoomPlayerNameDto;
@@ -23,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoomSocketServiceImpl implements RoomSocketService {
 
   private final RoomPlayerDao roomPlayerDao;
+  private final RoomDao roomDao;
+  private final RoomGameDao roomGameDao;
 
   @Override
   public EnterResponse enter(Long roomId, EnterRequest request) {
@@ -51,9 +55,36 @@ public class RoomSocketServiceImpl implements RoomSocketService {
   }
 
   @Override
+  @Transactional
   public ExitResponse exit(Long roomId, ExitRequest request) {
-    // TODO Auto-generated method stub
-    return null;
+    RoomPlayer roomPlayer = roomPlayerDao.findByRoomAndMember(roomId, request.memberId())
+        .orElseThrow(() -> new NoSuchElementException(RoomPlayerErrorCode.NOT_JOINED.getMessage()));
+
+    roomPlayerDao.deleteById(roomPlayer.getId());
+
+    List<RoomPlayer> players = roomPlayerDao.findAllByRoomId(roomId);
+
+    if (players.isEmpty()) {
+      deleteRoom(roomId);
+
+      return ExitResponse.empty();
+    }
+
+    if (roomPlayer.isManager()) {
+      RoomPlayer candidate = players.get(0);
+      RoomPlayer newManager = candidate.promoteToManager();
+
+      roomPlayerDao.update(newManager);
+    }
+
+    List<RoomPlayerNameDto> newPlayers = roomPlayerDao.findAllWithNamesByRoomId(roomId);
+
+    return ExitResponse.from(request.nickname(), newPlayers);
+  }
+
+  private void deleteRoom(Long roomId) {
+    roomGameDao.deleteByRoomId(roomId);
+    roomDao.deleteById(roomId);
   }
 
   private long countReady(List<RoomPlayer> roomPlayers) {
