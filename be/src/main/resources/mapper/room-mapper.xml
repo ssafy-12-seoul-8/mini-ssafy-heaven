@@ -46,4 +46,8 @@
 		capacity=#{room.capacity}, updated_at=#{updatedAt}
 		WHERE id=#{room.id}
 	</update>
+	<delete id="deleteById">
+		DELETE FROM rooms
+		WHERE id=#{id}
+	</delete>
 </mapper>

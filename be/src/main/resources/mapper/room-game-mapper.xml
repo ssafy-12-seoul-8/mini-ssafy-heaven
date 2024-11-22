@@ -11,4 +11,8 @@
     JOIN games g ON rg.game_id = g.id
     WHERE rg.room_id = #{roomId}
   </select>
+  <delete id="deleteByRoomId">
+  	DELETE FROM room_games
+  	WHERE room_id=#{roomId}
+  </delete>
 </mapper>

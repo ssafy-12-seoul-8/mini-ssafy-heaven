@@ -65,4 +65,8 @@
 		WHERE rp.room_id=#{roomId}
 		ORDER BY rp.created_at
 	</select>
+	<delete id="deleteById">
+		DELETE FROM room_players
+		WHERE id=#{id}
+	</delete>
 </mapper>

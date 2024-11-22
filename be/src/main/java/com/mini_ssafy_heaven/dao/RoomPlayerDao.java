@@ -27,4 +27,6 @@ public interface RoomPlayerDao {
 
   List<RoomPlayerNameDto> findAllWithNamesByRoomId(Long roomId);
 
+  void deleteById(Long id);
+
 }
