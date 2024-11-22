@@ -12,7 +12,7 @@ public interface RoomDao {
 
   boolean existsById(Long id);
 
-  List<SimpleRoomDto> selectAll(Long cursor, Integer size);
+  List<SimpleRoomDto> selectAll(@Param("cursor") Long cursor, @Param("size") Integer size);
 
   Optional<Room> findById(Long id);
 
