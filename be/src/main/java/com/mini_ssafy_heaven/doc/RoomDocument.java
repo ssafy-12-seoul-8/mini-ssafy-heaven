@@ -3,9 +3,10 @@ package com.mini_ssafy_heaven.doc;
 import com.mini_ssafy_heaven.doc.example.RoomErrorExample;
 import com.mini_ssafy_heaven.dto.request.CreateRoomRequest;
 import com.mini_ssafy_heaven.dto.request.ScrollRequest;
-import com.mini_ssafy_heaven.dto.response.BasicRoomResponse;
 import com.mini_ssafy_heaven.dto.request.UpdateRoomStatusRequest;
+import com.mini_ssafy_heaven.dto.response.BasicRoomResponse;
 import com.mini_ssafy_heaven.dto.response.CreateRoomResponse;
+import com.mini_ssafy_heaven.dto.response.RoomDetailResponse;
 import com.mini_ssafy_heaven.dto.response.ScrollResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,18 +39,13 @@ public interface RoomDocument {
 
   @Operation(summary = "방 전체 조회")
   @ApiResponses(
-      {
-          @ApiResponse(
-              responseCode = "200",
-              description = "OK",
-              useReturnTypeSchema = true
-          )
-      }
+    {@ApiResponse(responseCode = "200", description = "OK", useReturnTypeSchema = true)}
   )
-  ResponseEntity<ScrollResponse<BasicRoomResponse>> getAll(
-      @ParameterObject
-      ScrollRequest request
-  );
+  ResponseEntity<ScrollResponse<BasicRoomResponse>> getAll(@ParameterObject ScrollRequest request);
+
+  @Operation(summary = "방 상세 조회")
+  @ApiResponse(responseCode = "200", description = "OK")
+  ResponseEntity<RoomDetailResponse> getDetail(Long id, HttpSession session);
 
   @Operation(summary = "방 참여")
   @ApiResponses(@ApiResponse(responseCode = "201", description = "CREATED"))

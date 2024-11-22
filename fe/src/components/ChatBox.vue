@@ -14,7 +14,14 @@
           {{ chat }}
         </div>
       </div>
-      <input class="z-50" type="text" :value="text" @change="text = event.target.value" />
+      <div class="z-50 w-11/12 flex justify-center gap-4">
+        <input
+          class="z-50 w-11/12 pl-4 rounded-xl caret-main-skyblue focus:outline-none border-main-skyblue border"
+          :value="text"
+          @change="text = event.target.value"
+        />
+        <button>보내기</button>
+      </div>
     </div>
   </div>
 </template>
