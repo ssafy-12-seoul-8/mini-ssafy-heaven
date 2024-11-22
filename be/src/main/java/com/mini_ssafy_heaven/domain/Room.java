@@ -50,8 +50,8 @@ public class Room {
     return update(this.title, this.capacity, RoomStatus.get(status));
   }
 
-  public boolean isInGame() {
-    return status == RoomStatus.PLAYING;
+  public boolean isPossibleToEnter() {
+    return status.isWaiting();
   }
 
   private Room update(String title, Integer capacity, RoomStatus status) {
