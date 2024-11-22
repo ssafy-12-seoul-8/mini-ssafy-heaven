@@ -13,7 +13,11 @@ export const useRoomPlayerStore = defineStore('roomPlayer', () => {
   })
 
   // TODO: 회원 구현 후 수정
-  const currentPlayer = computed(() => roomPlayers.value.find((player) => player.memberId === 1))
+  const currentPlayer = computed(() =>
+    roomPlayers.value.find(
+      (player) => player.nickname === JSON.parse(localStorage.getItem('me')).nickname,
+    ),
+  )
   const manager = computed(() => roomPlayers.value[0])
 
   // actions

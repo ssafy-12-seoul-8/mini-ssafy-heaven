@@ -1,21 +1,27 @@
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useMemberStore = defineStore('member', () => {
   // state
   const me = ref({
-    id: null,
     nickname: null,
+    score: null,
   })
 
   // getters
   const myNickname = computed(() => me.value.nickname)
 
   // actions
-  const updateMe = (id, nickname) => {
-    me.value.id = id
+  const updateMe = (nickname, score) => {
     me.value.nickname = nickname
+    me.value.score = score ?? 0
+
+    localStorage.setItem('me', JSON.stringify(me.value))
   }
+
+  onMounted(() => {
+    me.value = JSON.parse(localStorage.getItem('me'))
+  })
 
   return {
     me,
