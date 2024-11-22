@@ -42,7 +42,9 @@ const roomPlayerStore = useRoomPlayerStore()
 const { isPossibleToStart } = storeToRefs(roomStore)
 const { roomPlayers, currentPlayer, manager } = storeToRefs(roomPlayerStore)
 const isReady = computed(() => RoomPlayerStatus.isReady(currentPlayer.value))
-const isManager = computed(() => manager.memberId === currentPlayer.memberId)
+const isManager = computed(
+  () => manager.value && manager.value.memberId === currentPlayer.value.memberId,
+)
 const disabled = computed(() => isManager.value && !isPossibleToStart.value)
 const buttonText = computed(() => {
   if (isManager.value) {
