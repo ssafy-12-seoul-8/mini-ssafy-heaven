@@ -24,10 +24,15 @@ export const useRoomStore = defineStore('room', () => {
     currentRoom.value.totalCount = totalCount
   }
 
+  const updateTotalCount = (totalCount) => {
+    currentRoom.value.totalCount = totalCount
+  }
+
   return {
     currentRoom,
     isPossibleToStart,
     fetchRoomDetail,
     updateReadyCount,
+    updateTotalCount,
   }
 })

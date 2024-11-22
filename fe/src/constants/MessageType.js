@@ -4,9 +4,11 @@ import { useRoomStore } from '@/stores/rooms'
 
 const doEnter = (data) => {
   const { updatePlayers } = useRoomPlayerStore()
+  const { updateTotalCount } = useRoomStore()
   const { addChat } = useChatStore()
 
   updatePlayers(data.players)
+  updateTotalCount(data.players.length)
   addChat(data.message)
 }
 
