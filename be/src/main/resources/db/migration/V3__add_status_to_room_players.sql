@@ -1,0 +1,1 @@
+ALTER TABLE room_players ADD status VARCHAR(20) DEFAULT 'WAITING';
