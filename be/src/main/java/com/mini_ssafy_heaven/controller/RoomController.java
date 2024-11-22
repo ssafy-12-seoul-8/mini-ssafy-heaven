@@ -34,8 +34,7 @@ public class RoomController implements RoomDocument {
     @RequestBody CreateRoomRequest request,
     HttpSession session
   ) {
-    // TODO: 로그인 기능 생성 후 실 사용자로 바꾸기
-    Long loginId = 1L;
+    Long loginId = (Long) session.getAttribute("loginId");
     CreateRoomResponse response = roomService.create(request, loginId);
     URI uri = URI.create("/api/rooms/" + response.id());
 
@@ -57,8 +56,7 @@ public class RoomController implements RoomDocument {
     @PathVariable("id") Long id,
     HttpSession session
   ) {
-    // TODO: 로그인 기능 생성 후 실 사용자로 바꾸기
-    Long loginId = 1L;
+    Long loginId = (Long) session.getAttribute("loginId");
     RoomDetailResponse response = roomService.getDetail(id, loginId);
 
     return ResponseEntity.ok(response);
@@ -67,8 +65,7 @@ public class RoomController implements RoomDocument {
   @Override
   @PostMapping("/{id}")
   public ResponseEntity<Void> join(@PathVariable("id") Long id, HttpSession session) {
-    // TODO: 로그인 기능 생성 후 실 사용자로 바꾸기
-    Long loginId = 1L;
+    Long loginId = (Long) session.getAttribute("loginId");
 
     roomService.join(id, loginId);
 
@@ -83,8 +80,7 @@ public class RoomController implements RoomDocument {
     @RequestBody UpdateRoomStatusRequest request,
     HttpSession session
   ) {
-    // TODO: 로그인 기능 생성 후 실 사용자로 바꾸
-    Long loginId = 1L;
+    Long loginId = (Long) session.getAttribute("loginId");
 
     roomService.updateStatus(id, request, loginId);
 
