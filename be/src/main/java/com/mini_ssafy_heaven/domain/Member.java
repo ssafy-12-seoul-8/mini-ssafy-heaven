@@ -51,7 +51,7 @@ public class Member {
     RandomUserAdjective adjective = RandomUserAdjective.getRandom();
     RandomUserAnimal animal = RandomUserAnimal.getRandom();
     String username = adjective.getUsername() + animal.getUsername() + lowTime;
-    String nickname = adjective.getNickname() + " " + animal.getNickname();
+    String nickname = adjective.getNickname() + " " + animal.getNickname() + lowTime.substring(0, 4);
     String password = uuid.substring(8, uuid.length());
 
     return Member.builder()
