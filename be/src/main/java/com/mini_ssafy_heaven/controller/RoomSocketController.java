@@ -24,7 +24,9 @@ public class RoomSocketController {
     @DestinationVariable("id") Long id,
     EnterRequest request
   ) {
-    return roomSocketService.enter(id, request);
+    EnterResponse response = roomSocketService.enter(id, request);
+
+    return MessageResponse.enter(response);
   }
 
   @MessageMapping("/{id}/ready")
@@ -33,7 +35,9 @@ public class RoomSocketController {
     @DestinationVariable("id") Long id,
     ReadyRequest request
   ) {
-    return roomSocketService.toggleReady(id, request);
+    ReadyResponse response = roomSocketService.toggleReady(id, request);
+
+    return MessageResponse.ready(response);
   }
 
 }
