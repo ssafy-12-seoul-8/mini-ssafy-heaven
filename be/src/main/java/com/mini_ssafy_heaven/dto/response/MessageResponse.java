@@ -16,4 +16,8 @@ public record MessageResponse<T>(SocketMessageType type, T payload) {
     return new MessageResponse<T>(SocketMessageType.EXIT, payload);
   }
 
+  public static <T> MessageResponse<T> chat(T payload) {
+    return new MessageResponse<T>(SocketMessageType.TALK, payload);
+  }
+
 }

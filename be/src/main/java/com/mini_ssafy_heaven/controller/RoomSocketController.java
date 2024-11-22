@@ -1,8 +1,10 @@
 package com.mini_ssafy_heaven.controller;
 
+import com.mini_ssafy_heaven.dto.request.ChatRequest;
 import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
+import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.MessageResponse;
@@ -51,6 +53,17 @@ public class RoomSocketController {
     ExitResponse response = roomSocketService.exit(id, request);
 
     return MessageResponse.exit(response);
+  }
+
+  @MessageMapping("/{id}/talk")
+  @SendTo("/game/{id}")
+  public MessageResponse<ChatResponse> chat(
+    @DestinationVariable("id") Long id,
+    ChatRequest request
+  ) {
+    ChatResponse response = roomSocketService.chat(request);
+
+    return MessageResponse.chat(response);
   }
 
 }
