@@ -29,7 +29,10 @@ public class RoomSocketController {
 
   @MessageMapping("/{id}/ready")
   @SendTo("/game/{id}")
-  public MessageResponse<ReadyResponse> toggleReady(@DestinationVariable("id") Long id, ReadyRequest request) {
+  public MessageResponse<ReadyResponse> toggleReady(
+    @DestinationVariable("id") Long id,
+    ReadyRequest request
+  ) {
     return roomSocketService.toggleReady(id, request);
   }
 

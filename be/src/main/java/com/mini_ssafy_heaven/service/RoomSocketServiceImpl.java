@@ -47,8 +47,8 @@ public class RoomSocketServiceImpl implements RoomSocketService {
 
     int updated = roomPlayerDao.update(toggled);
     long updatedReadyCount = toggled.isReady() ? readyCount + updated : readyCount - updated;
-    ReadyResponse response = ReadyResponse.from(
-        toggled, (int) updatedReadyCount, roomPlayers.size());
+    ReadyResponse response =
+        ReadyResponse.from(toggled, (int) updatedReadyCount, roomPlayers.size());
 
     return MessageResponse.from(SocketMessageType.READY, response);
   }
