@@ -2,14 +2,23 @@ import { useRoomPlayerStore } from '@/stores/roomPlayers'
 import { useChatStore } from '@/stores/chats'
 import { useRoomStore } from '@/stores/rooms'
 
-const doEnter = (data) => {
-  const { updatePlayers } = useRoomPlayerStore()
-  const { updateTotalCount } = useRoomStore()
+const handleChat = (message) => {
   const { addChat } = useChatStore()
 
-  updatePlayers(data.players)
-  updateTotalCount(data.players.length)
-  addChat(data.message)
+  addChat(message)
+}
+
+const handlePlayerUpdate = (players) => {
+  const { updatePlayers } = useRoomPlayerStore()
+  const { updateTotalCount } = useRoomStore()
+
+  updatePlayers(players)
+  updateTotalCount(players.length)
+}
+
+const doMemberChange = (data) => {
+  handlePlayerUpdate(data.players)
+  handleChat(data.message)
 }
 
 const doReady = (data) => {
@@ -24,15 +33,17 @@ export const MessageType = {
   ENTER: {
     name: 'ENTER',
     lower: 'enter',
-    action: doEnter,
+    action: doMemberChange,
   },
   EXIT: {
     name: 'EXIT',
     lower: 'exit',
+    action: doMemberChange,
   },
   TALK: {
     name: 'TALK',
     lower: 'talk',
+    action: (data) => handleChat(data.message),
   },
   READY: {
     name: 'READY',
