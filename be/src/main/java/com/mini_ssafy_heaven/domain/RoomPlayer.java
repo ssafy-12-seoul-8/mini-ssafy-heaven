@@ -1,7 +1,10 @@
 package com.mini_ssafy_heaven.domain;
 
 import com.mini_ssafy_heaven.domain.enums.RoomPlayerRole;
+import com.mini_ssafy_heaven.domain.enums.RoomPlayerStatus;
 import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,25 +16,32 @@ public class RoomPlayer {
   private final Long roomId;
   private final Integer score;
   private final RoomPlayerRole role;
+  private final RoomPlayerStatus status;
 
-  private RoomPlayer(Long id, Long memberId, Long roomId, RoomPlayerRole role, Integer score) {
-    this(id, memberId, roomId, score, role, null);
+  private RoomPlayer(
+      Long id, Long memberId, Long roomId, Integer score, RoomPlayerRole role,
+      RoomPlayerStatus status
+  ) {
+    this(id, memberId, roomId, score, role, null, status, null);
   }
 
   @Builder
   private RoomPlayer(
-    Long id,
-    Long memberId,
-    Long roomId,
-    Integer score,
-    RoomPlayerRole role,
-    String roleString
+      Long id,
+      Long memberId,
+      Long roomId,
+      Integer score,
+      RoomPlayerRole role,
+      String roleString,
+      RoomPlayerStatus status,
+      String statusString
   ) {
     this.id = id;
     this.memberId = memberId;
     this.roomId = roomId;
     this.score = Objects.isNull(score) ? 0 : score;
     this.role = Objects.isNull(role) ? RoomPlayerRole.get(roleString) : role;
+    this.status = Objects.isNull(status) ? RoomPlayerStatus.get(statusString) : status;
   }
 
   public static RoomPlayer createManager(Long memberId, Long roomId) {
@@ -39,6 +49,7 @@ public class RoomPlayer {
         .memberId(memberId)
         .roomId(roomId)
         .role(RoomPlayerRole.MANAGER)
+        .status(RoomPlayerStatus.READY)
         .build();
   }
 
@@ -55,6 +66,21 @@ public class RoomPlayer {
 
   public boolean isManager() {
     return role == RoomPlayerRole.MANAGER;
+  }
+
+  public boolean isReady() {
+    return status.isReady();
+  }
+
+  public RoomPlayer toggleReady() {
+    return RoomPlayer.builder()
+        .id(id)
+        .memberId(memberId)
+        .roomId(roomId)
+        .role(role)
+        .score(score)
+        .status(status.isReady() ? RoomPlayerStatus.WAITING : RoomPlayerStatus.READY)
+        .build();
   }
 
 }
