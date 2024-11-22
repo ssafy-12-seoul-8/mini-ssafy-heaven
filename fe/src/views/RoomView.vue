@@ -1,8 +1,11 @@
 <template>
   <div class="h-full w-full">
-    <ChatBox />
+    <div class="h-full w-full flex flex-col justify-between">
+      <RoomContents />
+      <ChatBox />
+    </div>
     <div id="player-list-container-wrapper" class="w-screen h-5/6 absolute left-0">
-      <PlayerList :room-players="roomPlayers" />
+      <PlayerList @ready="toggleReady" />
     </div>
   </div>
 </template>
@@ -10,21 +13,26 @@
 <script setup>
 import { onMounted } from 'vue'
 import PlayerList from '@/components/PlayerList.vue'
-import ChatBox from '@/components/ChatBox.vue'
 import { useRoomPlayerStore } from '@/stores/roomPlayers'
 import { storeToRefs } from 'pinia'
-import { roomApi } from '@/apis/rooms'
+import { roomApi, roomSocket } from '@/apis/rooms'
 import { useRoute } from 'vue-router'
 import { useRoomStore } from '@/stores/rooms'
 import { useRouter } from 'vue-router'
+import ChatBox from '@/components/ChatBox.vue'
+import RoomContents from '@/components/RoomContents.vue'
 
 const router = useRouter()
 const { params } = useRoute()
 const roomPlayerStore = useRoomPlayerStore()
 const roomStore = useRoomStore()
-const { roomPlayers } = storeToRefs(roomPlayerStore)
+const { currentRoom } = storeToRefs(roomStore)
 const { updatePlayers } = roomPlayerStore
 const { fetchRoomDetail } = roomStore
+
+onMounted(() => {
+  validatePlayer()
+})
 
 const validatePlayer = () => {
   roomApi
@@ -45,9 +53,13 @@ const handleError = (err) => {
   router.replace('/rooms')
 }
 
-onMounted(() => {
-  validatePlayer()
-})
+const toggleReady = (memberId) => {
+  const request = {
+    memberId: memberId,
+  }
+
+  roomSocket.ready(currentRoom.value.id, request)
+}
 </script>
 
 <style>

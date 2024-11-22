@@ -1,8 +1,8 @@
 <template>
-  <div id="chat-box-container" class="w-full h-full flex flex-col-reverse">
+  <div id="chat-box-container" class="h-1/3 flex flex-col-reverse">
     <div
       id="chat-box-wrapper"
-      class="flex flex-col justify-center items-center h-1/3 bg-slate-400 mx-auto mb-4 rounded-lg gap-2"
+      class="flex flex-col justify-center h-full items-center bg-slate-400 mx-auto mb-4 rounded-lg gap-2"
     >
       <div id="chat-contents-container" class="h-5/6 gap-1 w-11/12">
         <div
