@@ -3,8 +3,6 @@ package com.mini_ssafy_heaven.domain;
 import com.mini_ssafy_heaven.domain.enums.RoomPlayerRole;
 import com.mini_ssafy_heaven.domain.enums.RoomPlayerStatus;
 import java.util.Objects;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -19,22 +17,26 @@ public class RoomPlayer {
   private final RoomPlayerStatus status;
 
   private RoomPlayer(
-      Long id, Long memberId, Long roomId, Integer score, RoomPlayerRole role,
-      RoomPlayerStatus status
+    Long id,
+    Long memberId,
+    Long roomId,
+    Integer score,
+    RoomPlayerRole role,
+    RoomPlayerStatus status
   ) {
     this(id, memberId, roomId, score, role, null, status, null);
   }
 
   @Builder
   private RoomPlayer(
-      Long id,
-      Long memberId,
-      Long roomId,
-      Integer score,
-      RoomPlayerRole role,
-      String roleString,
-      RoomPlayerStatus status,
-      String statusString
+    Long id,
+    Long memberId,
+    Long roomId,
+    Integer score,
+    RoomPlayerRole role,
+    String roleString,
+    RoomPlayerStatus status,
+    String statusString
   ) {
     this.id = id;
     this.memberId = memberId;
@@ -80,6 +82,17 @@ public class RoomPlayer {
         .role(role)
         .score(score)
         .status(status.isReady() ? RoomPlayerStatus.WAITING : RoomPlayerStatus.READY)
+        .build();
+  }
+
+  public RoomPlayer promoteToManager() {
+    return RoomPlayer.builder()
+        .id(id)
+        .memberId(memberId)
+        .roomId(roomId)
+        .role(RoomPlayerRole.MANAGER)
+        .score(score)
+        .status(status)
         .build();
   }
 
