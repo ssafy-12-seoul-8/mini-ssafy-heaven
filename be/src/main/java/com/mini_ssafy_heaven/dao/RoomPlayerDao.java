@@ -12,6 +12,8 @@ public interface RoomPlayerDao {
 
   int save(@Param("roomPlayer") RoomPlayer roomPlayer);
 
+  int update(@Param("roomPlayer") RoomPlayer roomPlayer);
+
   int countByRoomId(Long roomId);
 
   int countPlayersByRoomId(Long roomId);
@@ -21,6 +23,8 @@ public interface RoomPlayerDao {
     @Param("memberId") Long memberId
   );
 
-  List<RoomPlayerNameDto> findAllByRoomId(Long roomId);
+  List<RoomPlayer> findAllByRoomId(Long roomId);
+
+  List<RoomPlayerNameDto> findAllWithNamesByRoomId(Long roomId);
 
 }
