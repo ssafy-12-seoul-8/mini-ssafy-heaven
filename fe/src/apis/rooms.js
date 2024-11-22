@@ -31,4 +31,8 @@ export const roomSocket = {
     stomp.connect(onEnter, onError)
   },
   ready: (id, body) => stomp.send(id, MessageType.READY.lower, body),
+  exit: (id, body) => {
+    stomp.send(id, MessageType.EXIT.lower, body)
+    stomp.disconnect()
+  },
 }
