@@ -42,7 +42,7 @@ const routes = [
     path: '/me',
     name: 'me',
     component: GetMeView,
-  }
+  },
 ]
 
 const router = createRouter({

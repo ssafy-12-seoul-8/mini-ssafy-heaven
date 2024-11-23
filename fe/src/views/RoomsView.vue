@@ -9,6 +9,6 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const me = () => {
-    router.push({ path: 'me' })
+  router.push({ path: 'me' })
 }
 </script>
