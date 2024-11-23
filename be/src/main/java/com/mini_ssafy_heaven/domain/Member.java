@@ -63,6 +63,12 @@ public class Member {
         .build();
   }
 
+  public void verifyPassword(String input) {
+    if (!Objects.equals(this.password, input)) {
+      throw new IllegalArgumentException(MemberErrorCode.WRONG_PASSWORD.getMessage());
+    }
+  }
+
   private void validateName(String name) {
     if (StringUtils.isBlank(name)) {
       throw new IllegalArgumentException(MemberErrorCode.EMPTY.getMessage());
