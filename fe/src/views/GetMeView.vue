@@ -19,9 +19,9 @@ const userDetail = async () => {
   meApi
     .getDetail()
     .then((response) => {
-      const data = response.data;
-      nickname.value = data.nickname;
-      score.value = data.score;
+      const data = response.data
+      nickname.value = data.nickname
+      score.value = data.score
     })
     .catch((err) => {
       alert(err.response.data.message)
