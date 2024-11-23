@@ -11,5 +11,5 @@ export const loginApi = {
 }
 
 export const meApi = {
-  me: (body) => http.get(`${MEMBER_PREFIX}/me`, body),
+  getDetail: () => http.get(`${MEMBER_PREFIX}/me`),
 }

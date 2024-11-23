@@ -8,20 +8,20 @@
 <script setup>
 import BaseButton from '@/components/BaseButton.vue'
 import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { meApi } from '@/apis/member'
 
 const nickname = ref('')
 const score = ref(0)
 const router = useRouter()
-const params = useRoute()
 
 const userDetail = async () => {
   meApi
-    .getDetail(params.id)
-    .then(() => {
-      nickname.value = params.nickname
-      score.value = params.score
+    .getDetail()
+    .then((response) => {
+      const data = response.data;
+      nickname.value = data.nickname;
+      score.value = data.score;
     })
     .catch((err) => {
       alert(err.response.data.message)
