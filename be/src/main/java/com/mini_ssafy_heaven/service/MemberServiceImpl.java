@@ -56,10 +56,14 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Member getMemberById(Long id) {
-    Member member = memberDao.findById(id)
+    Member temp = memberDao.findById(id)
         .orElseThrow(
           () -> new NoSuchElementException(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())
         );
+    Member member = Member.builder()
+        .nickname(temp.getNickname())
+        .score(temp.getScore())
+        .build();
 
     return member;
   }

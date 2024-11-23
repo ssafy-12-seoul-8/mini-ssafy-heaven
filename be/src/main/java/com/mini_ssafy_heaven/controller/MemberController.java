@@ -53,8 +53,7 @@ public class MemberController implements MemberDocument {
     Member member = memberService.getMemberById(loginId);
     URI uri = URI.create("/api/members/" + member.getId());
 
-    return ResponseEntity.created(uri)
-        .body(member);
+    return ResponseEntity.ok(member);
   }
 
 }
