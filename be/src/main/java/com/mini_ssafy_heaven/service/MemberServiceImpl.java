@@ -54,6 +54,16 @@ public class MemberServiceImpl implements MemberService {
     return new LoginMemberResponse(member.getId());
   }
 
+  @Override
+  public Member getMemberById(Long id) {
+    Member member = memberDao.findById(id)
+        .orElseThrow(
+          () -> new NoSuchElementException(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())
+        );
+
+    return member;
+  }
+
   // 아이디 중복확인
   private void validateUserName(String username) {
     if (memberDao.existsByUserName(username)) {

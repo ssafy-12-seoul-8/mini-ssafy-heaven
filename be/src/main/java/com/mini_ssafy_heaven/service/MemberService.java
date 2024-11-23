@@ -1,5 +1,6 @@
 package com.mini_ssafy_heaven.service;
 
+import com.mini_ssafy_heaven.domain.Member;
 import com.mini_ssafy_heaven.dto.request.CreateMemberRequest;
 import com.mini_ssafy_heaven.dto.request.LoginMemberRequest;
 import com.mini_ssafy_heaven.dto.response.CreateMemberResponse;
@@ -12,4 +13,6 @@ public interface MemberService {
   CreateMemberResponse addMember(CreateMemberRequest request);
 
   LoginMemberResponse login(LoginMemberRequest request);
+
+  Member getMemberById(Long id);
 }
