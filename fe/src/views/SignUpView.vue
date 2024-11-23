@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { memberApi } from '@/apis/members'
+import { memberApi } from '@/apis/member'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import { ref, onMounted } from 'vue'

@@ -28,7 +28,7 @@ import BaseInput from '@/components/BaseInput.vue'
 import BaseLogo from '@/components/BaseLogo.vue'
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import { loginApi } from '@/apis/login'
+import { loginApi } from '@/apis/member'
 
 const router = useRouter()
 const username = ref('')
@@ -76,16 +76,10 @@ const login = async () => {
 }
 
 const validateUserName = (username) => {
-  if (!username) {
-    return false
-  }
-  return true
+  return !!username
 }
 
 const validatePassword = (password) => {
-  if (!password) {
-    return false
-  }
-  return true
+  return !!password
 }
 </script>

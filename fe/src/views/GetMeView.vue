@@ -9,7 +9,7 @@
 import BaseButton from '@/components/BaseButton.vue'
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { meApi } from '@/apis/me'
+import { meApi } from '@/apis/member'
 
 const nickname = ref('')
 const score = ref(0)
