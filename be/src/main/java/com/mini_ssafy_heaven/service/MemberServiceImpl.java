@@ -6,6 +6,7 @@ import com.mini_ssafy_heaven.dto.request.CreateMemberRequest;
 import com.mini_ssafy_heaven.dto.request.LoginMemberRequest;
 import com.mini_ssafy_heaven.dto.response.CreateMemberResponse;
 import com.mini_ssafy_heaven.dto.response.LoginMemberResponse;
+import com.mini_ssafy_heaven.dto.response.MemberInfoResponse;
 import com.mini_ssafy_heaven.global.exception.code.MemberErrorCode;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
@@ -55,17 +56,13 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public Member getMemberById(Long id) {
-    Member temp = memberDao.findById(id)
+  public MemberInfoResponse getMemberById(Long id) {
+    Member member = memberDao.findById(id)
         .orElseThrow(
           () -> new NoSuchElementException(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())
         );
-    Member member = Member.builder()
-        .nickname(temp.getNickname())
-        .score(temp.getScore())
-        .build();
 
-    return member;
+    return new MemberInfoResponse(member.getNickname(), member.getScore());
   }
 
   // 아이디 중복확인

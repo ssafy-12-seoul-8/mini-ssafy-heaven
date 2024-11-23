@@ -1,11 +1,11 @@
 package com.mini_ssafy_heaven.controller;
 
 import com.mini_ssafy_heaven.doc.MemberDocument;
-import com.mini_ssafy_heaven.domain.Member;
 import com.mini_ssafy_heaven.dto.request.CreateMemberRequest;
 import com.mini_ssafy_heaven.dto.request.LoginMemberRequest;
 import com.mini_ssafy_heaven.dto.response.CreateMemberResponse;
 import com.mini_ssafy_heaven.dto.response.LoginMemberResponse;
+import com.mini_ssafy_heaven.dto.response.MemberInfoResponse;
 import com.mini_ssafy_heaven.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import java.net.URI;
@@ -41,19 +41,16 @@ public class MemberController implements MemberDocument {
   ) {
     LoginMemberResponse response = memberService.login(request);
     session.setAttribute("loginId", response.id());
-    URI uri = URI.create("/api/members/" + response.id());
 
-    return ResponseEntity.created(uri)
-        .body(response);
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("/me")
-  public ResponseEntity<Member> getMe(HttpSession session) {
+  public ResponseEntity<MemberInfoResponse> getMe(HttpSession session) {
     Long loginId = (long) session.getAttribute("loginId");
-    Member member = memberService.getMemberById(loginId);
-    URI uri = URI.create("/api/members/" + member.getId());
+    MemberInfoResponse response = memberService.getMemberById(loginId);
 
-    return ResponseEntity.ok(member);
+    return ResponseEntity.ok(response);
   }
 
 }
