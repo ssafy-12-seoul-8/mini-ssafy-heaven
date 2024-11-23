@@ -1,8 +1,8 @@
 package com.mini_ssafy_heaven.dto.response;
 
 import com.mini_ssafy_heaven.dto.query.RoomPlayerNameDto;
-import io.netty.util.internal.logging.MessageFormatter;
 import java.util.List;
+import org.slf4j.helpers.MessageFormatter;
 
 public record EnterResponse(List<RoomPlayerNameDto> players, String message) {
 

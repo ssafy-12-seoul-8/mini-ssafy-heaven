@@ -14,4 +14,6 @@ public interface MemberDao {
 
   Optional<Member> findById(Long id);
 
+  Optional<Member> getMemberInfo(String username);
+
 }
