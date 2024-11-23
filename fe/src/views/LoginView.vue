@@ -27,22 +27,12 @@ import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseLogo from '@/components/BaseLogo.vue'
 import { useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { loginApi } from '@/apis/login'
 
 const router = useRouter()
 const username = ref('')
 const password = ref('')
-
-const loginInfo = ref({
-  type: Object,
-  required: true,
-})
-
-onMounted(() => {
-  username.value = loginInfo.value.username
-  password.value = loginInfo.value.password
-})
 
 const signUp = () => {
   router.push({ path: '/signUp' })
