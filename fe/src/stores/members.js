@@ -16,11 +16,17 @@ export const useMemberStore = defineStore('member', () => {
     me.value.nickname = nickname
     me.value.score = score ?? 0
 
-    localStorage.setItem('me', JSON.stringify(me.value))
+    sessionStorage.setItem('me', JSON.stringify(me.value))
   }
 
   onMounted(() => {
-    me.value = JSON.parse(localStorage.getItem('me'))
+    const stored = JSON.parse(sessionStorage.getItem('me'))
+
+    if (!stored) {
+      return
+    }
+
+    me.value = stored
   })
 
   return {

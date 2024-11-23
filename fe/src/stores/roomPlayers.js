@@ -12,10 +12,9 @@ export const useRoomPlayerStore = defineStore('roomPlayer', () => {
     return sorted.reverse()
   })
 
-  // TODO: 회원 구현 후 수정
   const currentPlayer = computed(() =>
     roomPlayers.value.find(
-      (player) => player.nickname === JSON.parse(localStorage.getItem('me')).nickname,
+      (player) => player.nickname === JSON.parse(sessionStorage.getItem('me')).nickname,
     ),
   )
   const manager = computed(() => roomPlayers.value[0])
