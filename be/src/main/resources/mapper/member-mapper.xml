@@ -4,8 +4,8 @@
 	<resultMap id="memberConstructor" type="Member">
 		<constructor>
 			<idArg column="id" javaType="long" />
-			<arg column="username" javaType="long" />
-			<arg column="password" javaType="long" />
+			<arg column="username" javaType="String" />
+			<arg column="password" javaType="String" />
 			<arg column="nickname" javaType="String" />
 			<arg column="role" javaType="com.mini_ssafy_heaven.domain.enums.MemberRole" />
 			<arg column="score" javaType="int" />
@@ -32,11 +32,6 @@
 		SELECT *
 		FROM members
 		WHERE id=#{id}
-	</select>
-	<select id="getPassWord" resultType="String">
-		SELECT password
-		FROM members
-		WHERE username=#{username};
 	</select>
 	<select id="getMemberInfo" resultType="Member">
 		SELECT *

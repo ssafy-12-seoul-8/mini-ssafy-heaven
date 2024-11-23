@@ -14,8 +14,6 @@ public interface MemberDao {
 
   Optional<Member> findById(Long id);
 
-  String getPassWord(String username);
-
   Optional<Member> getMemberInfo(String username);
 
 }
