@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 export const useRoomStore = defineStore('room', () => {
   // state
   const currentRoom = ref({})
+  const rooms = ref([])
 
   // getters
   const isPossibleToStart = computed(() => {
@@ -19,6 +20,10 @@ export const useRoomStore = defineStore('room', () => {
     currentRoom.value = roomDetail
   }
 
+  const fetchRooms = (roomPages) => {
+    rooms.value.push(...roomPages)
+  }
+
   const updateReadyCount = (readyCount, totalCount) => {
     currentRoom.value.currentReadyCount = readyCount
     currentRoom.value.totalCount = totalCount
@@ -28,11 +33,18 @@ export const useRoomStore = defineStore('room', () => {
     currentRoom.value.totalCount = totalCount
   }
 
+  const clearRooms = () => {
+    rooms.value = []
+  }
+
   return {
     currentRoom,
+    rooms,
     isPossibleToStart,
     fetchRoomDetail,
+    fetchRooms,
     updateReadyCount,
     updateTotalCount,
+    clearRooms,
   }
 })
