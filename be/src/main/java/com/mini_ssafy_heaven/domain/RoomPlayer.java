@@ -92,7 +92,7 @@ public class RoomPlayer {
         .roomId(roomId)
         .role(RoomPlayerRole.MANAGER)
         .score(score)
-        .status(status)
+        .status(RoomPlayerStatus.READY)
         .build();
   }
 
