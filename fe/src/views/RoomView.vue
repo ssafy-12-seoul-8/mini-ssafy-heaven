@@ -21,15 +21,18 @@ import { useRoomStore } from '@/stores/rooms'
 import { useRouter } from 'vue-router'
 import ChatBox from '@/components/ChatBox.vue'
 import RoomContents from '@/components/RoomContents.vue'
+import { useChatStore } from '@/stores/chats'
 
 const router = useRouter()
 const { params } = useRoute()
 const roomPlayerStore = useRoomPlayerStore()
 const roomStore = useRoomStore()
+const chatStore = useChatStore()
 const { currentRoom } = storeToRefs(roomStore)
 const { currentPlayer } = storeToRefs(roomPlayerStore)
 const { updatePlayers } = roomPlayerStore
 const { fetchRoomDetail } = roomStore
+const { clearChats } = chatStore
 
 onMounted(() => {
   validatePlayer()
@@ -66,15 +69,15 @@ const toggleReady = (memberId) => {
   roomSocket.ready(currentRoom.value.id, request)
 }
 
-const handleExit = (memberId, nickname) => {
+const handleExit = async (memberId, nickname) => {
   const request = {
     memberId: memberId,
     nickname: nickname,
   }
 
-  roomSocket.exit(currentRoom.value.id, request)
-
-  router.replace('/rooms')
+  await roomSocket.exit(currentRoom.value.id, request)
+  clearChats()
+  router.push({ path: '/rooms' })
 }
 </script>
 

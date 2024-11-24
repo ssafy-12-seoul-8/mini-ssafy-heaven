@@ -8,12 +8,12 @@ export const useChatStore = defineStore('chat', () => {
   // getters
 
   // actions
-  const addChat = (message) => {
-    chats.value = [message, ...chats.value]
-  }
+  const addChat = (message) => chats.value.unshift(message)
+  const clearChats = () => (chats.value = [])
 
   return {
     chats,
     addChat,
+    clearChats,
   }
 })
