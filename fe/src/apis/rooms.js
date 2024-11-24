@@ -38,4 +38,5 @@ export const roomSocket = {
     await stomp.disconnect()
   },
   chat: (id, body) => stomp.send(id, MessageType.TALK.lower, body),
+  start: (id) => stomp.send(id, MessageType.START.lower),
 }
