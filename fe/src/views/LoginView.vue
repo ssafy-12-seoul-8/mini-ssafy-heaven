@@ -14,8 +14,7 @@
         <BaseButton @click="login">로그인</BaseButton>
         <div class="h-50">
           <BaseButton type="white" size="w-24" @click="signUp">가입</BaseButton>
-          <!-- 게스트로 입장 로직 필요 -->
-          <BaseButton type="white" size="w-24">게스트</BaseButton>
+          <BaseButton type="white" size="w-24" @click="loginGuest">게스트</BaseButton>
         </div>
       </div>
     </div>
@@ -23,16 +22,19 @@
 </template>
 <!-- 게스트 router 정의 필요 -->
 <script setup>
+import { memberApi } from '@/apis/members'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseLogo from '@/components/BaseLogo.vue'
+import { useMemberStore } from '@/stores/members'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
-import { memberApi } from '@/apis/members'
 
 const router = useRouter()
 const username = ref('')
 const password = ref('')
+const memberStore = useMemberStore()
+const { updateMe } = memberStore
 
 const signUp = () => {
   router.push({ path: '/signUp' })
@@ -63,5 +65,21 @@ const login = async () => {
       username.value = ''
       password.value = ''
     })
+}
+
+const loginGuest = () => {
+  memberApi
+    .loginGuest()
+    .then((res) => afterGuestLogin(res.data))
+    .then(() => moveToMain())
+    .catch((err) => console.error(err))
+}
+
+const afterGuestLogin = (data) => {
+  updateMe(data.nickname)
+}
+
+const moveToMain = () => {
+  router.replace('/rooms')
 }
 </script>

@@ -18,4 +18,6 @@ public interface RoomDao {
 
   void update(@Param("room") Room room);
 
+  void deleteById(Long id);
+
 }

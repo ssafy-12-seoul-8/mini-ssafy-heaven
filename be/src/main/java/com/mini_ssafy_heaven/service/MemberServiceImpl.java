@@ -5,6 +5,7 @@ import com.mini_ssafy_heaven.domain.Member;
 import com.mini_ssafy_heaven.dto.request.CreateMemberRequest;
 import com.mini_ssafy_heaven.dto.request.LoginMemberRequest;
 import com.mini_ssafy_heaven.dto.response.CreateMemberResponse;
+import com.mini_ssafy_heaven.dto.response.GuestLoginResponse;
 import com.mini_ssafy_heaven.dto.response.LoginMemberResponse;
 import com.mini_ssafy_heaven.dto.response.MemberInfoResponse;
 import com.mini_ssafy_heaven.global.exception.code.MemberErrorCode;
@@ -47,7 +48,7 @@ public class MemberServiceImpl implements MemberService {
   public LoginMemberResponse login(LoginMemberRequest request) {
     Member member = memberDao.getMemberInfo(request.username())
         .orElseThrow(
-          () -> new NoSuchElementException(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())
+            () -> new NoSuchElementException(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())
         );
 
     member.verifyPassword(request.password());
@@ -56,6 +57,7 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
+<<<<<<< HEAD
   public MemberInfoResponse getMemberById(Long id) {
     Member member = memberDao.findById(id)
         .orElseThrow(
@@ -63,6 +65,15 @@ public class MemberServiceImpl implements MemberService {
         );
 
     return new MemberInfoResponse(member.getNickname(), member.getScore());
+=======
+  @Transactional
+  public GuestLoginResponse loginGuest() {
+    Member guest = Member.createGuest();
+
+    memberDao.addMember(guest);
+
+    return GuestLoginResponse.from(guest);
+>>>>>>> 57eef0b4e02559ca9df9766aef644059f6278eb3
   }
 
   // 아이디 중복확인

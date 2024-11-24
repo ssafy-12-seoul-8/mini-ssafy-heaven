@@ -12,14 +12,30 @@ export const useRoomPlayerStore = defineStore('roomPlayer', () => {
     return sorted.reverse()
   })
 
+  const currentPlayer = computed(() =>
+    roomPlayers.value.find(
+      (player) => player.nickname === JSON.parse(sessionStorage.getItem('me')).nickname,
+    ),
+  )
+  const manager = computed(() => roomPlayers.value[0])
+
   // actions
   const updatePlayers = (players) => {
     roomPlayers.value = players
   }
 
+  const updateReadyPlayer = (memberId, status) => {
+    const player = roomPlayers.value.find((player) => player.memberId === memberId)
+
+    player.status = status
+  }
+
   return {
     roomPlayers,
     sortedByRank,
+    currentPlayer,
+    manager,
     updatePlayers,
+    updateReadyPlayer,
   }
 })

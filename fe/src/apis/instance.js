@@ -4,6 +4,7 @@ import SockJS from 'sockjs-client/dist/sockjs'
 
 export const http = axios.create({
   baseURL: import.meta.env.VITE_REST_API_URL,
+  withCredentials: true,
 })
 
 const SUBSCRIBE_PREFIX = '/game/'
@@ -57,4 +58,6 @@ export const stomp = {
       body: JSON.stringify(body),
     })
   },
+  connected: client.connected,
+  disconnect: () => client.deactivate(),
 }

@@ -16,8 +16,13 @@ public enum RoomStatus {
 
   public static RoomStatus get(String status) {
     return Arrays.stream(RoomStatus.values())
-        .filter(roomStatus -> Objects.equals(status, roomStatus.status))
+        .filter(roomStatus -> Objects.equals(status, roomStatus.name()))
         .findFirst()
         .orElse(CREATING);
   }
+
+  public boolean isWaiting() {
+    return this == WAITING;
+  }
+
 }

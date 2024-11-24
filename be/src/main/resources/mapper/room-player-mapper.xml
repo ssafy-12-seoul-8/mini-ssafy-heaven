@@ -6,26 +6,37 @@
 			<idArg column="id" javaType="long" />
 			<arg column="member_id" javaType="long" />
 			<arg column="room_id" javaType="long" />
-			<arg column="role" javaType="com.mini_ssafy_heaven.domain.enums.RoomPlayerRole" />
 			<arg column="score" javaType="int" />
+			<arg column="role" javaType="com.mini_ssafy_heaven.domain.enums.RoomPlayerRole" />
+			<arg column="status" javaType="com.mini_ssafy_heaven.domain.enums.RoomPlayerStatus" />
 		</constructor>
 	</resultMap>
 	<select id="existsByMemberId" resultType="boolean">
 		SELECT IF(COUNT(*)=1,
 		true, false)
 		FROM room_players
-		WHERE id=#{id};
+		WHERE member_id=#{memberId};
 	</select>
 	<insert id="save" useGeneratedKeys="true"
 		keyProperty="roomPlayer.id">
-		INSERT INTO room_players (score, role, member_id, room_id,
-		created_at,
-		updated_at)
+		INSERT INTO room_players (score, role, member_id, room_id, status,
+															created_at,
+															updated_at)
 		VALUES (#{roomPlayer.score}, #{roomPlayer.role},
-		#{roomPlayer.memberId},
-		#{roomPlayer.roomId}, #{createdAt},
-		#{updatedAt});
+						#{roomPlayer.memberId},
+						#{roomPlayer.roomId}, #{roomPlayer.status}, #{createdAt},
+						#{updatedAt});
 	</insert>
+	<update id="update">
+    UPDATE room_players
+    SET member_id=#{roomPlayer.memberId},
+        room_id=#{roomPlayer.roomId},
+        score=#{roomPlayer.score},
+        role=#{roomPlayer.role},
+        status=#{roomPlayer.status},
+        updated_at=#{updatedAt}
+    WHERE id = #{roomPlayer.id}
+  </update>
 	<select id="countByRoomId">
 		SELECT COUNT(*)
 		FROM room_players
@@ -42,11 +53,20 @@
 		FROM room_players
 		WHERE room_id=#{roomId} AND member_id=#{memberId}
 	</select>
-	<select id="findAllByRoomId">
-		SELECT m.id, m.nickname, rp.score, m.score, dense_rank() OVER (ORDER BY rp.score DESC)
+	<select id="findAllByRoomId" resultMap="roomPlayerConstructor">
+		SELECT *
+		FROM room_players
+		WHERE room_id=#{roomId}
+	</select>
+	<select id="findAllWithNamesByRoomId">
+		SELECT m.id, m.nickname, rp.score, m.score, dense_rank() OVER (ORDER BY rp.score DESC), rp.status
 		FROM room_players rp
 		JOIN members m ON m.id=rp.member_id
 		WHERE rp.room_id=#{roomId}
 		ORDER BY rp.created_at
 	</select>
+	<delete id="deleteById">
+		DELETE FROM room_players
+		WHERE id=#{id}
+	</delete>
 </mapper>

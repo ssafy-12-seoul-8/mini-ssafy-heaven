@@ -1,5 +1,8 @@
 <template>
-  <div>{{ player.rank }}. {{ player.nickname }} {{ player.roomScore }}</div>
+  <div class="text-md">
+    {{ player.rank }}. {{ player.nickname }} &nbsp;
+    <span class="text-lg text-cyan-950">{{ player.roomScore }}</span>
+  </div>
 </template>
 
 <script setup>

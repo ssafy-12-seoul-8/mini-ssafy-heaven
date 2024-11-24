@@ -19,14 +19,9 @@ export const RoomStatus = {
     name: 'WAITING',
     message: '대기 중',
   },
-}
-
-export const isInput = (name) => {
-  return name === RoomStatus.INPUT_INFO.name
-}
-
-export const isReady = (name) => {
-  return name === RoomStatus.READY_FOR_GAME_SELECTION.name
+  isInput: (name) => name === RoomStatus.INPUT_INFO.name,
+  isReady: (name) => name === RoomStatus.READY_FOR_GAME_SELECTION.name,
+  isWaiting: (name) => name === RoomStatus.WAITING.name,
 }
 
 Object.freeze(RoomStatus)

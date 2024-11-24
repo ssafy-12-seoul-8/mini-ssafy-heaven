@@ -4,6 +4,7 @@ import com.mini_ssafy_heaven.doc.MemberDocument;
 import com.mini_ssafy_heaven.dto.request.CreateMemberRequest;
 import com.mini_ssafy_heaven.dto.request.LoginMemberRequest;
 import com.mini_ssafy_heaven.dto.response.CreateMemberResponse;
+import com.mini_ssafy_heaven.dto.response.GuestLoginResponse;
 import com.mini_ssafy_heaven.dto.response.LoginMemberResponse;
 import com.mini_ssafy_heaven.dto.response.MemberInfoResponse;
 import com.mini_ssafy_heaven.service.MemberService;
@@ -26,7 +27,10 @@ public class MemberController implements MemberDocument {
 
   @Override
   @PostMapping("/signUp")
-  public ResponseEntity<CreateMemberResponse> addMember(@RequestBody CreateMemberRequest request) {
+  public ResponseEntity<CreateMemberResponse> addMember(
+      @RequestBody
+      CreateMemberRequest request
+  ) {
     CreateMemberResponse response = memberService.addMember(request);
     URI uri = URI.create("/api/members/" + response.id());
 
@@ -36,10 +40,12 @@ public class MemberController implements MemberDocument {
 
   @PostMapping("/login")
   public ResponseEntity<LoginMemberResponse> login(
-    @RequestBody LoginMemberRequest request,
-    HttpSession session
+      @RequestBody
+      LoginMemberRequest request,
+      HttpSession session
   ) {
     LoginMemberResponse response = memberService.login(request);
+<<<<<<< HEAD
     session.setAttribute("loginId", response.id());
 
     return ResponseEntity.ok(response);
@@ -51,6 +57,28 @@ public class MemberController implements MemberDocument {
     MemberInfoResponse response = memberService.getMemberById(loginId);
 
     return ResponseEntity.ok(response);
+=======
+    URI uri = URI.create("/api/members/" + response.id());
+
+    session.setAttribute("loginId", response.id());
+    session.setMaxInactiveInterval(60 * 60 * 24 * 365);
+
+    return ResponseEntity.created(uri)
+        .body(response);
+  }
+
+  @Override
+  @PostMapping("/login/guest")
+  public ResponseEntity<GuestLoginResponse> loginGuest(HttpSession session) {
+    GuestLoginResponse response = memberService.loginGuest();
+    URI uri = URI.create("/api/members/" + response.id());
+
+    session.setAttribute("loginId", response.id());
+    session.setMaxInactiveInterval(60 * 60 * 24 * 365);
+
+    return ResponseEntity.created(uri)
+        .body(response);
+>>>>>>> 57eef0b4e02559ca9df9766aef644059f6278eb3
   }
 
 }

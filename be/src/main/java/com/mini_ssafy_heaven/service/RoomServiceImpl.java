@@ -23,8 +23,10 @@ import com.mini_ssafy_heaven.dto.response.ScrollResponse;
 import com.mini_ssafy_heaven.global.annotation.Lock;
 import com.mini_ssafy_heaven.global.exception.code.MemberErrorCode;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
+import com.mini_ssafy_heaven.global.exception.code.RoomPlayerErrorCode;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
@@ -124,17 +126,13 @@ public class RoomServiceImpl implements RoomService {
         .orElseThrow(
           () -> new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage())
         );
-    List<RoomPlayerNameDto> players = roomPlayerDao.findAllByRoomId(room.getId());
+    List<RoomPlayerNameDto> players = roomPlayerDao.findAllWithNamesByRoomId(room.getId());
 
-    players.stream()
-        .filter(
-          player -> player.memberId()
-              .equals(member.getId())
-        )
-        .findFirst()
-        .orElseThrow(() -> new NoSuchElementException(RoomErrorCode.NOT_JOINED.getMessage()));
+    validatePlayerInRoom(players, member.getId());
 
-    return RoomDetailResponse.from(room, players);
+    long readyCount = countReady(players);
+
+    return RoomDetailResponse.from(room, players, readyCount);
   }
 
   private void validatePlayerNotJoined(Long loginId) {
@@ -187,18 +185,37 @@ public class RoomServiceImpl implements RoomService {
   }
 
   private void validateRoom(Long roomId) {
-    if (!roomDao.existsById(roomId)) {
-      throw new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage());
+    Room room = roomDao.findById(roomId)
+        .orElseThrow(
+            () -> new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage()));
+
+    if (!room.isPossibleToEnter()) {
+      throw new IllegalStateException(RoomErrorCode.NOT_POSSIBLE_TO_ENTER.getMessage());
     }
   }
 
   private void validateManager(Long memberId, Long roomId) {
     RoomPlayer roomPlayer = roomPlayerDao.findByRoomAndMember(roomId, memberId)
-        .orElseThrow(() -> new NoSuchElementException(RoomErrorCode.NOT_JOINED.getMessage()));
+        .orElseThrow(() -> new NoSuchElementException(RoomPlayerErrorCode.NOT_JOINED.getMessage()));
 
     if (!roomPlayer.isManager()) {
-      throw new IllegalArgumentException(RoomErrorCode.NOT_A_MANAGER.getMessage());
+      throw new IllegalArgumentException(RoomPlayerErrorCode.NOT_A_MANAGER.getMessage());
     }
+  }
+
+  private void validatePlayerInRoom(List<RoomPlayerNameDto> players, Long memberId) {
+    boolean notFound = players.stream()
+        .noneMatch(player -> Objects.equals(player.memberId(), memberId));
+
+    if (notFound) {
+      throw new IllegalStateException(RoomPlayerErrorCode.NOT_JOINED.getMessage());
+    }
+  }
+
+  private long countReady(List<RoomPlayerNameDto> roomPlayers) {
+    return roomPlayers.stream()
+        .filter(player -> player.status().isReady())
+        .count();
   }
 
 }

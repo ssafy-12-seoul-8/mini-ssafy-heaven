@@ -9,7 +9,7 @@ export const useChatStore = defineStore('chat', () => {
 
   // actions
   const addChat = (message) => {
-    chats.value = [...chats.value, message]
+    chats.value = [message, ...chats.value]
   }
 
   return {

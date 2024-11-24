@@ -47,8 +47,11 @@ public class Room {
       throw new IllegalArgumentException(RoomErrorCode.NULL_STATUS_FOR_UPDATE.getMessage());
     }
 
-    // TODO: 방 상태 관련 커밋 합치고 valueOf 수정
-    return update(this.title, this.capacity, RoomStatus.valueOf(status));
+    return update(this.title, this.capacity, RoomStatus.get(status));
+  }
+
+  public boolean isPossibleToEnter() {
+    return status.isWaiting();
   }
 
   private Room update(String title, Integer capacity, RoomStatus status) {

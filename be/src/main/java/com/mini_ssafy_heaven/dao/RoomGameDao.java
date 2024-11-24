@@ -11,4 +11,6 @@ public interface RoomGameDao {
 
   List<RoomGameTitleDto> findTitlesByRoomId(Long roomId);
 
+  void deleteByRoomId(Long roomId);
+
 }
