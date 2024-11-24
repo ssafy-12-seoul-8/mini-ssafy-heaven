@@ -19,13 +19,14 @@ export const RoomStatus = {
     name: 'WAITING',
     message: '대기 중',
   },
-  IN_GAME: {
-    name: 'IN_GAME',
+  PLAYING: {
+    name: 'PLAYING',
     message: '게임 중',
   },
   isInput: (name) => name === RoomStatus.INPUT_INFO.name,
   isReady: (name) => name === RoomStatus.READY_FOR_GAME_SELECTION.name,
   isWaiting: (name) => name === RoomStatus.WAITING.name,
+  isPlaying: (name) => name === RoomStatus.PLAYING.name,
   findMessage: (name) =>
     Object.entries(RoomStatus).find((entry) => {
       const status = entry[1]
