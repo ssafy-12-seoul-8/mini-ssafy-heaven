@@ -3,6 +3,7 @@ package com.mini_ssafy_heaven.service;
 import com.mini_ssafy_heaven.dao.RoomDao;
 import com.mini_ssafy_heaven.dao.RoomGameDao;
 import com.mini_ssafy_heaven.dao.RoomPlayerDao;
+import com.mini_ssafy_heaven.domain.Room;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
 import com.mini_ssafy_heaven.dto.query.RoomPlayerNameDto;
 import com.mini_ssafy_heaven.dto.request.ChatRequest;
@@ -13,7 +14,9 @@ import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
+import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.Lock;
+import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
 import com.mini_ssafy_heaven.global.exception.code.RoomPlayerErrorCode;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -87,6 +90,27 @@ public class RoomSocketServiceImpl implements RoomSocketService {
   @Override
   public ChatResponse chat(ChatRequest request) {
     return ChatResponse.from(request.nickname(), request.chat());
+  }
+
+  @Override
+  @Transactional
+  @Lock("PLAYER-READY")
+  public StartResponse start(Long roomId) {
+    List<RoomPlayer> players = roomPlayerDao.findAllByRoomId(roomId);
+    long readyCount = countReady(players);
+
+    if (players.size() != readyCount) {
+      throw new IllegalStateException(RoomErrorCode.NOT_READY_YET.getMessage());
+    }
+
+    Room room = roomDao.findById(roomId)
+        .orElseThrow(
+            () -> new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage()));
+    Room started = room.start();
+
+    roomDao.update(started);
+
+    return new StartResponse(started.getStatus());
   }
 
   private void deleteRoom(Long roomId) {
