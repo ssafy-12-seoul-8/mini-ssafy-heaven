@@ -22,7 +22,7 @@
     	JOIN room_players rp ON r.id = rp.room_id
     	JOIN members m ON rp.member_id = m.id
     	WHERE rp.role = 'MANAGER'
-    	<if test="cursor != null || cursor > 0">
+    	<if test="cursor != null and cursor > 0">
       		<![CDATA[
         		AND r.id < #{cursor}
       		]]>
