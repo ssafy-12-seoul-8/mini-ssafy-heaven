@@ -5,13 +5,13 @@
       <ChatBox :player="currentPlayer" />
     </div>
     <div id="player-list-container-wrapper" class="w-screen h-5/6 absolute left-0">
-      <PlayerList @ready="toggleReady" @exit="handleExit" />
+      <PlayerList @ready="toggleReady" @exit="handleExit" @start="handleStart" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import PlayerList from '@/components/PlayerList.vue'
 import { useRoomPlayerStore } from '@/stores/roomPlayers'
 import { storeToRefs } from 'pinia'
@@ -29,17 +29,25 @@ const roomPlayerStore = useRoomPlayerStore()
 const roomStore = useRoomStore()
 const chatStore = useChatStore()
 const { currentRoom } = storeToRefs(roomStore)
-const { currentPlayer } = storeToRefs(roomPlayerStore)
+const { currentPlayer, manager } = storeToRefs(roomPlayerStore)
 const { updatePlayers } = roomPlayerStore
-const { fetchRoomDetail } = roomStore
+const { fetchRoomDetail, storeRoomIdInSession, clearCurrentRoom } = roomStore
 const { clearChats } = chatStore
 
 onMounted(() => {
   validatePlayer()
 
-  if (!roomSocket.connected()) {
-    roomSocket.enter(params.id)
-  }
+  const storedInSession = sessionStorage.getItem('currentRoomId')
+  const myNickname = JSON.parse(sessionStorage.getItem('me')).nickname
+
+  storedInSession
+    ? roomSocket.enter(params.id)
+    : roomSocket.enter(params.id, { nickname: myNickname }, storeRoomIdInSession(params.id))
+})
+
+onUnmounted(() => {
+  clearChats()
+  clearCurrentRoom()
 })
 
 const validatePlayer = () => {
@@ -76,7 +84,6 @@ const handleExit = async (memberId, nickname) => {
   }
 
   await roomSocket.exit(currentRoom.value.id, request)
-  clearChats()
   router.push({ path: '/rooms' })
 }
 </script>

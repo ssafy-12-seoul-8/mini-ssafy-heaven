@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { RoomStatus } from '@/constants/RoomStatus'
 
 export const useRoomStore = defineStore('room', () => {
   // state
@@ -14,10 +15,15 @@ export const useRoomStore = defineStore('room', () => {
 
     return currentRoom.value.totalCount === currentRoom.value.currentReadyCount
   })
+  const isPlaying = computed(() => RoomStatus.isPlaying(currentRoom.value.status))
 
   // actions
   const fetchRoomDetail = (roomDetail) => {
     currentRoom.value = roomDetail
+  }
+
+  const storeRoomIdInSession = (id) => {
+    sessionStorage.setItem('currentRoomId', id)
   }
 
   const fetchRooms = (roomPages) => {
@@ -33,18 +39,31 @@ export const useRoomStore = defineStore('room', () => {
     currentRoom.value.totalCount = totalCount
   }
 
+  const updateStatus = (status) => {
+    currentRoom.value.status = status
+  }
+
   const clearRooms = () => {
     rooms.value = []
+  }
+
+  const clearCurrentRoom = () => {
+    currentRoom.value = {}
+    sessionStorage.removeItem('currentRoomId')
   }
 
   return {
     currentRoom,
     rooms,
     isPossibleToStart,
+    isPlaying,
     fetchRoomDetail,
+    storeRoomIdInSession,
     fetchRooms,
     updateReadyCount,
     updateTotalCount,
+    updateStatus,
     clearRooms,
+    clearCurrentRoom,
   }
 })

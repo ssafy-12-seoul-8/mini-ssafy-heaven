@@ -30,18 +30,14 @@
 </template>
 
 <script setup>
-import { roomApi, roomSocket } from '@/apis/rooms'
+import { roomApi } from '@/apis/rooms'
 import { RoomStatus } from '@/constants/RoomStatus'
-import { useMemberStore } from '@/stores/members'
-import { storeToRefs } from 'pinia'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const status = ref()
-const bgColor = ref('bg-slay-300')
+const bgColor = ref('bg-slate-300')
 const router = useRouter()
-const memberStore = useMemberStore()
-const { myNickname } = storeToRefs(memberStore)
 
 const { room } = defineProps({
   room: {
@@ -63,17 +59,8 @@ onMounted(() => {
 const join = () => {
   roomApi
     .join(room.id)
-    .then(() => enter())
     .then(() => router.replace({ name: 'room', params: { id: room.id } }))
     .catch((err) => alert(err.response.data.message))
-}
-
-const enter = () => {
-  const request = {
-    nickname: myNickname.value,
-  }
-
-  roomSocket.enter(room.id, request)
 }
 </script>
 
