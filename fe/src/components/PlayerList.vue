@@ -22,8 +22,12 @@
       <div class="grow flex flex-col justify-between items-center">
         <LeaderBoard class="w-11/12" />
         <div class="flex flex-col gap-4 justify-center items-center">
-          <BaseButton @click="onClickReady" :disabled="disabled">{{ readyButtonText }}</BaseButton>
-          <BaseButton @click="onClickExit" type="white">나가기</BaseButton>
+          <BaseButton v-if="!isPlaying" @click="onClickReady" :disabled="startDisabled">{{
+            readyButtonText
+          }}</BaseButton>
+          <BaseButton v-if="!isPlaying" @click="onClickExit" type="white" :disabled="isPlaying"
+            >나가기</BaseButton
+          >
         </div>
       </div>
     </div>
@@ -42,13 +46,13 @@ import { useRoomStore } from '@/stores/rooms'
 
 const roomStore = useRoomStore()
 const roomPlayerStore = useRoomPlayerStore()
-const { isPossibleToStart } = storeToRefs(roomStore)
+const { isPossibleToStart, isPlaying } = storeToRefs(roomStore)
 const { roomPlayers, currentPlayer, manager } = storeToRefs(roomPlayerStore)
 const isReady = computed(() => RoomPlayerStatus.isReady(currentPlayer.value))
 const isManager = computed(
   () => manager.value && manager.value.memberId === currentPlayer.value.memberId,
 )
-const disabled = computed(() => isManager.value && !isPossibleToStart.value)
+const startDisabled = computed(() => isManager.value && !isPossibleToStart.value)
 const readyButtonText = computed(() => {
   if (isManager.value) {
     return isPossibleToStart.value ? '시작하기' : '대기 중'
@@ -57,13 +61,19 @@ const readyButtonText = computed(() => {
   return isReady.value ? '취소' : '준비'
 })
 
-const emit = defineEmits(['ready', 'exit'])
+const emit = defineEmits(['ready', 'exit', 'start'])
 
 const isInLeft = (index) => {
   return index === 0 || index === 2 || index === 4
 }
 
 const onClickReady = () => {
+  if (isManager.value && isPossibleToStart.value) {
+    emit('start')
+
+    return
+  }
+
   emit('ready', currentPlayer.value.memberId)
 }
 
