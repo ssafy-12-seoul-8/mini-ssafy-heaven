@@ -9,14 +9,14 @@
 import BaseButton from '@/components/BaseButton.vue'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { meApi } from '@/apis/member'
+import { memberApi } from '@/apis/members'
 
 const nickname = ref('')
 const score = ref(0)
 const router = useRouter()
 
-const userDetail = async () => {
-  meApi
+const userDetail = () => {
+  memberApi
     .getDetail()
     .then((response) => {
       const data = response.data
