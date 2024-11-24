@@ -86,6 +86,27 @@ const handleExit = async (memberId, nickname) => {
   await roomSocket.exit(currentRoom.value.id, request)
   router.push({ path: '/rooms' })
 }
+
+const handleStart = () => {
+  roomSocket.start(currentRoom.value.id)
+
+  let count = 3
+  const request = {
+    nickname: manager.value.nickname,
+    chat: count + '...',
+  }
+
+  const countDown = setInterval(() => {
+    roomSocket.chat(currentRoom.value.id, request)
+
+    count--
+    request.chat = count + '...'
+
+    if (!count) {
+      clearInterval(countDown)
+    }
+  }, 1000)
+}
 </script>
 
 <style>
