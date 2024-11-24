@@ -15,10 +15,8 @@ public interface MemberService {
 
   LoginMemberResponse login(LoginMemberRequest request);
 
-<<<<<<< HEAD
   MemberInfoResponse getMemberById(Long id);
-=======
+
   GuestLoginResponse loginGuest();
 
->>>>>>> 57eef0b4e02559ca9df9766aef644059f6278eb3
 }
