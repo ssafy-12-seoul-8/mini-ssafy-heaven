@@ -25,7 +25,7 @@ public record ScrollRequest(
       Long cursor,
       Integer size
   ) {
-    this.cursor = cursor;
+    this.cursor = Objects.requireNonNullElse(cursor, 0L);
     this.size = Objects.requireNonNullElse(size, DEFAULT_SIZE);
   }
 

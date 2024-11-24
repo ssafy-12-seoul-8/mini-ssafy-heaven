@@ -72,24 +72,36 @@ public class RoomServiceImpl implements RoomService {
   @Override
   @Transactional(readOnly = true)
   public ScrollResponse<BasicRoomResponse> getAll(ScrollRequest request) {
-    List<SimpleRoomDto> rooms = roomDao.selectAll(request.cursor(), request.size());
+    List<SimpleRoomDto> rooms = roomDao.selectAll(request.cursor(), request.size() + 1);
     List<BasicRoomResponse> list = rooms.stream()
+        .limit(request.size())
         .map(this::buildBasicRoom)
         .toList();
-    Long nextCursor = getNextCursor(rooms);
+    boolean hasNext = Objects.equals(request.size() + 1, rooms.size());
+    Long nextCursor = getNextCursor(hasNext, rooms);
 
-    return ScrollResponse.from(list, nextCursor);
+    return ScrollResponse.from(hasNext, list, nextCursor);
   }
 
   @Override
   @Transactional
   @Lock("PLAYER-JOIN")
   public void join(Long roomId, Long loginId) {
-    validateRoom(roomId);
+    Room room = roomDao.findById(roomId)
+        .orElseThrow(
+            () -> new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage()));
 
-    int count = roomPlayerDao.countByRoomId(roomId);
+    if (!room.isPossibleToEnter()) {
+      throw new IllegalStateException(RoomErrorCode.NOT_POSSIBLE_TO_ENTER.getMessage());
+    }
 
-    if (count >= MAX_PLAYERS) {
+    List<RoomPlayer> players = roomPlayerDao.findAllByRoomId(roomId);
+
+    if (isInRoom(players, loginId)) {
+      return;
+    }
+
+    if (players.size() >= room.getCapacity()) {
       throw new IllegalStateException(RoomErrorCode.FULL_ROOM.getMessage());
     }
 
@@ -175,23 +187,15 @@ public class RoomServiceImpl implements RoomService {
     return BasicRoomResponse.from(room, playerCount, roomGames);
   }
 
-  private Long getNextCursor(List<SimpleRoomDto> rooms) {
+  private Long getNextCursor(boolean hasNext, List<SimpleRoomDto> rooms) {
     if (rooms.isEmpty()) {
       return 0L;
     }
 
-    return rooms.get(rooms.size() - 1)
+    int last = hasNext ? rooms.size() - 2 : rooms.size() - 1;
+
+    return rooms.get(last)
         .id();
-  }
-
-  private void validateRoom(Long roomId) {
-    Room room = roomDao.findById(roomId)
-        .orElseThrow(
-            () -> new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage()));
-
-    if (!room.isPossibleToEnter()) {
-      throw new IllegalStateException(RoomErrorCode.NOT_POSSIBLE_TO_ENTER.getMessage());
-    }
   }
 
   private void validateManager(Long memberId, Long roomId) {
@@ -201,6 +205,11 @@ public class RoomServiceImpl implements RoomService {
     if (!roomPlayer.isManager()) {
       throw new IllegalArgumentException(RoomPlayerErrorCode.NOT_A_MANAGER.getMessage());
     }
+  }
+
+  private boolean isInRoom(List<RoomPlayer> players, Long memberId) {
+    return players.stream()
+        .anyMatch((player) -> player.isSameUser(memberId));
   }
 
   private void validatePlayerInRoom(List<RoomPlayerNameDto> players, Long memberId) {

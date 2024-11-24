@@ -62,8 +62,8 @@ public class RoomPlayer {
         .build();
   }
 
-  public boolean hasSameId(Long roomPlayerId) {
-    return this.id.equals(roomPlayerId);
+  public boolean isSameUser(Long memberId) {
+    return Objects.equals(this.memberId, memberId);
   }
 
   public boolean isManager() {
