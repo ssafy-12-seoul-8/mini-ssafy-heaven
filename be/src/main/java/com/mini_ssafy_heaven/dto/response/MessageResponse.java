@@ -20,4 +20,8 @@ public record MessageResponse<T>(SocketMessageType type, T payload) {
     return new MessageResponse<T>(SocketMessageType.TALK, payload);
   }
 
+  public static <T> MessageResponse<T> start(T payload) {
+    return new MessageResponse<T>(SocketMessageType.START, payload);
+  }
+
 }
