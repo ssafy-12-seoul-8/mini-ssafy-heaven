@@ -5,6 +5,7 @@ import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.GameRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
+import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
@@ -25,5 +26,7 @@ public interface RoomSocketService {
   StartResponse start(Long roomId);
 
   GameResponse<?> gameStart(Long roomId, GameRequest request);
+
+  GameResponse<?> gameSetAnswer(Long roomId, SetAnswerRequest request);
 
 }

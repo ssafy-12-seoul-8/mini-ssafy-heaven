@@ -13,6 +13,7 @@ import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.GameRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
+import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
@@ -129,6 +130,14 @@ public class RoomSocketServiceImpl implements RoomSocketService {
     GamePlayService<?> gamePlayService = gameType.getGamePlayService();
 
     return gamePlayService.start(roomId);
+  }
+
+  @Override
+  public GameResponse<?> gameSetAnswer(Long roomId, SetAnswerRequest request) {
+    GameType gameType = GameType.get(request.gameType());
+    GamePlayService<?> gamePlayService = gameType.getGamePlayService();
+
+    return gamePlayService.setAnswer(roomId, request.answer());
   }
 
   private void deleteRoom(Long roomId) {
