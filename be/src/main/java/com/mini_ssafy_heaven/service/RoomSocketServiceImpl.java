@@ -4,20 +4,25 @@ import com.mini_ssafy_heaven.dao.RoomDao;
 import com.mini_ssafy_heaven.dao.RoomGameDao;
 import com.mini_ssafy_heaven.dao.RoomPlayerDao;
 import com.mini_ssafy_heaven.domain.Room;
+import com.mini_ssafy_heaven.domain.RoomGameScore;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
+import com.mini_ssafy_heaven.domain.enums.GameType;
 import com.mini_ssafy_heaven.dto.query.RoomPlayerNameDto;
 import com.mini_ssafy_heaven.dto.request.ChatRequest;
 import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
+import com.mini_ssafy_heaven.dto.request.GameRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
+import com.mini_ssafy_heaven.dto.response.GameResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.Lock;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
 import com.mini_ssafy_heaven.global.exception.code.RoomPlayerErrorCode;
+import com.mini_ssafy_heaven.repository.RoomGameScoreRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -32,6 +37,7 @@ public class RoomSocketServiceImpl implements RoomSocketService {
   private final RoomPlayerDao roomPlayerDao;
   private final RoomDao roomDao;
   private final RoomGameDao roomGameDao;
+  private final RoomGameScoreRepository roomGameScoreRepository;
 
   @Override
   public EnterResponse enter(Long roomId, EnterRequest request) {
@@ -110,7 +116,19 @@ public class RoomSocketServiceImpl implements RoomSocketService {
 
     roomDao.update(started);
 
+    List<RoomGameScore> cacheScore = buildScoreCache(players);
+
+    roomGameScoreRepository.saveAll(cacheScore);
+
     return new StartResponse(started.getStatus());
+  }
+
+  @Override
+  public GameResponse<?> gameStart(Long roomId, GameRequest request) {
+    GameType gameType = GameType.get(request.gameType());
+    GamePlayService<?> gamePlayService = gameType.getGamePlayService();
+
+    return gamePlayService.start(roomId);
   }
 
   private void deleteRoom(Long roomId) {
@@ -122,6 +140,12 @@ public class RoomSocketServiceImpl implements RoomSocketService {
     return roomPlayers.stream()
         .filter(RoomPlayer::isReady)
         .count();
+  }
+
+  private List<RoomGameScore> buildScoreCache(List<RoomPlayer> players) {
+    return players.stream()
+        .map(RoomGameScore::from)
+        .toList();
   }
 
 }
