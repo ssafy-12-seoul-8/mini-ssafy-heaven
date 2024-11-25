@@ -19,6 +19,10 @@ export const useRoomPlayerStore = defineStore('roomPlayer', () => {
   )
   const manager = computed(() => roomPlayers.value[0])
 
+  const getTagger = (taggerId) => {
+    return roomPlayers.value.find((player) => player.memberId === taggerId)
+  }
+
   // actions
   const updatePlayers = (players) => {
     roomPlayers.value = players
@@ -35,6 +39,7 @@ export const useRoomPlayerStore = defineStore('roomPlayer', () => {
     sortedByRank,
     currentPlayer,
     manager,
+    getTagger,
     updatePlayers,
     updateReadyPlayer,
   }
