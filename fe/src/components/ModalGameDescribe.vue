@@ -28,14 +28,14 @@
         </div>
         <span class="text-red-700 text-lg">{{ roundWarnMessage }}</span>
       </div>
-      <!-- TODO: 버튼 구현 후 교체 -->
       <div id="modal-button-wrapper" class="flex justify-center items-center gap-4 text-lg">
-        <BaseButton @click="onConfirm" size="w-32">{{
+        <BaseButton v-if="isCreating" @click="onConfirm" size="w-32">{{
           game.isSelected ? '수정하기' : '추가하기'
         }}</BaseButton>
-        <BaseButton @click="$emit('cancel')" type="white" size="w-32">{{
+        <BaseButton v-if="isCreating" @click="$emit('cancel')" type="white" size="w-32">{{
           game.isSelected ? '취소하기' : '돌아가기'
         }}</BaseButton>
+        <BaseButton v-else @click="$emit('ready')">준비 완료</BaseButton>
       </div>
     </div>
   </div>
@@ -63,7 +63,7 @@ const { isOpen, game, isCreating } = defineProps({
   },
 })
 
-const emit = defineEmits(['confirm', 'cancel'])
+const emit = defineEmits(['confirm', 'cancel', 'ready'])
 
 const onConfirm = () => {
   if (!validateRound(round.value)) {
