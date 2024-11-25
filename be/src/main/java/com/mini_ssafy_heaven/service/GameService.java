@@ -7,4 +7,6 @@ public interface GameService {
 
   List<GameDetailResponse> getAll();
 
+  GameDetailResponse getById(Long id);
+
 }
