@@ -8,7 +8,7 @@
         :ball-count="condition.ballCount"
         @submit="submitAnswer"
       />
-      <BaseButton v-if="isBeforeTrial" class="z-50" @click="openDescribtion"
+      <BaseButton v-if="isBeforeTrial && !hasRead" class="z-50" @click="openDescribtion"
         >{{ currentGame.title }} 설명 보기</BaseButton
       >
     </div>
@@ -30,6 +30,7 @@ import ModalGameDescribe from './ModalGameDescribe.vue'
 import { gameApi } from '@/apis/games'
 
 const isDescriptionOpen = ref(false)
+const hasRead = ref(false)
 const content = ref()
 const isTagger = computed(() => currentPlayer.value.memberId === tagger.value.memberId)
 const game = ref({})
@@ -40,10 +41,14 @@ const baseballStore = useBaseballStore()
 const { currentRoom } = storeToRefs(roomStore)
 const { currentGame } = storeToRefs(roomGameStore)
 const { currentPlayer } = storeToRefs(roomPlayerStore)
-const { isStart, isBeforeTrial, condition, tagger, normalText, taggerText } =
+const { isStart, isBeforeTrial, isConfirm, condition, tagger, normalText, taggerText } =
   storeToRefs(baseballStore)
 
 watchEffect(() => {
+  if (isConfirm) {
+    console.log('라운드 시작')
+  }
+
   if (!currentGame.value) {
     content.value = '게임을 시작합니다!'
 
@@ -79,6 +84,13 @@ const openDescribtion = () => {
 }
 
 const handleReady = () => {
+  const request = {
+    gameType: currentGame.value.title,
+  }
+
+  roomSocket.gameConfirm(currentRoom.value.id, request)
+
+  hasRead.value = true
   isDescriptionOpen.value = false
   content.value = '다른 플레이어들을 기다리는 중입니다...'
 }
