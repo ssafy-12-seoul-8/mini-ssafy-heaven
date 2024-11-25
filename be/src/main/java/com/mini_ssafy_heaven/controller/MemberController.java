@@ -6,11 +6,13 @@ import com.mini_ssafy_heaven.dto.request.LoginMemberRequest;
 import com.mini_ssafy_heaven.dto.response.CreateMemberResponse;
 import com.mini_ssafy_heaven.dto.response.GuestLoginResponse;
 import com.mini_ssafy_heaven.dto.response.LoginMemberResponse;
+import com.mini_ssafy_heaven.dto.response.MemberInfoResponse;
 import com.mini_ssafy_heaven.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,10 +27,7 @@ public class MemberController implements MemberDocument {
 
   @Override
   @PostMapping("/signUp")
-  public ResponseEntity<CreateMemberResponse> addMember(
-      @RequestBody
-      CreateMemberRequest request
-  ) {
+  public ResponseEntity<CreateMemberResponse> addMember(@RequestBody CreateMemberRequest request) {
     CreateMemberResponse response = memberService.addMember(request);
     URI uri = URI.create("/api/members/" + response.id());
 
@@ -38,18 +37,21 @@ public class MemberController implements MemberDocument {
 
   @PostMapping("/login")
   public ResponseEntity<LoginMemberResponse> login(
-      @RequestBody
-      LoginMemberRequest request,
-      HttpSession session
+    @RequestBody LoginMemberRequest request,
+    HttpSession session
   ) {
     LoginMemberResponse response = memberService.login(request);
-    URI uri = URI.create("/api/members/" + response.id());
-
     session.setAttribute("loginId", response.id());
-    session.setMaxInactiveInterval(60 * 60 * 24 * 365);
 
-    return ResponseEntity.created(uri)
-        .body(response);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/me")
+  public ResponseEntity<MemberInfoResponse> getMe(HttpSession session) {
+    Long loginId = (long) session.getAttribute("loginId");
+    MemberInfoResponse response = memberService.getMemberById(loginId);
+
+    return ResponseEntity.ok(response);
   }
 
   @Override
@@ -63,6 +65,7 @@ public class MemberController implements MemberDocument {
 
     return ResponseEntity.created(uri)
         .body(response);
+
   }
 
 }
