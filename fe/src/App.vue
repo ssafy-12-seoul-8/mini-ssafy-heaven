@@ -57,6 +57,7 @@ const logout = () => {
 }
 
 const createRoom = () => {
+  menuVisible.value = false
   router.push('/rooms/new')
 }
 
