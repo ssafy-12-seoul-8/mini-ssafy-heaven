@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { RoomStatus } from '@/constants/RoomStatus'
+import { RoomStatus } from '@/enums/RoomStatus'
 
 export const useRoomStore = defineStore('room', () => {
   // state

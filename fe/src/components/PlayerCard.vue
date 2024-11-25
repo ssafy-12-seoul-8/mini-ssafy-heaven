@@ -20,7 +20,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import defaultUserImage from '@/assets/defaultUserImg.png'
-import { TierColor } from '@/constants/TierColor'
+import { TierColor } from '@/enums/TierColor'
 
 const tier = ref(TierColor.BRONZE)
 const profileImage = ref(defaultUserImage)

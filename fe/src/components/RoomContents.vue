@@ -10,7 +10,7 @@ import { computed } from 'vue'
 import { useRoomStore } from '@/stores/rooms'
 import RoomWaiting from './RoomWaiting.vue'
 import { storeToRefs } from 'pinia'
-import { RoomStatus } from '@/constants/RoomStatus'
+import { RoomStatus } from '@/enums/RoomStatus'
 import RoomPlaying from './RoomPlaying.vue'
 
 const roomStore = useRoomStore()

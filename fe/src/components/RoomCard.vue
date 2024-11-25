@@ -31,7 +31,7 @@
 
 <script setup>
 import { roomApi } from '@/apis/rooms'
-import { RoomStatus } from '@/constants/RoomStatus'
+import { RoomStatus } from '@/enums/RoomStatus'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 

@@ -14,7 +14,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import CreateRoomInput from '@/components/CreateRoomInput.vue'
 import SelectGamesContainer from '@/components/SelectGamesContainer.vue'
-import { RoomStatus } from '@/constants/RoomStatus'
+import { RoomStatus } from '@/enums/RoomStatus'
 import { useGameStore } from '@/stores/games'
 import { storeToRefs } from 'pinia'
 import { roomApi, roomSocket } from '@/apis/rooms'
@@ -83,7 +83,7 @@ const dispatchCreate = () => {
     .then((res) => createRoom(res.data.id))
     .then(() => joinRoom())
     .then(() => confirmCreation())
-    .then(() => router.replace({ name: 'room', params: { id: roomInfo.value.id } }))
+    .then(() => router.push({ name: 'room', params: { id: roomInfo.value.id } }))
     .catch((err) => handleFailCreate(err))
 }
 
@@ -97,7 +97,8 @@ const joinRoom = () => {
     nickname: myNickname.value,
   }
 
-  roomSocket.enter(roomInfo.value.id, body, storeRoomIdInSession(roomInfo.value.id))
+  roomSocket.enter(roomInfo.value.id, body)
+  storeRoomIdInSession(roomInfo.value.id)
 }
 
 const confirmCreation = () => {

@@ -41,7 +41,7 @@ import PlayerCard from './PlayerCard.vue'
 import BaseButton from './BaseButton.vue'
 import { useRoomPlayerStore } from '@/stores/roomPlayers'
 import { storeToRefs } from 'pinia'
-import { RoomPlayerStatus } from '@/constants/RoomPlayerStatus'
+import { RoomPlayerStatus } from '@/enums/RoomPlayerStatus'
 import { useRoomStore } from '@/stores/rooms'
 
 const roomStore = useRoomStore()
