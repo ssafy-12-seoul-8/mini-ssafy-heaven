@@ -14,6 +14,7 @@ export const findGameType = (value) => {
 export const GameMessageType = {
   START: 'START',
   SET_ANSWER: 'SET_ANSWER',
+  CONFIRM: 'CONFIRM',
 }
 
 export const findGameMessageType = (value) => {
