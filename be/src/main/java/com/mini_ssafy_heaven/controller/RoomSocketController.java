@@ -1,12 +1,14 @@
 package com.mini_ssafy_heaven.controller;
 
 import com.mini_ssafy_heaven.dto.request.ChatRequest;
+import com.mini_ssafy_heaven.dto.request.DescriptionReadRequest;
 import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.GameRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
 import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
+import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
@@ -16,6 +18,7 @@ import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.StompController;
 import com.mini_ssafy_heaven.service.RoomSocketService;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.javassist.runtime.Desc;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -100,6 +103,15 @@ public class RoomSocketController {
   @SendTo("/game/{id}")
   public MessageResponse<GameResponse<?>> gameSetAnswer(@DestinationVariable("id") Long id, SetAnswerRequest request) {
     GameResponse<?> response = roomSocketService.gameSetAnswer(id, request);
+
+    return MessageResponse.game(response);
+  }
+
+  @MessageMapping("/{id}/game/confirm")
+  @SendTo("/game/{id}")
+  public MessageResponse<GameResponse<DescriptionReadResponse>> countRead(@DestinationVariable("id") Long id, DescriptionReadRequest request) {
+    GameResponse<DescriptionReadResponse> response = roomSocketService.countRead(
+        id, request);
 
     return MessageResponse.game(response);
   }
