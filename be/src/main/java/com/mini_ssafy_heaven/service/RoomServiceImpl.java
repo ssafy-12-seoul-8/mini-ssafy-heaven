@@ -37,8 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
 
-  private static final int MAX_PLAYERS = 5;
-
   private final RoomDao roomDao;
   private final MemberDao memberDao;
   private final RoomPlayerDao roomPlayerDao;
@@ -142,9 +140,10 @@ public class RoomServiceImpl implements RoomService {
 
     validatePlayerInRoom(players, member.getId());
 
+    List<RoomGameTitleDto> roomGames = roomGameDao.findTitlesByRoomId(room.getId());
     long readyCount = countReady(players);
 
-    return RoomDetailResponse.from(room, players, readyCount);
+    return RoomDetailResponse.from(room, players, roomGames, readyCount);
   }
 
   private void validatePlayerNotJoined(Long loginId) {
