@@ -13,4 +13,9 @@
 		SELECT id, title, description, max_round
 		FROM games;
 	</select>
+	<select id="findById">
+		SELECT id, title, description, max_round
+		FROM games
+		WHERE id=#{id}
+	</select>
 </mapper>
