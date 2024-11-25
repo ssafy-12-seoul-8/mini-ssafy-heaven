@@ -13,6 +13,7 @@ export const useBaseballStore = defineStore('baseball', () => {
   // getters
   const isStart = computed(() => stage.value === GameMessageType.START)
   const isBeforeTrial = computed(() => stage.value === GameMessageType.SET_ANSWER)
+  const isConfirm = computed(() => stage.value === GameMessageType.CONFIRM)
 
   // action
   const updateCondition = (data, member) => {
@@ -23,11 +24,17 @@ export const useBaseballStore = defineStore('baseball', () => {
     taggerText.value = '당신은 술래입니다! 숫자를 선정해주세요.'
   }
 
-  const setAnswer = (condition) => {
+  const setAnswer = (data) => {
     stage.value = GameMessageType.SET_ANSWER
-    condition.value = condition
+    condition.value = data
     normalText.value = '숫자가 정해졌습니다! 게임 설명을 읽고 진행해주세요!'
     taggerText.value = normalText.value
+  }
+
+  const incrementConfirm = (totalCount, count) => {
+    if (totalCount === count) {
+      stage.value = GameMessageType.CONFIRM
+    }
   }
 
   return {
@@ -37,7 +44,9 @@ export const useBaseballStore = defineStore('baseball', () => {
     taggerText,
     isStart,
     isBeforeTrial,
+    isConfirm,
     updateCondition,
     setAnswer,
+    incrementConfirm,
   }
 })
