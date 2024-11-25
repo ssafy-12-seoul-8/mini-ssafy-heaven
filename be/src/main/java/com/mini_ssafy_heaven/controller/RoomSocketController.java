@@ -5,6 +5,7 @@ import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.GameRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
+import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
@@ -91,6 +92,14 @@ public class RoomSocketController {
       Long id, GameRequest request
   ) {
     GameResponse<?> response = roomSocketService.gameStart(id, request);
+
+    return MessageResponse.game(response);
+  }
+
+  @MessageMapping("/{id}/game/set-answer")
+  @SendTo("/game/{id}")
+  public MessageResponse<GameResponse<?>> gameSetAnswer(@DestinationVariable("id") Long id, SetAnswerRequest request) {
+    GameResponse<?> response = roomSocketService.gameSetAnswer(id, request);
 
     return MessageResponse.game(response);
   }
