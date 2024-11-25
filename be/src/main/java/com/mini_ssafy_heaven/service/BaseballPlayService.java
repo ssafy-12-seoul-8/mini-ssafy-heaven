@@ -6,8 +6,10 @@ import com.mini_ssafy_heaven.domain.RoomPlayer;
 import com.mini_ssafy_heaven.domain.enums.GameMessageType;
 import com.mini_ssafy_heaven.domain.enums.GameType;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
+import com.mini_ssafy_heaven.global.exception.code.InGameErrorCode;
 import com.mini_ssafy_heaven.repository.BaseballConditionRepository;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,19 @@ public class BaseballPlayService implements GamePlayService<BaseballCondition> {
     baseballConditionRepository.save(condition);
 
     return new GameResponse<>(GameType.BASEBALL, GameMessageType.START, condition);
+  }
+
+  @Override
+  @Transactional
+  public GameResponse<BaseballCondition> setAnswer(Long roomId, String answer) {
+    BaseballCondition condition = baseballConditionRepository.findById(roomId)
+        .orElseThrow(
+            () -> new NoSuchElementException(InGameErrorCode.NO_GAME_FOR_ROOM.getMessage()));
+    BaseballCondition updated = condition.withBall(answer);
+
+    baseballConditionRepository.save(updated);
+
+    return new GameResponse<>(GameType.BASEBALL, GameMessageType.SET_ANSWER, updated);
   }
 
   private static int calculateBallDigits(int playerCount) {

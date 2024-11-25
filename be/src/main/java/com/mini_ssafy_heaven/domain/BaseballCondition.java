@@ -28,4 +28,14 @@ public class BaseballCondition {
     this.taggerId = taggerId;
   }
 
+  public BaseballCondition withBall(String ball) {
+    return BaseballCondition.builder()
+        .roomId(roomId)
+        .currentBall(ball)
+        .ballCount(ballCount)
+        .maxCount(maxCount)
+        .taggerId(taggerId)
+        .build();
+  }
+
 }
