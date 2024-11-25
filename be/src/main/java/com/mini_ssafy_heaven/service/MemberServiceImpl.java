@@ -76,6 +76,14 @@ public class MemberServiceImpl implements MemberService {
     return GuestLoginResponse.from(guest);
   }
 
+  @Override
+  @Transactional
+  public void validateId(Long loginId) {
+    if ("loginId" == null) {
+      throw new NoSuchElementException(MemberErrorCode.LOGIN_REQUIRED.getMessage());
+    }
+  }
+
   // 아이디 중복확인
   private void validateUserName(String username) {
     if (memberDao.existsByUserName(username)) {

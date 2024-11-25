@@ -19,4 +19,5 @@ public interface MemberService {
 
   GuestLoginResponse loginGuest();
 
+  void validateId(Long loginId);
 }
