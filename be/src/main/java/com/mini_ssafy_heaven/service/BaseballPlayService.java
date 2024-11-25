@@ -2,12 +2,15 @@ package com.mini_ssafy_heaven.service;
 
 import com.mini_ssafy_heaven.dao.RoomPlayerDao;
 import com.mini_ssafy_heaven.domain.BaseballCondition;
+import com.mini_ssafy_heaven.domain.DescriptionReadCount;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
 import com.mini_ssafy_heaven.domain.enums.GameMessageType;
 import com.mini_ssafy_heaven.domain.enums.GameType;
+import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
 import com.mini_ssafy_heaven.global.exception.code.InGameErrorCode;
 import com.mini_ssafy_heaven.repository.BaseballConditionRepository;
+import com.mini_ssafy_heaven.repository.DescriptionReadCountRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -21,6 +24,7 @@ public class BaseballPlayService implements GamePlayService<BaseballCondition> {
 
   private final RoomPlayerDao roomPlayerDao;
   private final BaseballConditionRepository baseballConditionRepository;
+  private final DescriptionReadCountRepository descriptionReadCountRepository;
 
   @Override
   @Transactional
@@ -39,6 +43,19 @@ public class BaseballPlayService implements GamePlayService<BaseballCondition> {
     baseballConditionRepository.save(condition);
 
     return new GameResponse<>(GameType.BASEBALL, GameMessageType.START, condition);
+  }
+
+  @Override
+  public GameResponse<DescriptionReadResponse> readDescription(Long roomId) {
+    DescriptionReadCount readCount = descriptionReadCountRepository.findById(roomId)
+        .orElseGet(() -> new DescriptionReadCount(roomId, 0));
+    DescriptionReadCount incremented = readCount.increment();
+
+    descriptionReadCountRepository.save(incremented);
+
+    DescriptionReadResponse response = new DescriptionReadResponse(incremented.getReadCount());
+
+    return new GameResponse<>(GameType.BASEBALL, GameMessageType.CONFIRM, response);
   }
 
   @Override
