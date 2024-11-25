@@ -2,6 +2,7 @@ import { useRoomPlayerStore } from '@/stores/roomPlayers'
 import { useChatStore } from '@/stores/chats'
 import { useRoomStore } from '@/stores/rooms'
 import { RoomPlayerStatus } from './RoomPlayerStatus'
+import { findGameMessageType, findGameType } from './GameType'
 
 const handleChat = (message) => {
   const { addChat } = useChatStore()
@@ -39,6 +40,13 @@ const doStart = (data) => {
   updateStatus(data.status)
 }
 
+const doGame = (data) => {
+  const gameType = findGameType(data.gameType)
+  const gameMessageType = findGameMessageType(data.gameMessageType)
+
+  gameType.instance.doAction(gameMessageType, data.payload)
+}
+
 export const MessageType = {
   ENTER: {
     name: 'ENTER',
@@ -64,6 +72,11 @@ export const MessageType = {
     name: 'START',
     lower: 'start',
     action: doStart,
+  },
+  GAME: {
+    name: 'GAME',
+    lower: 'game',
+    action: doGame,
   },
   SCORE: {
     name: 'SCORE',
