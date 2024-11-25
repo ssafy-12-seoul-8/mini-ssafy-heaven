@@ -7,35 +7,42 @@
 			<arg column="username" javaType="String" />
 			<arg column="password" javaType="String" />
 			<arg column="nickname" javaType="String" />
-			<arg column="role" javaType="com.mini_ssafy_heaven.domain.enums.MemberRole" />
+			<arg column="role"
+				javaType="com.mini_ssafy_heaven.domain.enums.MemberRole" />
 			<arg column="score" javaType="int" />
 		</constructor>
 	</resultMap>
 	<select id="existsById" resultType="boolean">
-		SELECT IF(COUNT(*)=1, true, false)
+		SELECT IF(COUNT(*)=1, true,
+		false)
 		FROM members
 		WHERE id=#{id};
 	</select>
 	<select id="existsByUserName">
 		SELECT IF(COUNT(*)=1, true, false)
 		FROM members
-		WHERE username=#{username};
+		WHERE
+		username=#{username};
 	</select>
 	<insert id="addMember" useGeneratedKeys="true"
 		keyProperty="member.id">
-		INSERT INTO members (username, password, nickname, role,created_at,
+		INSERT INTO members (username, password, nickname, role,
+		created_at,
 		updated_at)
-		VALUES (#{member.username}, #{member.password}, #{member.nickname},
+		VALUES (#{member.username}, #{member.password},
+		#{member.nickname},
 		#{member.role},#{createdAt}, #{updatedAt});
 	</insert>
 	<select id="findById" resultMap="memberConstructor">
 		SELECT *
 		FROM members
-		WHERE id=#{id}
+		WHERE
+		id=#{id}
 	</select>
 	<select id="getMemberInfo" resultType="Member">
 		SELECT *
 		FROM members
-		WHERE username=#{username};
+		WHERE
+		username=#{username};
 	</select>
 </mapper>

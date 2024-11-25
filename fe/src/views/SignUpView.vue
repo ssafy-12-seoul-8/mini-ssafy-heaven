@@ -18,7 +18,10 @@
       <BaseInput name="nickname" label="닉네임" v-model="nickname" />
       <span v-if="nickNameWarnMessage" class="text-red-700">{{ nickNameWarnMessage }}</span>
     </div>
-    <BaseButton @click="submitToGetReady"> 가입하기 </BaseButton>
+    <div class="flex gap-4">
+      <BaseButton @click="submitToGetReady">가입하기</BaseButton>
+      <BaseButton @click="goBack">뒤로가기</BaseButton>
+    </div>
   </div>
 </template>
 
@@ -82,6 +85,10 @@ const submitToGetReady = async () => {
 
 const addMember = (id) => {
   memberInfo.value.id = id
+}
+
+const goBack = () => {
+  router.replace('/login')
 }
 
 const validateUserName = (username) => {

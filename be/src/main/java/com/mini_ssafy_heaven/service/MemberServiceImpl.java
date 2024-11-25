@@ -7,6 +7,7 @@ import com.mini_ssafy_heaven.dto.request.LoginMemberRequest;
 import com.mini_ssafy_heaven.dto.response.CreateMemberResponse;
 import com.mini_ssafy_heaven.dto.response.GuestLoginResponse;
 import com.mini_ssafy_heaven.dto.response.LoginMemberResponse;
+import com.mini_ssafy_heaven.dto.response.MemberInfoResponse;
 import com.mini_ssafy_heaven.global.exception.code.MemberErrorCode;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
@@ -47,12 +48,22 @@ public class MemberServiceImpl implements MemberService {
   public LoginMemberResponse login(LoginMemberRequest request) {
     Member member = memberDao.getMemberInfo(request.username())
         .orElseThrow(
-            () -> new NoSuchElementException(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())
+          () -> new NoSuchElementException(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())
         );
 
     member.verifyPassword(request.password());
 
     return new LoginMemberResponse(member.getId());
+  }
+
+  @Override
+  public MemberInfoResponse getMemberById(Long id) {
+    Member member = memberDao.findById(id)
+        .orElseThrow(
+          () -> new NoSuchElementException(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())
+        );
+
+    return new MemberInfoResponse(id, member.getNickname(), member.getScore());
   }
 
   @Override
@@ -63,6 +74,14 @@ public class MemberServiceImpl implements MemberService {
     memberDao.addMember(guest);
 
     return GuestLoginResponse.from(guest);
+  }
+
+  @Override
+  @Transactional
+  public void validateId(Long loginId) {
+    if ("loginId" == null) {
+      throw new NoSuchElementException(MemberErrorCode.LOGIN_REQUIRED.getMessage());
+    }
   }
 
   // 아이디 중복확인

@@ -12,7 +12,8 @@ public enum MemberErrorCode {
   EXCESSIVE_NAME_LENGTH("최대 30자입니다."),
   EXCESSIVE_PASSWORD_LENGTH("비밀번호는 최대 100자입니다."),
   EMPTY("필수값입니다."),
-  MEMBER_NOT_FOUND("해당 아이디의 회원이 존재하지 않습니다.");
+  MEMBER_NOT_FOUND("해당 아이디의 회원이 존재하지 않습니다."),
+  LOGIN_REQUIRED("로그인이 필요합니다.");
 
   private final String message;
 

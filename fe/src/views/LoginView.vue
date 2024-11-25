@@ -29,7 +29,6 @@ import BaseLogo from '@/components/BaseLogo.vue'
 import { useMemberStore } from '@/stores/members'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
-import { loginApi } from '@/apis/login'
 
 const router = useRouter()
 const username = ref('')
@@ -42,11 +41,11 @@ const signUp = () => {
 }
 
 const login = async () => {
-  if (!validateUserName(username.value)) {
+  if (!username.value) {
     alert('아이디를 입력하세요!')
     return
   }
-  if (!validatePassword(password.value)) {
+  if (!password.value) {
     alert('비밀번호를 입력하세요!')
     return
   }
@@ -56,7 +55,7 @@ const login = async () => {
     password: password.value,
   }
 
-  loginApi
+  memberApi
     .login(request)
     .then(() => {
       router.push({ path: '/rooms' })
@@ -66,20 +65,6 @@ const login = async () => {
       username.value = ''
       password.value = ''
     })
-}
-
-const validateUserName = (username) => {
-  if (!username) {
-    return false
-  }
-  return true
-}
-
-const validatePassword = (password) => {
-  if (!password) {
-    return false
-  }
-  return true
 }
 
 const loginGuest = () => {
