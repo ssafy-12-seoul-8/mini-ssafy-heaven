@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +22,14 @@ public class GameController implements GameDocument {
   @GetMapping
   public ResponseEntity<List<GameDetailResponse>> getAll() {
     List<GameDetailResponse> response = gameService.getAll();
+
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  @GetMapping("/{id}")
+  public ResponseEntity<GameDetailResponse> get(@PathVariable("id") Long id) {
+    GameDetailResponse response = gameService.getById(id);
 
     return ResponseEntity.ok(response);
   }

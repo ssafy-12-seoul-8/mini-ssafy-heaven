@@ -20,4 +20,8 @@ public interface GameDocument {
   )
   ResponseEntity<List<GameDetailResponse>> getAll();
 
+  @Operation(summary = "게임 설명 조회")
+  @ApiResponse(responseCode = "200", description = "OK")
+  ResponseEntity<GameDetailResponse> get(Long id);
+
 }
