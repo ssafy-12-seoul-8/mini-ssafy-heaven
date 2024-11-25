@@ -40,4 +40,5 @@ export const roomSocket = {
   chat: (id, body) => stomp.send(id, MessageType.TALK.lower, body),
   start: (id) => stomp.send(id, MessageType.START.lower),
   gameStart: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/start`, body),
+  gameSetAnswer: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/set-answer`, body),
 }
