@@ -84,8 +84,8 @@ public class RoomServiceImpl implements RoomService {
   @Override
   @Transactional
   @Lock("PLAYER-JOIN")
-  public void join(Long roomId, Long loginId) {
-    Room room = roomDao.findById(roomId)
+  public void join(Long id, Long loginId) {
+    Room room = roomDao.findById(id)
         .orElseThrow(
             () -> new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage()));
 
@@ -93,7 +93,7 @@ public class RoomServiceImpl implements RoomService {
       throw new IllegalStateException(RoomErrorCode.NOT_POSSIBLE_TO_ENTER.getMessage());
     }
 
-    List<RoomPlayer> players = roomPlayerDao.findAllByRoomId(roomId);
+    List<RoomPlayer> players = roomPlayerDao.findAllByRoomId(id);
 
     if (isInRoom(players, loginId)) {
       return;
@@ -105,7 +105,7 @@ public class RoomServiceImpl implements RoomService {
 
     validatePlayerNotJoined(loginId);
 
-    RoomPlayer roomPlayer = RoomPlayer.createPlayer(loginId, roomId);
+    RoomPlayer roomPlayer = RoomPlayer.createPlayer(loginId, id);
 
     roomPlayerDao.save(roomPlayer);
   }

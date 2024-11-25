@@ -3,26 +3,31 @@ package com.mini_ssafy_heaven.service;
 import com.mini_ssafy_heaven.dao.RoomDao;
 import com.mini_ssafy_heaven.dao.RoomGameDao;
 import com.mini_ssafy_heaven.dao.RoomPlayerDao;
+import com.mini_ssafy_heaven.domain.DescriptionReadCount;
 import com.mini_ssafy_heaven.domain.Room;
 import com.mini_ssafy_heaven.domain.RoomGameScore;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
 import com.mini_ssafy_heaven.domain.enums.GameType;
 import com.mini_ssafy_heaven.dto.query.RoomPlayerNameDto;
 import com.mini_ssafy_heaven.dto.request.ChatRequest;
+import com.mini_ssafy_heaven.dto.request.DescriptionReadRequest;
 import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.GameRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
 import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
+import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.Lock;
+import com.mini_ssafy_heaven.global.exception.code.InGameErrorCode;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
 import com.mini_ssafy_heaven.global.exception.code.RoomPlayerErrorCode;
+import com.mini_ssafy_heaven.repository.DescriptionReadCountRepository;
 import com.mini_ssafy_heaven.repository.RoomGameScoreRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -39,6 +44,7 @@ public class RoomSocketServiceImpl implements RoomSocketService {
   private final RoomDao roomDao;
   private final RoomGameDao roomGameDao;
   private final RoomGameScoreRepository roomGameScoreRepository;
+  private final DescriptionReadCountRepository descriptionReadCountRepository;
 
   @Override
   public EnterResponse enter(Long roomId, EnterRequest request) {
@@ -50,8 +56,8 @@ public class RoomSocketServiceImpl implements RoomSocketService {
   @Override
   @Transactional
   @Lock("PLAYER-READY")
-  public ReadyResponse toggleReady(Long roomId, ReadyRequest request) {
-    List<RoomPlayer> roomPlayers = roomPlayerDao.findAllByRoomId(roomId);
+  public ReadyResponse toggleReady(Long id, ReadyRequest request) {
+    List<RoomPlayer> roomPlayers = roomPlayerDao.findAllByRoomId(id);
     long readyCount = countReady(roomPlayers);
 
     RoomPlayer toggled = roomPlayers.stream()
@@ -102,15 +108,15 @@ public class RoomSocketServiceImpl implements RoomSocketService {
   @Override
   @Transactional
   @Lock("PLAYER-READY")
-  public StartResponse start(Long roomId) {
-    List<RoomPlayer> players = roomPlayerDao.findAllByRoomId(roomId);
+  public StartResponse start(Long id) {
+    List<RoomPlayer> players = roomPlayerDao.findAllByRoomId(id);
     long readyCount = countReady(players);
 
     if (players.size() != readyCount) {
       throw new IllegalStateException(RoomErrorCode.NOT_READY_YET.getMessage());
     }
 
-    Room room = roomDao.findById(roomId)
+    Room room = roomDao.findById(id)
         .orElseThrow(
             () -> new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage()));
     Room started = room.start();
@@ -138,6 +144,16 @@ public class RoomSocketServiceImpl implements RoomSocketService {
     GamePlayService<?> gamePlayService = gameType.getGamePlayService();
 
     return gamePlayService.setAnswer(roomId, request.answer());
+  }
+
+  @Override
+  @Transactional
+  @Lock("DESCRIPTION-READ")
+  public GameResponse<DescriptionReadResponse> countRead(Long id, DescriptionReadRequest request) {
+    GameType gameType = GameType.get(request.gameType());
+    GamePlayService<?> gamePlayService = gameType.getGamePlayService();
+
+    return gamePlayService.readDescription(id);
   }
 
   private void deleteRoom(Long roomId) {
