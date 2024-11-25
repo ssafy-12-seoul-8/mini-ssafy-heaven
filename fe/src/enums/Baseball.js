@@ -26,10 +26,20 @@ const start = (condition) => {
   updateCondition(condition, tagger)
 }
 
+const setAnswer = (condition) => {
+  const { setAnswer } = useBaseballStore()
+
+  setAnswer(condition)
+}
+
 export const Baseball = {
   start: {
     value: () => GameMessageType.START,
     action: start,
+  },
+  setAnswer: {
+    value: () => GameMessageType.SET_ANSWER,
+    action: setAnswer,
   },
   doAction: (messageType, payload) => findProcess(messageType).action(payload),
 }
