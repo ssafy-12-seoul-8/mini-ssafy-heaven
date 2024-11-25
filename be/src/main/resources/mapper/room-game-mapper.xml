@@ -6,7 +6,7 @@
     VALUES (#{roomGame.currentRound}, #{roomGame.roundLimit}, #{roomGame.roomId}, #{roomGame.gameId}, #{createdAt}, #{updatedAt});
   </insert>
   <select id="findTitlesByRoomId">
-    SELECT g.title
+    SELECT rg.id, rg.round_limit, g.title
     FROM room_games rg
     JOIN games g ON rg.game_id = g.id
     WHERE rg.room_id = #{roomId}
