@@ -12,12 +12,7 @@
         :slots="messages"
         class="w-full flex justify-center"
       />
-      <BaseButton
-        type="white"
-        size="w-16"
-        @click="refreshRooms"
-        class="absolute top-4 right-24"
-      >
+      <BaseButton type="white" size="w-16" @click="refreshRooms" class="absolute top-4 right-24">
         ⟳
       </BaseButton>
     </div>
@@ -105,5 +100,4 @@ const updateRooms = (data) => {
   display: flex;
   flex-wrap: wrap;
 }
-
 </style>
