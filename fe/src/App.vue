@@ -10,7 +10,8 @@
     >
     <div v-if="menuVisible" class="absolute top-20 right-4 bg-white shadow-md rounded p-2">
       <BaseButton class="block w-full text-left mb-2" @click="me">내 정보</BaseButton>
-      <BaseButton class="block w-full text-left" @click="logout">로그아웃</BaseButton>
+      <BaseButton class="block w-full text-left mb-2" @click="logout">로그아웃</BaseButton>
+      <BaseButton class="block w-full text-left" @click="createRoom">방 만들기</BaseButton>
     </div>
     <Container>
       <router-view />
@@ -53,6 +54,10 @@ const logout = () => {
       moveToMain()
       menuVisible.value = false
     })
+}
+
+const createRoom = () => {
+  router.push('/rooms/new')
 }
 
 const moveToMain = () => {
