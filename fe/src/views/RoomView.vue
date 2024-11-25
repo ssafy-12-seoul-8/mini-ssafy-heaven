@@ -22,15 +22,19 @@ import { useRouter } from 'vue-router'
 import ChatBox from '@/components/ChatBox.vue'
 import RoomContents from '@/components/RoomContents.vue'
 import { useChatStore } from '@/stores/chats'
+import { useRoomGameStore } from '@/stores/roomGames'
 
 const router = useRouter()
 const { params } = useRoute()
 const roomPlayerStore = useRoomPlayerStore()
 const roomStore = useRoomStore()
 const chatStore = useChatStore()
+const roomGameStore = useRoomGameStore()
 const { currentRoom } = storeToRefs(roomStore)
 const { currentPlayer, manager } = storeToRefs(roomPlayerStore)
+const { roomGames } = storeToRefs(roomGameStore)
 const { updatePlayers } = roomPlayerStore
+const { updateRoomGames } = roomGameStore
 const { fetchRoomDetail, storeRoomIdInSession, clearCurrentRoom } = roomStore
 const { clearChats } = chatStore
 
@@ -42,7 +46,9 @@ onMounted(() => {
 
   storedInSession
     ? roomSocket.enter(params.id)
-    : roomSocket.enter(params.id, { nickname: myNickname }, storeRoomIdInSession(params.id))
+    : roomSocket.enter(params.id, { nickname: myNickname })
+
+  storeRoomIdInSession(params.id)
 })
 
 onUnmounted(() => {
@@ -60,6 +66,7 @@ const validatePlayer = () => {
 const fetchRoomAndPlayers = (room) => {
   fetchRoomDetail(room)
   updatePlayers(room.roomPlayers)
+  updateRoomGames(room.roomGames)
 }
 
 const handleError = (err) => {
@@ -89,7 +96,10 @@ const handleExit = async (memberId, nickname) => {
 
 const handleStart = () => {
   roomSocket.start(currentRoom.value.id)
+  sendCountDown()
+}
 
+const sendCountDown = () => {
   let count = 3
   const request = {
     nickname: manager.value.nickname,
@@ -97,15 +107,26 @@ const handleStart = () => {
   }
 
   const countDown = setInterval(() => {
+    if (!count) {
+      gameStart()
+      clearInterval(countDown)
+    }
+
     roomSocket.chat(currentRoom.value.id, request)
 
     count--
     request.chat = count + '...'
-
-    if (!count) {
-      clearInterval(countDown)
-    }
   }, 1000)
+}
+
+const gameStart = () => {
+  const first = roomGames.value[0]
+
+  const request = {
+    gameType: first.title,
+  }
+
+  roomSocket.gameStart(currentRoom.value.id, request)
 }
 </script>
 
