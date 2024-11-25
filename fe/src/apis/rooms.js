@@ -8,6 +8,7 @@ export const roomApi = {
   confirmCreation: (id, request) => http.patch(`${baseRoomPath}/${id}`, request),
   getDetail: (id) => http.get(`${baseRoomPath}/${id}`),
   join: (id) => http.post(`${baseRoomPath}/${id}`),
+  getAll: (cursor, size) => http.get(`${baseRoomPath}?cursor=${cursor}&size=${size}`),
 }
 
 const parseSocketMessage = (res) => {
@@ -32,9 +33,10 @@ export const roomSocket = {
     stomp.connect(onEnter, onError)
   },
   ready: (id, body) => stomp.send(id, MessageType.READY.lower, body),
-  exit: (id, body) => {
+  exit: async (id, body) => {
     stomp.send(id, MessageType.EXIT.lower, body)
-    stomp.disconnect()
+    await stomp.disconnect()
   },
   chat: (id, body) => stomp.send(id, MessageType.TALK.lower, body),
+  start: (id) => stomp.send(id, MessageType.START.lower),
 }

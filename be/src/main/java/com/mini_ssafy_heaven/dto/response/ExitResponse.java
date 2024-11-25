@@ -11,7 +11,7 @@ public record ExitResponse(String message, List<RoomPlayerNameDto> players) {
 
   public static ExitResponse from(String nickname, List<RoomPlayerNameDto> players) {
     String message = MessageFormatter.format(TEMPLATE, nickname)
-        .toString();
+        .getMessage();
 
     return new ExitResponse(message, players);
   }

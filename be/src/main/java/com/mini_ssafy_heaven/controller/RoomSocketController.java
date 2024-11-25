@@ -9,6 +9,7 @@ import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.MessageResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
+import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.StompController;
 import com.mini_ssafy_heaven.service.RoomSocketService;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +65,14 @@ public class RoomSocketController {
     ChatResponse response = roomSocketService.chat(request);
 
     return MessageResponse.chat(response);
+  }
+
+  @MessageMapping("/{id}/start")
+  @SendTo("/game/{id}")
+  public MessageResponse<StartResponse> start(@DestinationVariable("id") Long id) {
+    StartResponse response = roomSocketService.start(id);
+
+    return MessageResponse.start(response);
   }
 
 }

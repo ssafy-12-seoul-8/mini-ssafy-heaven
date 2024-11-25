@@ -8,6 +8,7 @@ import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
+import com.mini_ssafy_heaven.dto.response.StartResponse;
 
 public interface RoomSocketService {
 
@@ -18,5 +19,7 @@ public interface RoomSocketService {
   ExitResponse exit(Long roomId, ExitRequest request);
 
   ChatResponse chat(ChatRequest request);
+
+  StartResponse start(Long roomId);
 
 }

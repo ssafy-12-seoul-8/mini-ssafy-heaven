@@ -21,6 +21,7 @@ import { roomApi, roomSocket } from '@/apis/rooms'
 import LoaderBox from '@/components/LoaderBox.vue'
 import { useRouter } from 'vue-router'
 import { useMemberStore } from '@/stores/members'
+import { useRoomStore } from '@/stores/rooms'
 
 const roomInfo = ref({
   title: '',
@@ -32,8 +33,10 @@ const failMessage = ref()
 const isWaitingForInput = computed(() => RoomStatus.isInput(status.value.name))
 const isReadyForGameSet = computed(() => RoomStatus.isReady(status.value.name))
 const gameStore = useGameStore()
+const roomStore = useRoomStore()
 const memberStore = useMemberStore()
 const { myNickname } = storeToRefs(memberStore)
+const { storeRoomIdInSession } = roomStore
 const { fetchAllGames } = gameStore
 const { selectedGames } = storeToRefs(gameStore)
 const router = useRouter()
@@ -94,7 +97,7 @@ const joinRoom = () => {
     nickname: myNickname.value,
   }
 
-  roomSocket.enter(roomInfo.value.id, body)
+  roomSocket.enter(roomInfo.value.id, body, storeRoomIdInSession(roomInfo.value.id))
 }
 
 const confirmCreation = () => {

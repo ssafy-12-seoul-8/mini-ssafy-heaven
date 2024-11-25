@@ -6,13 +6,13 @@
     >
       <div
         id="chat-contents-container"
-        class="z-50 h-5/6 gap-1 w-11/12 flex flex-col-reverse overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
+        class="z-50 h-5/6 mt-2 gap-1 w-11/12 flex flex-col-reverse overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
       >
         <div id="chat-contents" v-for="(chat, index) in chats" :key="index">
           {{ chat }}
         </div>
       </div>
-      <div class="z-50 w-11/12 flex justify-center gap-4">
+      <div class="z-50 w-11/12 flex justify-center gap-4 mb-2">
         <input
           class="z-50 w-11/12 pl-4 rounded-xl caret-main-skyblue focus:outline-none border-main-skyblue border"
           :value="text"

@@ -6,6 +6,7 @@ public enum SocketMessageType {
   TALK,
   READY,
   SCORE,
+  START,
   GAME_OVER,
   ALL_OVER;
 }

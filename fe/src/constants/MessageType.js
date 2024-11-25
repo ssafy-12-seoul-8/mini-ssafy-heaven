@@ -1,6 +1,7 @@
 import { useRoomPlayerStore } from '@/stores/roomPlayers'
 import { useChatStore } from '@/stores/chats'
 import { useRoomStore } from '@/stores/rooms'
+import { RoomPlayerStatus } from './RoomPlayerStatus'
 
 const handleChat = (message) => {
   const { addChat } = useChatStore()
@@ -10,10 +11,13 @@ const handleChat = (message) => {
 
 const handlePlayerUpdate = (players) => {
   const { updatePlayers } = useRoomPlayerStore()
-  const { updateTotalCount } = useRoomStore()
+  const { updateReadyCount } = useRoomStore()
+  const readyCount = players.filter(
+    (player) => player.status === RoomPlayerStatus.READY.value,
+  ).length
 
   updatePlayers(players)
-  updateTotalCount(players.length)
+  updateReadyCount(readyCount, players.length)
 }
 
 const doMemberChange = (data) => {
@@ -27,6 +31,12 @@ const doReady = (data) => {
 
   updateReadyPlayer(data.memberId, data.status)
   updateReadyCount(data.currentReadyCount, data.totalCount)
+}
+
+const doStart = (data) => {
+  const { updateStatus } = useRoomStore()
+
+  updateStatus(data.status)
 }
 
 export const MessageType = {
@@ -49,6 +59,11 @@ export const MessageType = {
     name: 'READY',
     lower: 'ready',
     action: doReady,
+  },
+  START: {
+    name: 'START',
+    lower: 'start',
+    action: doStart,
   },
   SCORE: {
     name: 'SCORE',

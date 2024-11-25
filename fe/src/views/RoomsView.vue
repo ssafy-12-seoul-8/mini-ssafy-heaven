@@ -1,30 +1,89 @@
 <template>
-  <h1>rooms</h1>
-  <BaseButton @click="me">내 정보</BaseButton>
-  <BaseButton @click="logout">로그아웃</BaseButton>
+  <div
+    id="rooms-container"
+    :class="{ empty: isEmpty }"
+    class="py-2 flex flex-wrap content-start overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
+  >
+    <RoomCard v-for="room in rooms" :key="room.id" :room="room" />
+    <InfiniteLoading
+      target="#rooms-container"
+      @infinite="load"
+      :slots="messages"
+      class="w-full flex justify-center"
+    />
+  </div>
 </template>
+
 <script setup>
-import { memberApi } from '@/apis/members'
-import BaseButton from '@/components/BaseButton.vue'
-import { useRouter } from 'vue-router'
+import { ref, onBeforeMount } from 'vue'
+import { roomApi } from '@/apis/rooms'
+import RoomCard from '@/components/RoomCard.vue'
+import { useRoomStore } from '@/stores/rooms'
+import { storeToRefs } from 'pinia'
+import InfiniteLoading from 'v3-infinite-loading'
 
-const router = useRouter()
+const size = 15
+const cursor = ref(0)
+const isEmpty = ref(false)
+const hasNext = ref(false)
+const roomStore = useRoomStore()
+const { rooms } = storeToRefs(roomStore)
+const { fetchRooms, clearRooms } = roomStore
+const messages = ref({
+  complete: '마지막 방입니다!',
+})
 
-const me = () => {
-  router.push({ path: 'me' })
+onBeforeMount(() => {
+  clearRooms()
+})
+
+const load = async ($state) => {
+  await fetchAllRooms()
+
+  if (isEmpty.value || !hasNext.value) {
+    if (isEmpty.value) {
+      messages.value.complete = '등록된 방이 없습니다!'
+    }
+
+    $state.complete()
+
+    return
+  }
+
+  $state.loaded()
 }
 
-const logout = () => {
-  memberApi
-    .logout()
-    .then(() => moveToMain())
-    .catch((err) => {
-      alert(err.response.data.message)
-      moveToMain()
-    })
+const fetchAllRooms = async () => {
+  await roomApi
+    .getAll(cursor.value, size)
+    .then((res) => updateRooms(res.data))
+    .catch((err) => console.err(err))
 }
 
-const moveToMain = () => {
-  router.replace('/login')
+const updateRooms = (data) => {
+  if (data.isEmpty) {
+    isEmpty.value = true
+
+    return
+  }
+
+  fetchRooms(data.contents)
+
+  cursor.value = data.nextCursor
+  hasNext.value = data.hasNext
 }
 </script>
+
+<style scoped>
+.empty {
+  justify-content: center;
+  align-items: center;
+}
+
+#rooms-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+</style>

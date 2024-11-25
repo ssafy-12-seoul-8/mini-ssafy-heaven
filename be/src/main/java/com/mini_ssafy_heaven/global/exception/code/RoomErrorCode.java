@@ -17,7 +17,8 @@ public enum RoomErrorCode {
   UNEXPECTED_EMPTY_ROOM("해당 방이 존재하지 않습니다."),
   FULL_ROOM("방의 정원이 전부 찼습니다."),
   NULL_STATUS_FOR_UPDATE("변경할 상태가 입력되지 않았습니다."),
-  NOT_POSSIBLE_TO_ENTER("참여할 수 없는 방입니다.");
+  NOT_POSSIBLE_TO_ENTER("참여할 수 없는 방입니다."),
+  NOT_READY_YET("아직 준비하지 않은 플레이어가 있습니다.");
 
   private final String message;
 
