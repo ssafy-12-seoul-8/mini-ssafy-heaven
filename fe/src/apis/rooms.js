@@ -1,4 +1,4 @@
-import { MessageType, getMessageType } from '@/constants/MessageType'
+import { MessageType, getMessageType } from '@/enums/MessageType'
 import { http, stomp } from './instance'
 
 const baseRoomPath = 'api/rooms'
@@ -39,4 +39,5 @@ export const roomSocket = {
   },
   chat: (id, body) => stomp.send(id, MessageType.TALK.lower, body),
   start: (id) => stomp.send(id, MessageType.START.lower),
+  gameStart: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/start`, body),
 }
