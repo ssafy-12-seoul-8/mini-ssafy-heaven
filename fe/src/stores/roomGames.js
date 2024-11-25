@@ -1,21 +1,12 @@
-import { ref, computed } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useRoomGameStore = defineStore('roomGame', () => {
   // state
   const roomGames = ref([])
-  const currentGameTitle = ref()
+  const currentGame = ref()
 
   // getters
-  const getCurrentGame = computed(() => {
-    const storedGameTitle = sessionStorage.getItem('currentRoomGameTitle')
-
-    if (!storedGameTitle) {
-      return
-    }
-
-    return roomGames.value.find((roomGame) => roomGame.title === storedGameTitle)
-  })
 
   // actions
   const updateRoomGames = (games) => {
@@ -24,12 +15,20 @@ export const useRoomGameStore = defineStore('roomGame', () => {
 
   const updateCurrentGame = (title) => {
     sessionStorage.setItem('currentRoomGameTitle', title)
-    currentGameTitle.value = roomGames.value.find((roomGame) => roomGame.title === title)
+    currentGame.value = roomGames.value.find((roomGame) => roomGame.title === title)
   }
+
+  watchEffect(() => {
+    const storedTitle = sessionStorage.getItem('currentRoomGameTitle')
+
+    if (!currentGame.value && storedTitle) {
+      currentGame.value = roomGames.value.find((roomGame) => roomGame.title === storedTitle)
+    }
+  })
 
   return {
     roomGames,
-    getCurrentGame,
+    currentGame,
     updateRoomGames,
     updateCurrentGame,
   }
