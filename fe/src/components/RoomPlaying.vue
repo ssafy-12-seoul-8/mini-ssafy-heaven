@@ -49,7 +49,7 @@ const roomGameStore = useRoomGameStore()
 const roomPlayerStore = useRoomPlayerStore()
 const baseballStore = useBaseballStore()
 const { currentRoom } = storeToRefs(roomStore)
-const { currentGame } = storeToRefs(roomGameStore)
+const { currentGame, allRoundOver } = storeToRefs(roomGameStore)
 const { currentPlayer, roomPlayers, manager } = storeToRefs(roomPlayerStore)
 const {
   isStart,
@@ -61,9 +61,12 @@ const {
   normalText,
   taggerText,
   nextTurn,
+  isAnswer,
   isOver,
   hasTried,
+  scorerId,
 } = storeToRefs(baseballStore)
+const { nextRound } = roomGameStore
 const { getTaggerIndex } = roomPlayerStore
 const { setNextTurn, missAttempt, clearAnswer } = baseballStore
 const isManager = computed(() => manager.value.memberId === currentPlayer.value.memberId)
@@ -106,7 +109,6 @@ watchEffect(() => {
 
 watchEffect(() => {
   if (isRoundStart.value && isManager.value) {
-    console.log('round start')
     initRound()
   }
 })
@@ -170,7 +172,39 @@ const proceedToNextTurn = () => {
 }
 
 const handleMiss = () => {
+  if (isAnswer.value) {
+    const request = {
+      memberId: scorerId.value,
+      earn: 35,
+    }
+
+    roomSocket.score(currentRoom.value.id, request)
+
+    nextRound()
+
+    if (allRoundOver.value) {
+      console.log('게임 종료')
+      return
+    }
+
+    gameStart()
+  }
+
   if (isOver.value) {
+    const request = {
+      memberId: tagger.value.memberId,
+      earn: 35,
+    }
+
+    roomSocket.score(currentRoom.value.id, request)
+
+    nextRound()
+
+    if (allRoundOver.value) {
+      console.log('게임 종료')
+      return
+    }
+
     gameStart()
   }
 
@@ -188,6 +222,24 @@ const handleMiss = () => {
   timerInit.value = 0
 
   setTimeout(() => {
+    if (isOver.value) {
+      const request = {
+        memberId: tagger.value.memberId,
+        earn: 35,
+      }
+
+      roomSocket.score(currentRoom.value.id, request)
+
+      nextRound()
+
+      if (allRoundOver.value) {
+        console.log('게임 종료')
+        return
+      }
+
+      gameStart()
+    }
+
     proceedToNextTurn()
   }, 1000)
 }

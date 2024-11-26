@@ -96,4 +96,15 @@ public class RoomPlayer {
         .build();
   }
 
+  public RoomPlayer earnScore(int score) {
+    return RoomPlayer.builder()
+        .id(id)
+        .memberId(memberId)
+        .roomId(roomId)
+        .role(role)
+        .score(this.score + score)
+        .status(status)
+        .build();
+  }
+
 }

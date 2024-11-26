@@ -5,7 +5,7 @@ import { GameMessageType } from '@/enums/GameType'
 export const useBaseballStore = defineStore('baseball', () => {
   // state
   const condition = ref()
-  const currentHit = ref(0)
+  const currentHit = ref(1)
   const tagger = ref()
   const normalText = ref()
   const taggerText = ref()
@@ -15,6 +15,7 @@ export const useBaseballStore = defineStore('baseball', () => {
   const isOver = ref(false)
   const hasTried = ref(false)
   const initialClose = ref(true)
+  const scorerId = ref()
 
   // getters
   const isBeforeStart = computed(() => stage.value === GameMessageType.BEFORE_START)
@@ -24,6 +25,11 @@ export const useBaseballStore = defineStore('baseball', () => {
 
   // action
   const updateCondition = (data, member) => {
+    currentHit.value = 1
+    isAnswer.value = false
+    isOver.value = false
+    hasTried.value = false
+    initialClose.value = true
     stage.value = GameMessageType.START
     condition.value = data
     tagger.value = member
@@ -61,6 +67,11 @@ export const useBaseballStore = defineStore('baseball', () => {
   }
 
   const missAttempt = () => {
+    if (currentHit.value == condition.value.maxCount) {
+      isOver.value = true
+    }
+
+    currentHit.value++
     normalText.value = `시간 초과!`
     taggerText.value = normalText.value
   }
@@ -71,11 +82,13 @@ export const useBaseballStore = defineStore('baseball', () => {
     isOver.value = data.isOver
     currentHit.value = data.nextCount
     normalText.value = data.message
+    scorerId.value = data.memberId
     taggerText.value = normalText.value
   }
 
   const clearTry = () => {
     hasTried.value = false
+    scorerId.value = null
   }
 
   const clearAnswer = () => {
@@ -99,6 +112,7 @@ export const useBaseballStore = defineStore('baseball', () => {
     isOver,
     hasTried,
     initialClose,
+    scorerId,
     updateCondition,
     setAnswer,
     incrementConfirm,

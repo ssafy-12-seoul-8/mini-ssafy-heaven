@@ -43,17 +43,17 @@ public class BaseballCondition {
     return Objects.equals(trial, currentBall);
   }
 
-  public boolean isOver(boolean isHomeRun, int currentCount) {
-    if (isHomeRun) {
-      return true;
-    }
-
+  public boolean isOver(int currentCount) {
     return currentCount == maxCount;
   }
 
-  public String attempt(String trial) {
+  public String attempt(boolean isOver, String trial) {
+    if (isOver) {
+      return "모든 시도가 끝났습니다! 술래 +35";
+    }
+
     if (isHomeRun(trial)) {
-      return "정답입니다!";
+      return "정답입니다! +35";
     }
 
     int strikeCount = 0;

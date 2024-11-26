@@ -47,6 +47,12 @@ const doGame = (data) => {
   gameType.instance.doAction(gameMessageType, data.payload)
 }
 
+const doScore = (data) => {
+  const { updatePlayers } = useRoomPlayerStore()
+
+  updatePlayers(data.roomPlayers)
+}
+
 export const MessageType = {
   ENTER: {
     name: 'ENTER',
@@ -81,6 +87,7 @@ export const MessageType = {
   SCORE: {
     name: 'SCORE',
     lower: 'score',
+    action: doScore,
   },
   GAME_OVER: {
     name: 'GAME_OVER',

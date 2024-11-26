@@ -76,8 +76,8 @@ public class BaseballPlayService implements GamePlayService<BaseballCondition> {
         .orElseThrow(
             () -> new NoSuchElementException(InGameErrorCode.NO_GAME_FOR_ROOM.getMessage()));
     boolean isAnswer = condition.isHomeRun(trial);
-    boolean isOver = condition.isOver(isAnswer, currentCount);
-    String message = condition.attempt(trial);
+    boolean isOver = condition.isOver(currentCount);
+    String message = condition.attempt(isOver, trial);
     GameTryResponse response = GameTryResponse.from(
         isAnswer, isOver, currentCount + 1, memberId, message);
 
@@ -104,7 +104,7 @@ public class BaseballPlayService implements GamePlayService<BaseballCondition> {
   private static int calculateMaxCount(int playerCount) {
     int limit = playerCount % 2 == 0 ? 6 : 4;
 
-    return limit * playerCount;
+    return limit * (playerCount - 1);
   }
 
   private static RoomPlayer decideTagger(List<RoomPlayer> players) {

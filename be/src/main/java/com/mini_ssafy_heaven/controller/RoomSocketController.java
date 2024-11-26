@@ -8,6 +8,7 @@ import com.mini_ssafy_heaven.dto.request.GameRequest;
 import com.mini_ssafy_heaven.dto.request.GameTryRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
 import com.mini_ssafy_heaven.dto.request.RoundStartRequest;
+import com.mini_ssafy_heaven.dto.request.ScoreRequest;
 import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
@@ -17,6 +18,7 @@ import com.mini_ssafy_heaven.dto.response.GameResponse;
 import com.mini_ssafy_heaven.dto.response.GameTryResponse;
 import com.mini_ssafy_heaven.dto.response.MessageResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
+import com.mini_ssafy_heaven.dto.response.ScoreResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.StompController;
 import com.mini_ssafy_heaven.service.RoomSocketService;
@@ -88,6 +90,14 @@ public class RoomSocketController {
     StartResponse response = roomSocketService.start(id);
 
     return MessageResponse.start(response);
+  }
+
+  @MessageMapping("/{id}/score")
+  @SendTo("/game/{id}")
+  public MessageResponse<ScoreResponse> score(@DestinationVariable("id") Long id, ScoreRequest request) {
+    ScoreResponse response = roomSocketService.score(id, request);
+
+    return MessageResponse.score(response);
   }
 
   @MessageMapping("/{id}/game/start")

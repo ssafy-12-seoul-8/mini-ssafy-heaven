@@ -4,7 +4,6 @@ import com.mini_ssafy_heaven.dao.RoomDao;
 import com.mini_ssafy_heaven.dao.RoomGameDao;
 import com.mini_ssafy_heaven.dao.RoomPlayerDao;
 import com.mini_ssafy_heaven.domain.Room;
-import com.mini_ssafy_heaven.domain.RoomGameScore;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
 import com.mini_ssafy_heaven.domain.enums.GameType;
 import com.mini_ssafy_heaven.dto.query.RoomPlayerNameDto;
@@ -16,6 +15,7 @@ import com.mini_ssafy_heaven.dto.request.GameRequest;
 import com.mini_ssafy_heaven.dto.request.GameTryRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
 import com.mini_ssafy_heaven.dto.request.RoundStartRequest;
+import com.mini_ssafy_heaven.dto.request.ScoreRequest;
 import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
@@ -24,12 +24,12 @@ import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
 import com.mini_ssafy_heaven.dto.response.GameTryResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
+import com.mini_ssafy_heaven.dto.response.ScoreResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.Lock;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
 import com.mini_ssafy_heaven.global.exception.code.RoomPlayerErrorCode;
 import com.mini_ssafy_heaven.repository.DescriptionReadCountRepository;
-import com.mini_ssafy_heaven.repository.RoomGameScoreRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -44,7 +44,6 @@ public class RoomSocketServiceImpl implements RoomSocketService {
   private final RoomPlayerDao roomPlayerDao;
   private final RoomDao roomDao;
   private final RoomGameDao roomGameDao;
-  private final RoomGameScoreRepository roomGameScoreRepository;
   private final DescriptionReadCountRepository descriptionReadCountRepository;
 
   @Override
@@ -124,11 +123,20 @@ public class RoomSocketServiceImpl implements RoomSocketService {
 
     roomDao.update(started);
 
-    List<RoomGameScore> cacheScore = buildScoreCache(players);
-
-    roomGameScoreRepository.saveAll(cacheScore);
-
     return new StartResponse(started.getStatus());
+  }
+
+  @Override
+  public ScoreResponse score(Long roomId, ScoreRequest request) {
+    RoomPlayer roomPlayer = roomPlayerDao.findByRoomAndMember(roomId, request.memberId())
+        .orElseThrow(() -> new NoSuchElementException(RoomPlayerErrorCode.NOT_JOINED.getMessage()));
+    RoomPlayer scored = roomPlayer.earnScore(request.earn());
+
+    roomPlayerDao.update(scored);
+
+    List<RoomPlayerNameDto> playersWithRank = roomPlayerDao.findAllWithNamesByRoomId(roomId);
+
+    return new ScoreResponse(playersWithRank);
   }
 
   @Override
@@ -182,12 +190,6 @@ public class RoomSocketServiceImpl implements RoomSocketService {
     return roomPlayers.stream()
         .filter(RoomPlayer::isReady)
         .count();
-  }
-
-  private List<RoomGameScore> buildScoreCache(List<RoomPlayer> players) {
-    return players.stream()
-        .map(RoomGameScore::from)
-        .toList();
   }
 
 }

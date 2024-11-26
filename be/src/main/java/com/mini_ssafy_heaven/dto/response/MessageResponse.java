@@ -24,6 +24,10 @@ public record MessageResponse<T>(SocketMessageType type, T payload) {
     return new MessageResponse<>(SocketMessageType.START, payload);
   }
 
+  public static <T> MessageResponse<T> score(T payload) {
+    return new MessageResponse<>(SocketMessageType.SCORE, payload);
+  }
+
   public static <T> MessageResponse<T> game(T payload) {
     return new MessageResponse<>(SocketMessageType.GAME, payload);
   }
