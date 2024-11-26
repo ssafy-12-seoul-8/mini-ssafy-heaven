@@ -1,4 +1,4 @@
-name: 배포 파이프라인
+name: 미니싸피천국 백엔드 배포 파이프라인
 
 on:
   push:
@@ -31,7 +31,6 @@ jobs:
         run: |
           touch ./.env
           echo "${{ secrets.BACK_BUILD_ENV }}" > ./.env
-          cat ./.env
 
       - name: Gradle 캐싱
         uses: actions/cache@v3
@@ -86,14 +85,14 @@ jobs:
         id: render-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ secrets.dev-task-definition }}
-          container-name: ${{ secrets.dev-ecs-container-name }}
+          task-definition: ${{ secrets.DEV_TASK_DEFINITION }}
+          container-name: ${{ secrets.DEV_ECS_CONTAINER_NAME }}
           image: ${{ steps.build-docker.outputs.image }}
 
       - name: ECS Task 실행
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
-          service: ${{ secrets.dev-ecs-service }}
-          cluster: ${{ secrets.dev-ecs-cluster }}
+          service: ${{ secrets.DEV_ECS_SERVICE }}
+          cluster: ${{ secrets.DEV_ECS_CLUSTER }}
           wait-for-service-stability: true

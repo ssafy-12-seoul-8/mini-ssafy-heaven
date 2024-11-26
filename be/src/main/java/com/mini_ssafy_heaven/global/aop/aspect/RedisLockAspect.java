@@ -27,9 +27,9 @@ public class RedisLockAspect {
   public Object lock(ProceedingJoinPoint joinPoint, Long id) throws Throwable {
     Lock lockAnnotation = getAnnotation(joinPoint);
     String key = lockAnnotation.value() + ":" + id;
-    Long waitTime =
+    long waitTime =
         lockAnnotation.waitTime() == 0 ? lockProperties.waitTime() : lockAnnotation.waitTime();
-    Long leaseTime =
+    long leaseTime =
         lockAnnotation.leaseTime() == 0 ? lockProperties.leaseTime() : lockAnnotation.leaseTime();
     RLock lock = redissonClient.getLock(key);
 

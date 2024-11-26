@@ -179,10 +179,10 @@ watchEffect(() => {
     }
 
     roomSocket.score(currentRoom.value.id, request)
-  }
 
-  isAnswer.value = false
-  nextGameFlag.value = true
+    isAnswer.value = false
+    nextGameFlag.value = true
+  }
 })
 
 watchEffect(() => {
@@ -193,10 +193,10 @@ watchEffect(() => {
     }
 
     roomSocket.score(currentRoom.value.id, request)
-  }
 
-  isOver.value = false
-  nextGameFlag.value = true
+    isOver.value = false
+    nextGameFlag.value = true
+  }
 })
 
 const handleMiss = async () => {
@@ -211,6 +211,8 @@ const handleMiss = async () => {
 
     clearAnswer()
     gameStart()
+
+    nextGameFlag.value = false
 
     return
   }
@@ -240,6 +242,7 @@ const handleMiss = async () => {
       }
 
       initialClose.value = false
+      nextGameFlag.value = false
 
       gameStart()
 
