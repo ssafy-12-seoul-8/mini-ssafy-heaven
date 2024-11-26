@@ -25,10 +25,12 @@ import { useRoute, useRouter } from 'vue-router'
 import BaseButton from './components/BaseButton.vue'
 import Container from './components/BaseContainer.vue'
 import { memberApi } from '@/apis/members'
+import { useMemberStore  } from '@/stores/members'
 
 const menuVisible = ref(false)
 const route = useRoute()
 const router = useRouter()
+const memberStore = useMemberStore();
 
 const isRoomsView = computed(() => route.path === '/rooms')
 console.log(route.path)
@@ -46,11 +48,14 @@ const logout = () => {
   memberApi
     .logout()
     .then(() => {
+      memberStore.clearMe();
       moveToMain()
       menuVisible.value = false
     })
     .catch((err) => {
-      alert(err.response.data.message)
+      console.error(err);
+      alert('로그아웃이 불가합니다.')
+      memberStore.clearMe();
       moveToMain()
       menuVisible.value = false
     })
