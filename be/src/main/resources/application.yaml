@@ -16,14 +16,10 @@ spring:
 lock:
   wait-time: 2000
   lease-time: 5000
-springdoc:
-  swagger-ui:
-    path: /docs
-    operations-sorter: alpha
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
 mybatis:
   type-aliases-package: com.mini_ssafy_heaven.domain
   configuration:
     map-underscore-to-camel-case: true
   mapper-locations: classpath:mapper/**/*.xml
+client:
+  url: ${CLIENT_URL}

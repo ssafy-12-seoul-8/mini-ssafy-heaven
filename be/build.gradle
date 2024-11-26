@@ -35,7 +35,8 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-aop:3.3.5'
-	
+	implementation 'org.springframework.boot:spring-boot-starter-actuator:3.3.6'
+
 	// socket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket:3.3.5'
 	
