@@ -57,6 +57,7 @@ const login = async () => {
 
   memberApi
     .login(request)
+    .then(() => fetchMe())
     .then(() => {
       router.push({ path: '/rooms' })
     })
@@ -70,12 +71,16 @@ const login = async () => {
 const loginGuest = () => {
   memberApi
     .loginGuest()
-    .then((res) => afterGuestLogin(res.data))
+    .then((res) => afterLogin(res.data))
     .then(() => moveToMain())
     .catch((err) => console.error(err))
 }
 
-const afterGuestLogin = (data) => {
+const fetchMe = () => {
+  return memberApi.getDetail().then((res) => afterLogin(res.data))
+}
+
+const afterLogin = (data) => {
   updateMe(data.nickname)
 }
 
