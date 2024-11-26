@@ -17,8 +17,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      working-directiory: ./be
+    defaults:
+      run:
+        working-directiory: ./be
 
     steps:
       - name: 체크아웃

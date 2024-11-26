@@ -13,8 +13,9 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      working-directiory: ./be
+    defaults:
+      run:
+        working-directiory: ./be
 
     steps:
       - name: 체크아웃
@@ -31,9 +32,6 @@ jobs:
           touch ./.env
           echo "${{ secrets.BACK_BUILD_ENV }}" > ./.env
           cat ./.env
-
-      - name: Docker Compose
-        run: docker compuse up -d
 
       - name: Gradle 캐싱
         uses: actions/cache@v3
