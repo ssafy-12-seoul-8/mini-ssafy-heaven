@@ -14,7 +14,6 @@ import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
-import com.mini_ssafy_heaven.dto.response.RoundStartResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
 
 public interface RoomSocketService {
@@ -35,6 +34,6 @@ public interface RoomSocketService {
 
   GameResponse<DescriptionReadResponse> countRead(Long roomId, DescriptionReadRequest request);
 
-  GameResponse<RoundStartResponse> roundStart(Long roomId, RoundStartRequest request);
+  GameResponse<Void> roundStart(RoundStartRequest request);
 
 }

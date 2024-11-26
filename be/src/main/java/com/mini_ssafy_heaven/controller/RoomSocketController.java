@@ -15,12 +15,10 @@ import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
 import com.mini_ssafy_heaven.dto.response.MessageResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
-import com.mini_ssafy_heaven.dto.response.RoundStartResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.StompController;
 import com.mini_ssafy_heaven.service.RoomSocketService;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.javassist.runtime.Desc;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -120,8 +118,8 @@ public class RoomSocketController {
 
   @MessageMapping("/{id}/game/round-start")
   @SendTo("/game/{id}")
-  public MessageResponse<GameResponse<RoundStartResponse>> roundStart(@DestinationVariable("id") Long id, RoundStartRequest request) {
-    GameResponse<RoundStartResponse> response = roomSocketService.roundStart(id, request);
+  public MessageResponse<GameResponse<Void>> roundStart(@DestinationVariable("id") Long id, RoundStartRequest request) {
+    GameResponse<Void> response = roomSocketService.roundStart(request);
 
     return MessageResponse.game(response);
   }

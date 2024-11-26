@@ -3,7 +3,6 @@ package com.mini_ssafy_heaven.service;
 import com.mini_ssafy_heaven.dao.RoomDao;
 import com.mini_ssafy_heaven.dao.RoomGameDao;
 import com.mini_ssafy_heaven.dao.RoomPlayerDao;
-import com.mini_ssafy_heaven.domain.DescriptionReadCount;
 import com.mini_ssafy_heaven.domain.Room;
 import com.mini_ssafy_heaven.domain.RoomGameScore;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
@@ -23,10 +22,8 @@ import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
-import com.mini_ssafy_heaven.dto.response.RoundStartResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.Lock;
-import com.mini_ssafy_heaven.global.exception.code.InGameErrorCode;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
 import com.mini_ssafy_heaven.global.exception.code.RoomPlayerErrorCode;
 import com.mini_ssafy_heaven.repository.DescriptionReadCountRepository;
@@ -155,15 +152,15 @@ public class RoomSocketServiceImpl implements RoomSocketService {
     GameType gameType = GameType.get(request.gameType());
     GamePlayService<?> gamePlayService = gameType.getGamePlayService();
 
-    return gamePlayService.readDescription(id);
+    return gamePlayService.readDescription(id, request.totalCount());
   }
 
   @Override
-  public GameResponse<RoundStartResponse> roundStart(Long roomId, RoundStartRequest request) {
+  public GameResponse<Void> roundStart(RoundStartRequest request) {
     GameType gameType = GameType.get(request.gameType());
     GamePlayService<?> gamePlayService = gameType.getGamePlayService();
 
-    return gamePlayService.roundStart(roomId);
+    return gamePlayService.roundStart();
   }
 
   private void deleteRoom(Long roomId) {

@@ -8,11 +8,9 @@ import com.mini_ssafy_heaven.domain.enums.GameMessageType;
 import com.mini_ssafy_heaven.domain.enums.GameType;
 import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
-import com.mini_ssafy_heaven.dto.response.RoundStartResponse;
 import com.mini_ssafy_heaven.global.exception.code.InGameErrorCode;
 import com.mini_ssafy_heaven.repository.BaseballConditionRepository;
 import com.mini_ssafy_heaven.repository.DescriptionReadCountRepository;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -48,7 +46,7 @@ public class BaseballPlayService implements GamePlayService<BaseballCondition> {
   }
 
   @Override
-  public GameResponse<DescriptionReadResponse> readDescription(Long roomId) {
+  public GameResponse<DescriptionReadResponse> readDescription(Long roomId, int totalCount) {
     DescriptionReadCount readCount = descriptionReadCountRepository.findById(roomId)
         .orElseGet(() -> new DescriptionReadCount(roomId, 0));
     DescriptionReadCount incremented = readCount.increment();
@@ -57,16 +55,17 @@ public class BaseballPlayService implements GamePlayService<BaseballCondition> {
 
     DescriptionReadResponse response = new DescriptionReadResponse(incremented.getReadCount());
 
+    if (incremented.getReadCount() >= totalCount) {
+      descriptionReadCountRepository.deleteById(roomId);
+    }
+
     return new GameResponse<>(GameType.BASEBALL, GameMessageType.CONFIRM, response);
   }
 
   @Override
-  public GameResponse<RoundStartResponse> roundStart(Long roomId) {
-    LocalDateTime nextLimit = LocalDateTime.now()
-        .plusSeconds(12);
-    RoundStartResponse response = new RoundStartResponse(nextLimit);
+  public GameResponse<Void> roundStart() {
 
-    return new GameResponse<>(GameType.BASEBALL, GameMessageType.ROUND_START, response);
+    return new GameResponse<>(GameType.BASEBALL, GameMessageType.ROUND_START, null);
   }
 
   @Override

@@ -42,5 +42,5 @@ export const roomSocket = {
   gameStart: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/start`, body),
   gameSetAnswer: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/set-answer`, body),
   gameConfirm: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/confirm`, body),
-  gameRoundStart: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/round-start`, body)
+  gameRoundStart: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/round-start`, body),
 }

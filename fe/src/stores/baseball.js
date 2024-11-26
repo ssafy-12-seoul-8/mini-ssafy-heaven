@@ -40,12 +40,10 @@ export const useBaseballStore = defineStore('baseball', () => {
     }
   }
 
-  const stageToRoundStart = (data) => {
+  const stageToRoundStart = () => {
     if (stage.value !== GameMessageType.ROUND_START) {
       stage.value = GameMessageType.ROUND_START
     }
-
-    nextLimit.value = data
   }
 
   const setNextTurn = (index) => {

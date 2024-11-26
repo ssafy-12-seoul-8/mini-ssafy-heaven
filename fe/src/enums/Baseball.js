@@ -41,10 +41,10 @@ const confirm = (data) => {
   incrementConfirm(currentRoom.value.totalCount, data.readCount)
 }
 
-const roundStart = (data) => {
+const roundStart = () => {
   const { stageToRoundStart } = useBaseballStore()
 
-  stageToRoundStart(data.nextLimit)
+  stageToRoundStart()
 }
 
 export const Baseball = {
@@ -62,7 +62,7 @@ export const Baseball = {
   },
   roundStart: {
     value: () => GameMessageType.ROUND_START,
-    action: roundStart
+    action: roundStart,
   },
   doAction: (messageType, payload) => findProcess(messageType).action(payload),
 }
