@@ -90,7 +90,7 @@ jobs:
           image: ${{ steps.build-docker.outputs.image }}
 
       - name: ECS Task 실행
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
           service: ${{ secrets.DEV_ECS_SERVICE }}
