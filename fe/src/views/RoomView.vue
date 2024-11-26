@@ -5,7 +5,12 @@
       <ChatBox :player="currentPlayer" />
     </div>
     <div id="player-list-container-wrapper" class="w-screen h-5/6 absolute left-0">
-      <PlayerList @ready="toggleReady" @exit="handleExit" @start="handleStart" />
+      <PlayerList
+        @ready="toggleReady"
+        @exit="handleExit"
+        @start="handleStart"
+        @to-room="handleBackToRoom"
+      />
     </div>
   </div>
 </template>
@@ -30,7 +35,7 @@ const roomPlayerStore = useRoomPlayerStore()
 const roomStore = useRoomStore()
 const chatStore = useChatStore()
 const roomGameStore = useRoomGameStore()
-const { currentRoom } = storeToRefs(roomStore)
+const { currentRoom, isJustOver } = storeToRefs(roomStore)
 const { currentPlayer } = storeToRefs(roomPlayerStore)
 const { roomGames } = storeToRefs(roomGameStore)
 const { updatePlayers } = roomPlayerStore
@@ -40,15 +45,6 @@ const { clearChats } = chatStore
 
 onMounted(() => {
   validatePlayer()
-
-  const storedInSession = sessionStorage.getItem('currentRoomId')
-  const myNickname = JSON.parse(sessionStorage.getItem('me')).nickname
-
-  storedInSession
-    ? roomSocket.enter(params.id)
-    : roomSocket.enter(params.id, { nickname: myNickname })
-
-  storeRoomIdInSession(params.id)
 })
 
 onUnmounted(() => {
@@ -60,6 +56,22 @@ const validatePlayer = () => {
   roomApi
     .getDetail(params.id)
     .then((res) => fetchRoomAndPlayers(res.data))
+    .then(() => {
+      const storedInSession = sessionStorage.getItem('currentRoomId')
+      const myNickname = JSON.parse(sessionStorage.getItem('me')).nickname
+      console.log(storedInSession)
+
+      storedInSession
+        ? roomSocket.enter(params.id)
+        : roomSocket.enter(params.id, { nickname: myNickname })
+
+      storeRoomIdInSession(params.id)
+    })
+    .then(() => {
+      const first = roomGames.value[0]
+
+      updateCurrentGame(first.title)
+    })
     .catch((err) => handleError(err))
 }
 
@@ -90,16 +102,24 @@ const handleExit = async (memberId, nickname) => {
     nickname: nickname,
   }
 
+  isJustOver.value = false
   await roomSocket.exit(currentRoom.value.id, request)
   router.push({ path: '/rooms' })
 }
 
 const handleStart = () => {
   roomSocket.start(currentRoom.value.id)
+}
 
-  const first = roomGames.value[0]
+const handleBackToRoom = (memberId) => {
+  const request = {
+    memberId: memberId,
+  }
 
-  updateCurrentGame(first.title)
+  isJustOver.value = false
+
+  roomSocket.backRoom(currentRoom.value.id, request)
+  validatePlayer()
 }
 </script>
 

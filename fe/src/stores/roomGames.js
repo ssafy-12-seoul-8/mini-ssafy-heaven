@@ -13,7 +13,7 @@ export const useRoomGameStore = defineStore('roomGame', () => {
       return false
     }
 
-    return currentRound.value === currentGame.value.roundLimit
+    return currentRound.value - 1 === currentGame.value.roundLimit
   })
 
   // actions
@@ -28,6 +28,12 @@ export const useRoomGameStore = defineStore('roomGame', () => {
 
   const nextRound = () => {
     currentRound.value++
+  }
+
+  const clearCurrentGame = () => {
+    sessionStorage.removeItem('currentRoomGameTitle')
+    currentGame.value = null
+    currentRound.value = 0
   }
 
   watchEffect(() => {
@@ -45,5 +51,6 @@ export const useRoomGameStore = defineStore('roomGame', () => {
     updateRoomGames,
     updateCurrentGame,
     nextRound,
+    clearCurrentGame,
   }
 })

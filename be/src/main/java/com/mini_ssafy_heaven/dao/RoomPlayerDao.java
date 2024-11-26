@@ -29,4 +29,6 @@ public interface RoomPlayerDao {
 
   void deleteById(Long id);
 
+  void deleteByRoomId(Long roomId);
+
 }

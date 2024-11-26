@@ -36,6 +36,8 @@ public class RedisLockAspect {
     try {
       boolean locked = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
 
+      log.debug("locked : {}", lock);
+
       return doLock(locked, key, joinPoint);
     } catch (InterruptedException e) {
       log.debug("error occurred", e);
@@ -56,7 +58,7 @@ public class RedisLockAspect {
   private Object doLock(boolean locked, String key, ProceedingJoinPoint joinPoint)
       throws Throwable {
     if (!locked) {
-      log.debug("lock failed for {}", key);
+      log.info("lock failed for {}", key);
 
       return null;
     }

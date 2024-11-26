@@ -39,10 +39,12 @@ export const roomSocket = {
   },
   chat: (id, body) => stomp.send(id, MessageType.TALK.lower, body),
   start: (id) => stomp.send(id, MessageType.START.lower),
-  score: (id, body) => stomp.send(id, MessageType.SCORE.lower, body),
+  score: async (id, body) => stomp.send(id, MessageType.SCORE.lower, body),
   gameStart: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/start`, body),
   gameSetAnswer: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/set-answer`, body),
   gameConfirm: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/confirm`, body),
   gameRoundStart: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/round-start`, body),
   gameTry: (id, body) => stomp.send(id, `${MessageType.GAME.lower}/try`, body),
+  allOver: (id) => stomp.send(id, MessageType.ALL_OVER.lower),
+  backRoom: (id, body) => stomp.send(id, MessageType.BACK_ROOM.lower, body),
 }

@@ -45,4 +45,9 @@
 		WHERE
 		username=#{username};
 	</select>
+	<update id="update">
+		UPDATE members
+		SET username=#{member.username}, password=#{member.password}, nickname=#{member.nickname}, score=#{member.score}, updated_at=#{updatedAt}
+		WHERE id=#{member.id}
+	</update>
 </mapper>

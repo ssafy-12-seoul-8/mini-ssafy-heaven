@@ -32,4 +32,12 @@ public record MessageResponse<T>(SocketMessageType type, T payload) {
     return new MessageResponse<>(SocketMessageType.GAME, payload);
   }
 
+  public static <T> MessageResponse<T> allOver(T payload) {
+    return new MessageResponse<>(SocketMessageType.ALL_OVER, payload);
+  }
+
+  public static <T> MessageResponse<T> backToRoom(T payload) {
+    return new MessageResponse<>(SocketMessageType.READY, payload);
+  }
+
 }

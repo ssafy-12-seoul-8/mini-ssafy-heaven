@@ -10,6 +10,7 @@ import com.mini_ssafy_heaven.dto.request.ReadyRequest;
 import com.mini_ssafy_heaven.dto.request.RoundStartRequest;
 import com.mini_ssafy_heaven.dto.request.ScoreRequest;
 import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
+import com.mini_ssafy_heaven.dto.response.AllOverResponse;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
@@ -143,6 +144,22 @@ public class RoomSocketController {
         id, request);
 
     return MessageResponse.game(response);
+  }
+
+  @MessageMapping("/{id}/all-over")
+  @SendTo("/game/{id}")
+  public MessageResponse<AllOverResponse> allOver(@DestinationVariable("id") Long id) {
+    AllOverResponse response = roomSocketService.allOver(id);
+
+    return MessageResponse.allOver(response);
+  }
+
+  @MessageMapping("/{id}/back")
+  @SendTo("/game/{id}")
+  public MessageResponse<ReadyResponse> backRoom(@DestinationVariable("id") Long id, ReadyRequest request) {
+    ReadyResponse response = roomSocketService.backToRoom(id, request);
+
+    return MessageResponse.backToRoom(response);
   }
 
 }

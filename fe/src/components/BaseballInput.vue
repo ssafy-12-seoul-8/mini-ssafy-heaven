@@ -53,8 +53,24 @@ const validateNumbers = () => {
     return false
   }
 
-  if (fourth.value && !validateNumber(fourth.value)) {
+  if (first.value === second.value || first.value === third.value || second.value === third.value) {
+    failMessage.value = '겹치는 숫자가 존재합니다.'
     return false
+  }
+
+  if (fourth.value) {
+    if (!validateNumber(fourth.value)) {
+      return false
+    }
+
+    if (
+      first.value === fourth.value ||
+      second.value === fourth.value ||
+      third.value === fourth.value
+    ) {
+      failMessage.value = '겹치는 숫자가 존재합니다.'
+      return false
+    }
   }
 
   failMessage.value = ''

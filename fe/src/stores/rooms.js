@@ -6,6 +6,7 @@ export const useRoomStore = defineStore('room', () => {
   // state
   const currentRoom = ref({})
   const rooms = ref([])
+  const isJustOver = ref(false)
 
   // getters
   const isPossibleToStart = computed(() => {
@@ -16,6 +17,9 @@ export const useRoomStore = defineStore('room', () => {
     return currentRoom.value.totalCount === currentRoom.value.currentReadyCount
   })
   const isPlaying = computed(() => RoomStatus.isPlaying(currentRoom.value.status))
+  const isWaiting = computed(
+    () => RoomStatus.isWaiting(currentRoom.value.status) && !isJustOver.value,
+  )
 
   // actions
   const fetchRoomDetail = (roomDetail) => {
@@ -52,11 +56,17 @@ export const useRoomStore = defineStore('room', () => {
     sessionStorage.removeItem('currentRoomId')
   }
 
+  const roomOver = () => {
+    isJustOver.value = true
+  }
+
   return {
     currentRoom,
     rooms,
     isPossibleToStart,
     isPlaying,
+    isWaiting,
+    isJustOver,
     fetchRoomDetail,
     storeRoomIdInSession,
     fetchRooms,
@@ -65,5 +75,6 @@ export const useRoomStore = defineStore('room', () => {
     updateStatus,
     clearRooms,
     clearCurrentRoom,
+    roomOver,
   }
 })

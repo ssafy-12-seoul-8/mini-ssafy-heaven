@@ -41,9 +41,16 @@ import RoundStartTimer from './RoundStartTimer.vue'
 const isDescriptionOpen = ref(false)
 const hasRead = ref(false)
 const content = ref()
-const isTagger = computed(() => currentPlayer.value.memberId === tagger.value.memberId)
+const isTagger = computed(() => {
+  if (!tagger.value) {
+    return false
+  }
+
+  return currentPlayer.value.memberId === tagger.value.memberId
+})
 const game = ref({})
 const timerInit = ref(0)
+const nextGameFlag = ref(false)
 const roomStore = useRoomStore()
 const roomGameStore = useRoomGameStore()
 const roomPlayerStore = useRoomPlayerStore()
@@ -65,6 +72,7 @@ const {
   isOver,
   hasTried,
   scorerId,
+  initialClose,
 } = storeToRefs(baseballStore)
 const { nextRound } = roomGameStore
 const { getTaggerIndex } = roomPlayerStore
@@ -114,21 +122,13 @@ watchEffect(() => {
 })
 
 watchEffect(() => {
-  if (!currentGame.value) {
+  if (!normalText.value) {
     content.value = '게임을 시작합니다!'
 
     return
   }
 
-  if (currentGame.value.title === '숫자야구') {
-    if (!normalText.value) {
-      content.value = '게임을 시작합니다!'
-
-      return
-    }
-
-    content.value = isTagger.value ? taggerText.value : normalText.value
-  }
+  content.value = isTagger.value ? taggerText.value : normalText.value
 })
 
 const gameStart = () => {
@@ -171,41 +171,48 @@ const proceedToNextTurn = () => {
   timerInit.value = 8
 }
 
-const handleMiss = () => {
-  if (isAnswer.value) {
+watchEffect(() => {
+  if (isAnswer.value && scorerId.value === currentPlayer.value.memberId) {
     const request = {
       memberId: scorerId.value,
       earn: 35,
     }
 
     roomSocket.score(currentRoom.value.id, request)
-
-    nextRound()
-
-    if (allRoundOver.value) {
-      console.log('게임 종료')
-      return
-    }
-
-    gameStart()
   }
 
-  if (isOver.value) {
+  isAnswer.value = false
+  nextGameFlag.value = true
+})
+
+watchEffect(() => {
+  if (isOver.value && isTagger.value) {
     const request = {
       memberId: tagger.value.memberId,
       earn: 35,
     }
 
     roomSocket.score(currentRoom.value.id, request)
+  }
 
+  isOver.value = false
+  nextGameFlag.value = true
+})
+
+const handleMiss = async () => {
+  if (nextGameFlag.value) {
     nextRound()
 
     if (allRoundOver.value) {
-      console.log('게임 종료')
+      roomSocket.allOver(currentRoom.value.id)
+
       return
     }
 
+    clearAnswer()
     gameStart()
+
+    return
   }
 
   if (hasTried.value) {
@@ -220,25 +227,26 @@ const handleMiss = () => {
   missAttempt()
 
   timerInit.value = 0
+  initialClose.value = true
 
-  setTimeout(() => {
-    if (isOver.value) {
-      const request = {
-        memberId: tagger.value.memberId,
-        earn: 35,
-      }
-
-      roomSocket.score(currentRoom.value.id, request)
-
+  setTimeout(async () => {
+    if (nextGameFlag.value) {
       nextRound()
 
       if (allRoundOver.value) {
-        console.log('게임 종료')
+        roomSocket.allOver(currentRoom.value.id)
+
         return
       }
 
+      initialClose.value = false
+
       gameStart()
+
+      return
     }
+
+    initialClose.value = false
 
     proceedToNextTurn()
   }, 1000)

@@ -10,6 +10,7 @@ import com.mini_ssafy_heaven.dto.request.ReadyRequest;
 import com.mini_ssafy_heaven.dto.request.RoundStartRequest;
 import com.mini_ssafy_heaven.dto.request.ScoreRequest;
 import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
+import com.mini_ssafy_heaven.dto.response.AllOverResponse;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
@@ -43,5 +44,9 @@ public interface RoomSocketService {
   GameResponse<Void> roundStart(RoundStartRequest request);
 
   GameResponse<GameTryResponse> gameTry(Long roomId, GameTryRequest request);
+
+  AllOverResponse allOver(Long roomId);
+
+  ReadyResponse backToRoom(Long roomId, ReadyRequest request);
 
 }

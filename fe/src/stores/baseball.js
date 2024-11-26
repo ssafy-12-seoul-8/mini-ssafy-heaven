@@ -24,12 +24,19 @@ export const useBaseballStore = defineStore('baseball', () => {
   const isRoundStart = computed(() => stage.value === GameMessageType.ROUND_START)
 
   // action
+  const gameJustStart = () => {
+    stage.value = GameMessageType.BEFORE_START
+    normalText.value = '게임을 시작합니다!'
+    taggerText.value = normalText.value
+  }
+
   const updateCondition = (data, member) => {
     currentHit.value = 1
     isAnswer.value = false
     isOver.value = false
     hasTried.value = false
     initialClose.value = true
+    scorerId.value = null
     stage.value = GameMessageType.START
     condition.value = data
     tagger.value = member
@@ -78,11 +85,11 @@ export const useBaseballStore = defineStore('baseball', () => {
 
   const attempt = (data) => {
     hasTried.value = true
+    scorerId.value = data.memberId
     isAnswer.value = data.isAnswer
     isOver.value = data.isOver
     currentHit.value = data.nextCount
     normalText.value = data.message
-    scorerId.value = data.memberId
     taggerText.value = normalText.value
   }
 
@@ -95,6 +102,12 @@ export const useBaseballStore = defineStore('baseball', () => {
     clearTry()
 
     isAnswer.value = false
+  }
+
+  const gameOver = () => {
+    normalText.value = '모든 게임이 종료되었습니다!'
+    taggerText.value = normalText.value
+    stage.value = GameMessageType.GAME_OVER
   }
 
   return {
@@ -113,6 +126,7 @@ export const useBaseballStore = defineStore('baseball', () => {
     hasTried,
     initialClose,
     scorerId,
+    gameJustStart,
     updateCondition,
     setAnswer,
     incrementConfirm,
@@ -122,5 +136,6 @@ export const useBaseballStore = defineStore('baseball', () => {
     missAttempt,
     clearAnswer,
     openForFirstTrial,
+    gameOver,
   }
 })

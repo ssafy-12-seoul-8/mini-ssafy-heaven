@@ -18,6 +18,7 @@ export const GameMessageType = {
   SET_ANSWER: 'SET_ANSWER',
   ROUND_START: 'ROUND_START',
   TRY: 'TRY',
+  GAME_OVER: 'GAME_OVER',
 }
 
 export const findGameMessageType = (value) => {

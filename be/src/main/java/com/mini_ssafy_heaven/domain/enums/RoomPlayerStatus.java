@@ -19,4 +19,8 @@ public enum RoomPlayerStatus {
     return this == READY;
   }
 
+  public boolean isWaiting() {
+    return this == WAITING;
+  }
+
 }

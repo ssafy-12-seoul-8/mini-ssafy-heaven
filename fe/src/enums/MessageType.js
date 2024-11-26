@@ -3,6 +3,8 @@ import { useChatStore } from '@/stores/chats'
 import { useRoomStore } from '@/stores/rooms'
 import { RoomPlayerStatus } from './RoomPlayerStatus'
 import { findGameMessageType, findGameType } from './GameType'
+import { useRoomGameStore } from '@/stores/roomGames'
+import { useBaseballStore } from '@/stores/baseball'
 
 const handleChat = (message) => {
   const { addChat } = useChatStore()
@@ -36,7 +38,9 @@ const doReady = (data) => {
 
 const doStart = (data) => {
   const { updateStatus } = useRoomStore()
+  const { gameJustStart } = useBaseballStore()
 
+  gameJustStart()
   updateStatus(data.status)
 }
 
@@ -51,6 +55,18 @@ const doScore = (data) => {
   const { updatePlayers } = useRoomPlayerStore()
 
   updatePlayers(data.roomPlayers)
+}
+
+const doAllOver = (data) => {
+  const { updatePlayers } = useRoomPlayerStore()
+  const { roomOver } = useRoomStore()
+  const { clearCurrentGame } = useRoomGameStore()
+  const { gameOver } = useBaseballStore()
+
+  gameOver()
+  updatePlayers(data.roomPlayers)
+  clearCurrentGame()
+  roomOver()
 }
 
 export const MessageType = {
@@ -96,6 +112,11 @@ export const MessageType = {
   ALL_OVER: {
     name: 'ALL_OVER',
     lower: 'all-over',
+    action: doAllOver,
+  },
+  BACK_ROOM: {
+    name: 'BACK_ROOM',
+    lower: 'back',
   },
 }
 
