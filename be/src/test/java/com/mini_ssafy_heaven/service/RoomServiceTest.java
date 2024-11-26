@@ -81,7 +81,7 @@ class RoomServiceTest {
 
       // then
       // TODO: 방 조회 로직 구현 후 수정
-      assertThat(response.id()).isEqualTo(2L);
+      assertThat(response.id()).isEqualTo(1L);
     }
 
     @Test

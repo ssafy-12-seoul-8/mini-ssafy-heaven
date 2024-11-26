@@ -72,8 +72,8 @@ jobs:
         id: build-docker
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REGISTRY_ALIAS: ${{ secrets.ecr-registry-alias }}
-          REPOSITORY: ddudu-ecr
+          REGISTRY_ALIAS: ${{ secrets.ECR_REGISTRY_ALIAS }}
+          REPOSITORY: mini-ssafy-heaven-ecr
           IMAGE_TAG: ${{ github.sha }}
           PROFILE: dev
           FILE:
