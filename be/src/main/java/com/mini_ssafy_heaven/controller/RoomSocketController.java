@@ -6,6 +6,7 @@ import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.GameRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
+import com.mini_ssafy_heaven.dto.request.RoundStartRequest;
 import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
@@ -14,6 +15,7 @@ import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
 import com.mini_ssafy_heaven.dto.response.MessageResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
+import com.mini_ssafy_heaven.dto.response.RoundStartResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.StompController;
 import com.mini_ssafy_heaven.service.RoomSocketService;
@@ -112,6 +114,14 @@ public class RoomSocketController {
   public MessageResponse<GameResponse<DescriptionReadResponse>> countRead(@DestinationVariable("id") Long id, DescriptionReadRequest request) {
     GameResponse<DescriptionReadResponse> response = roomSocketService.countRead(
         id, request);
+
+    return MessageResponse.game(response);
+  }
+
+  @MessageMapping("/{id}/game/round-start")
+  @SendTo("/game/{id}")
+  public MessageResponse<GameResponse<RoundStartResponse>> roundStart(@DestinationVariable("id") Long id, RoundStartRequest request) {
+    GameResponse<RoundStartResponse> response = roomSocketService.roundStart(id, request);
 
     return MessageResponse.game(response);
   }
