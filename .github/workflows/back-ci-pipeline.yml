@@ -1,7 +1,9 @@
 name: Java CI with Gradle and MySQL
 
 on:
-  pull_request:
+  push:
+    paths:
+      - ./be
     branches:
       - dev
       - 'feat/**'
@@ -15,6 +17,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      working-directiory: ./be
+
     steps:
       - name: 체크아웃
         uses: actions/checkout@v4

@@ -2,6 +2,8 @@ name: 배포 파이프라인
 
 on:
   push:
+    paths:
+      - ./be
     branches:
       - dev
 
@@ -11,6 +13,9 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      working-directiory: ./be
+
     steps:
       - name: 체크아웃
         uses: actions/checkout@v4
