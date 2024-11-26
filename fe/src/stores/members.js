@@ -19,7 +19,14 @@ export const useMemberStore = defineStore('member', () => {
     sessionStorage.setItem('me', JSON.stringify(me.value))
   }
 
+  const clearMe = () => {
+    me.value = { nickname: null, score: null };
+    sessionStorage.removeItem('me');
+  };
+
   onMounted(() => {
+    if (me.value.nickname) return;
+
     const stored = JSON.parse(sessionStorage.getItem('me'))
 
     if (!stored) {
@@ -33,5 +40,6 @@ export const useMemberStore = defineStore('member', () => {
     me,
     myNickname,
     updateMe,
+    clearMe,
   }
 })
