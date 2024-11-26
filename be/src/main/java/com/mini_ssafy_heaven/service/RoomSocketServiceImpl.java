@@ -15,6 +15,7 @@ import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.GameRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
+import com.mini_ssafy_heaven.dto.request.RoundStartRequest;
 import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
@@ -22,6 +23,7 @@ import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
+import com.mini_ssafy_heaven.dto.response.RoundStartResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.Lock;
 import com.mini_ssafy_heaven.global.exception.code.InGameErrorCode;
@@ -154,6 +156,14 @@ public class RoomSocketServiceImpl implements RoomSocketService {
     GamePlayService<?> gamePlayService = gameType.getGamePlayService();
 
     return gamePlayService.readDescription(id);
+  }
+
+  @Override
+  public GameResponse<RoundStartResponse> roundStart(Long roomId, RoundStartRequest request) {
+    GameType gameType = GameType.get(request.gameType());
+    GamePlayService<?> gamePlayService = gameType.getGamePlayService();
+
+    return gamePlayService.roundStart(roomId);
   }
 
   private void deleteRoom(Long roomId) {

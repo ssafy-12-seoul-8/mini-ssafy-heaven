@@ -8,9 +8,11 @@ import com.mini_ssafy_heaven.domain.enums.GameMessageType;
 import com.mini_ssafy_heaven.domain.enums.GameType;
 import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
+import com.mini_ssafy_heaven.dto.response.RoundStartResponse;
 import com.mini_ssafy_heaven.global.exception.code.InGameErrorCode;
 import com.mini_ssafy_heaven.repository.BaseballConditionRepository;
 import com.mini_ssafy_heaven.repository.DescriptionReadCountRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -56,6 +58,15 @@ public class BaseballPlayService implements GamePlayService<BaseballCondition> {
     DescriptionReadResponse response = new DescriptionReadResponse(incremented.getReadCount());
 
     return new GameResponse<>(GameType.BASEBALL, GameMessageType.CONFIRM, response);
+  }
+
+  @Override
+  public GameResponse<RoundStartResponse> roundStart(Long roomId) {
+    LocalDateTime nextLimit = LocalDateTime.now()
+        .plusSeconds(12);
+    RoundStartResponse response = new RoundStartResponse(nextLimit);
+
+    return new GameResponse<>(GameType.BASEBALL, GameMessageType.ROUND_START, response);
   }
 
   @Override
