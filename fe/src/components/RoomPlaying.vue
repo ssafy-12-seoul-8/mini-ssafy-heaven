@@ -3,15 +3,22 @@
     <span v-if="currentGame" class="text-center text-xl">{{ currentGame.title }}</span>
     <div class="grow flex flex-col gap-4 justify-center items-center">
       {{ content }}
+      <BaseButton v-if="isBeforeStart && !hasRead" class="z-50" @click="openDescribtion"
+        >{{ currentGame.title }} 설명 보기</BaseButton
+      >
       <BaseballInput
         v-if="isStart && isTagger"
         :ball-count="condition.ballCount"
         @submit="submitAnswer"
       />
-      <BaseButton v-if="isBeforeTrial && !hasRead" class="z-50" @click="openDescribtion"
-        >{{ currentGame.title }} 설명 보기</BaseButton
-      >
-      <RoundStartTimer v-if="isRoundStart" @next="setNextTurnMember" />
+      <RoundStartTimer
+        v-if="isRoundStart"
+        @start="setStartMember"
+        @miss="handleMiss"
+        @answer="handleAnswer"
+        @try="handleTry"
+        :init="timerInit"
+      />
     </div>
     <ModalGameDescribe :is-open="isDescriptionOpen" :game="game" @ready="handleReady" />
   </div>
@@ -36,7 +43,7 @@ const hasRead = ref(false)
 const content = ref()
 const isTagger = computed(() => currentPlayer.value.memberId === tagger.value.memberId)
 const game = ref({})
-const turn = ref()
+const timerInit = ref(0)
 const roomStore = useRoomStore()
 const roomGameStore = useRoomGameStore()
 const roomPlayerStore = useRoomPlayerStore()
@@ -46,7 +53,7 @@ const { currentGame } = storeToRefs(roomGameStore)
 const { currentPlayer, roomPlayers, manager } = storeToRefs(roomPlayerStore)
 const {
   isStart,
-  isBeforeTrial,
+  isBeforeStart,
   isConfirm,
   isRoundStart,
   condition,
@@ -54,49 +61,12 @@ const {
   normalText,
   taggerText,
   nextTurn,
+  isOver,
+  hasTried,
 } = storeToRefs(baseballStore)
 const { getTaggerIndex } = roomPlayerStore
-const { setNextTurn } = baseballStore
+const { setNextTurn, missAttempt, clearAnswer } = baseballStore
 const isManager = computed(() => manager.value.memberId === currentPlayer.value.memberId)
-
-watchEffect(() => {
-  if (isConfirm.value && isManager.value) {
-    initRound()
-  }
-})
-
-watchEffect(() => {
-  if (!currentGame.value) {
-    content.value = '게임을 시작합니다!'
-
-    return
-  }
-
-  if (currentGame.value.title === '숫자야구') {
-    if (!normalText.value) {
-      content.value = '게임을 시작합니다!'
-
-      return
-    }
-
-    content.value = isTagger.value ? taggerText.value : normalText.value
-  }
-})
-
-watchEffect(() => {
-  if (isRoundStart.value) {
-    content.value = '라운드를 시작합니다!'
-
-    return
-  }
-
-  if (!nextTurn.value) {
-    return
-  }
-
-  turn.value = roomPlayers.value[nextTurn.value]
-  content.value = `${turn.value.nickname}님의 차례입니다. 채팅으로 답을 입력해주세요.`
-})
 
 const submitAnswer = (numbers) => {
   const request = {
@@ -128,20 +98,105 @@ const handleReady = () => {
   content.value = '다른 플레이어들을 기다리는 중입니다...'
 }
 
+watchEffect(() => {
+  if (isConfirm.value && isManager.value) {
+    gameStart()
+  }
+})
+
+watchEffect(() => {
+  if (isRoundStart.value && isManager.value) {
+    console.log('round start')
+    initRound()
+  }
+})
+
+watchEffect(() => {
+  if (!currentGame.value) {
+    content.value = '게임을 시작합니다!'
+
+    return
+  }
+
+  if (currentGame.value.title === '숫자야구') {
+    if (!normalText.value) {
+      content.value = '게임을 시작합니다!'
+
+      return
+    }
+
+    content.value = isTagger.value ? taggerText.value : normalText.value
+  }
+})
+
+const gameStart = () => {
+  const request = {
+    gameType: currentGame.value.title,
+  }
+
+  roomSocket.gameStart(currentRoom.value.id, request)
+}
+
 const initRound = () => {
   const request = {
     gameType: currentGame.value.title,
   }
 
   roomSocket.gameRoundStart(currentRoom.value.id, request)
+
+  timerInit.value = 3
 }
 
-const setNextTurnMember = () => {
+const setStartMember = () => {
   const taggerIndex = getTaggerIndex(tagger.value.memberId)
   const tempIndex = (taggerIndex + 1) % roomPlayers.value.length
   const turnIndex =
     tempIndex === taggerIndex ? (tempIndex + 1) % roomPlayers.value.length : tempIndex
 
-  setNextTurn(turnIndex)
+  setNextTurn(turnIndex, roomPlayers.value[turnIndex].nickname)
+
+  timerInit.value = 8
+}
+
+const proceedToNextTurn = () => {
+  const taggerIndex = getTaggerIndex(tagger.value.memberId)
+  const currentIndex = (nextTurn.value + 1) % roomPlayers.value.length
+  const nextTurnIndex =
+    currentIndex === taggerIndex ? (currentIndex + 1) % roomPlayers.value.length : currentIndex
+
+  setNextTurn(nextTurnIndex, roomPlayers.value[nextTurnIndex].nickname)
+
+  timerInit.value = 8
+}
+
+const handleMiss = () => {
+  if (isOver.value) {
+    gameStart()
+  }
+
+  if (hasTried.value) {
+    timerInit.value = 3
+
+    proceedToNextTurn()
+    clearAnswer()
+
+    return
+  }
+
+  missAttempt()
+
+  timerInit.value = 0
+
+  setTimeout(() => {
+    proceedToNextTurn()
+  }, 1000)
+}
+
+const handleAnswer = () => {
+  timerInit.value = 3
+}
+
+const handleTry = () => {
+  timerInit.value = 3
 }
 </script>

@@ -12,10 +12,12 @@ export const findGameType = (value) => {
 }
 
 export const GameMessageType = {
+  BEFORE_START: 'BEFORE_START',
+  CONFIRM: 'CONFIRM',
   START: 'START',
   SET_ANSWER: 'SET_ANSWER',
-  CONFIRM: 'CONFIRM',
   ROUND_START: 'ROUND_START',
+  TRY: 'TRY',
 }
 
 export const findGameMessageType = (value) => {

@@ -5,6 +5,7 @@ import com.mini_ssafy_heaven.dto.request.DescriptionReadRequest;
 import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.GameRequest;
+import com.mini_ssafy_heaven.dto.request.GameTryRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
 import com.mini_ssafy_heaven.dto.request.RoundStartRequest;
 import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
@@ -13,6 +14,7 @@ import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
+import com.mini_ssafy_heaven.dto.response.GameTryResponse;
 import com.mini_ssafy_heaven.dto.response.MessageResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
@@ -120,6 +122,15 @@ public class RoomSocketController {
   @SendTo("/game/{id}")
   public MessageResponse<GameResponse<Void>> roundStart(@DestinationVariable("id") Long id, RoundStartRequest request) {
     GameResponse<Void> response = roomSocketService.roundStart(request);
+
+    return MessageResponse.game(response);
+  }
+
+  @MessageMapping("/{id}/game/try")
+  @SendTo("/game/{id}")
+  public MessageResponse<GameResponse<GameTryResponse>> gameTry(@DestinationVariable("id") Long id, GameTryRequest request) {
+    GameResponse<GameTryResponse> response = roomSocketService.gameTry(
+        id, request);
 
     return MessageResponse.game(response);
   }

@@ -1,7 +1,6 @@
 import { useBaseballStore } from '@/stores/baseball'
 import { useRoomPlayerStore } from '@/stores/roomPlayers'
 import { GameMessageType } from './GameType'
-import { useRoomGameStore } from '@/stores/roomGames'
 import { storeToRefs } from 'pinia'
 import { useRoomStore } from '@/stores/rooms'
 
@@ -17,11 +16,8 @@ const findProcess = (messageType) =>
   })[1]
 
 const start = (condition) => {
-  const { updateCurrentGame } = useRoomGameStore()
   const { updateCondition } = useBaseballStore()
   const { getTagger } = useRoomPlayerStore()
-
-  updateCurrentGame('숫자야구')
 
   const tagger = getTagger(condition.taggerId)
 
@@ -47,6 +43,12 @@ const roundStart = () => {
   stageToRoundStart()
 }
 
+const gameTry = (data) => {
+  const { attempt } = useBaseballStore()
+
+  attempt(data)
+}
+
 export const Baseball = {
   start: {
     value: () => GameMessageType.START,
@@ -63,6 +65,10 @@ export const Baseball = {
   roundStart: {
     value: () => GameMessageType.ROUND_START,
     action: roundStart,
+  },
+  try: {
+    value: () => GameMessageType.TRY,
+    action: gameTry,
   },
   doAction: (messageType, payload) => findProcess(messageType).action(payload),
 }

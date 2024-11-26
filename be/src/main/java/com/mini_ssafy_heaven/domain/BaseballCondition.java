@@ -1,5 +1,6 @@
 package com.mini_ssafy_heaven.domain;
 
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
@@ -36,6 +37,41 @@ public class BaseballCondition {
         .maxCount(maxCount)
         .taggerId(taggerId)
         .build();
+  }
+
+  public boolean isHomeRun(String trial) {
+    return Objects.equals(trial, currentBall);
+  }
+
+  public boolean isOver(boolean isHomeRun, int currentCount) {
+    if (isHomeRun) {
+      return true;
+    }
+
+    return currentCount == maxCount;
+  }
+
+  public String attempt(String trial) {
+    if (isHomeRun(trial)) {
+      return "정답입니다!";
+    }
+
+    int strikeCount = 0;
+    int ballCount = 0;
+
+    for (int i = 0; i < trial.length(); i++) {
+      String num = String.valueOf(trial.charAt(i));
+
+      if (currentBall.contains(num)) {
+        if (currentBall.indexOf(num) == i) {
+          strikeCount++;
+        } else {
+          ballCount++;
+        }
+      }
+    }
+
+    return strikeCount + " 스트라이크, " + ballCount + " 볼!";
   }
 
 }

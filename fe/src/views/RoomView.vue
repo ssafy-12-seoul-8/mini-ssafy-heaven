@@ -31,10 +31,10 @@ const roomStore = useRoomStore()
 const chatStore = useChatStore()
 const roomGameStore = useRoomGameStore()
 const { currentRoom } = storeToRefs(roomStore)
-const { currentPlayer, manager } = storeToRefs(roomPlayerStore)
+const { currentPlayer } = storeToRefs(roomPlayerStore)
 const { roomGames } = storeToRefs(roomGameStore)
 const { updatePlayers } = roomPlayerStore
-const { updateRoomGames } = roomGameStore
+const { updateRoomGames, updateCurrentGame } = roomGameStore
 const { fetchRoomDetail, storeRoomIdInSession, clearCurrentRoom } = roomStore
 const { clearChats } = chatStore
 
@@ -96,37 +96,10 @@ const handleExit = async (memberId, nickname) => {
 
 const handleStart = () => {
   roomSocket.start(currentRoom.value.id)
-  sendCountDown()
-}
 
-const sendCountDown = () => {
-  let count = 3
-  const request = {
-    nickname: manager.value.nickname,
-    chat: count + '...',
-  }
-
-  const countDown = setInterval(() => {
-    if (!count) {
-      gameStart()
-      clearInterval(countDown)
-    }
-
-    roomSocket.chat(currentRoom.value.id, request)
-
-    count--
-    request.chat = count + '...'
-  }, 1000)
-}
-
-const gameStart = () => {
   const first = roomGames.value[0]
 
-  const request = {
-    gameType: first.title,
-  }
-
-  roomSocket.gameStart(currentRoom.value.id, request)
+  updateCurrentGame(first.title)
 }
 </script>
 
