@@ -41,6 +41,12 @@ const confirm = (data) => {
   incrementConfirm(currentRoom.value.totalCount, data.readCount)
 }
 
+const roundStart = (data) => {
+  const { stageToRoundStart } = useBaseballStore()
+
+  stageToRoundStart(data.nextLimit)
+}
+
 export const Baseball = {
   start: {
     value: () => GameMessageType.START,
@@ -53,6 +59,10 @@ export const Baseball = {
   confirm: {
     value: () => GameMessageType.CONFIRM,
     action: confirm,
+  },
+  roundStart: {
+    value: () => GameMessageType.ROUND_START,
+    action: roundStart
   },
   doAction: (messageType, payload) => findProcess(messageType).action(payload),
 }

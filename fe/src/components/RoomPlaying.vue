@@ -11,6 +11,7 @@
       <BaseButton v-if="isBeforeTrial && !hasRead" class="z-50" @click="openDescribtion"
         >{{ currentGame.title }} 설명 보기</BaseButton
       >
+      <RoundStartTimer @next="setNextTurnMember"/>
     </div>
     <ModalGameDescribe :is-open="isDescriptionOpen" :game="game" @ready="handleReady" />
   </div>
@@ -28,27 +29,34 @@ import { useRoomStore } from '@/stores/rooms'
 import BaseButton from './BaseButton.vue'
 import ModalGameDescribe from './ModalGameDescribe.vue'
 import { gameApi } from '@/apis/games'
+import RoundStartTimer from './RoundStartTimer.vue'
 
 const isDescriptionOpen = ref(false)
 const hasRead = ref(false)
 const content = ref()
 const isTagger = computed(() => currentPlayer.value.memberId === tagger.value.memberId)
 const game = ref({})
+const turn = ref()
 const roomStore = useRoomStore()
 const roomGameStore = useRoomGameStore()
 const roomPlayerStore = useRoomPlayerStore()
 const baseballStore = useBaseballStore()
 const { currentRoom } = storeToRefs(roomStore)
 const { currentGame } = storeToRefs(roomGameStore)
-const { currentPlayer } = storeToRefs(roomPlayerStore)
-const { isStart, isBeforeTrial, isConfirm, condition, tagger, normalText, taggerText } =
+const { currentPlayer, roomPlayers, manager } = storeToRefs(roomPlayerStore)
+const { isStart, isBeforeTrial, isConfirm, isRoundStart, condition, tagger, normalText, taggerText, nextTurn } =
   storeToRefs(baseballStore)
+const { getTaggerIndex } = roomPlayerStore
+const { setNextTurn } = baseballStore
+const isManager = computed(() => manager.value.memberId === currentPlayer.value.memberId)
 
 watchEffect(() => {
-  if (isConfirm) {
-    console.log('라운드 시작')
+  if (isConfirm.value && isManager.value) {
+    initRound()
   }
+})
 
+watchEffect(() => {
   if (!currentGame.value) {
     content.value = '게임을 시작합니다!'
 
@@ -64,6 +72,21 @@ watchEffect(() => {
 
     content.value = isTagger.value ? taggerText.value : normalText.value
   }
+})
+
+watchEffect(() => {
+  if (isRoundStart.value) {
+    content.value = '라운드를 시작합니다!'
+
+    return;
+  }
+
+  if (!nextTurn.value) {
+    return
+  }
+
+  turn.value = roomPlayers.value[nextTurn.value]
+  content.value = `${turn.value.nickname}님의 차례입니다. 채팅으로 답을 입력해주세요.`
 })
 
 const submitAnswer = (numbers) => {
@@ -93,5 +116,21 @@ const handleReady = () => {
   hasRead.value = true
   isDescriptionOpen.value = false
   content.value = '다른 플레이어들을 기다리는 중입니다...'
+}
+
+const initRound = () => {
+  const request = {
+      gameType: currentGame.value.title
+    }
+
+    roomSocket.gameRoundStart(currentRoom.value.id, request)
+}
+
+const setNextTurnMember = () => {
+  const taggerIndex = getTaggerIndex(tagger.value.memberId)
+    const tempIndex = (taggerIndex + 1) % roomPlayers.value.length
+    const turnIndex = tempIndex === taggerIndex ? (tempIndex + 1) % roomPlayers.value.length : tempIndex
+
+    setNextTurn(turnIndex);
 }
 </script>

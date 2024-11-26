@@ -9,11 +9,14 @@ export const useBaseballStore = defineStore('baseball', () => {
   const normalText = ref()
   const taggerText = ref()
   const stage = ref()
+  const nextLimit = ref()
+  const nextTurn = ref()
 
   // getters
   const isStart = computed(() => stage.value === GameMessageType.START)
   const isBeforeTrial = computed(() => stage.value === GameMessageType.SET_ANSWER)
   const isConfirm = computed(() => stage.value === GameMessageType.CONFIRM)
+  const isRoundStart = computed(() => stage.value === GameMessageType.ROUND_START)
 
   // action
   const updateCondition = (data, member) => {
@@ -37,16 +40,33 @@ export const useBaseballStore = defineStore('baseball', () => {
     }
   }
 
+  const stageToRoundStart = (data) => {
+    if (stage.value !== GameMessageType.ROUND_START) {
+      stage.value = GameMessageType.ROUND_START
+    }
+
+    nextLimit.value = data
+  }
+
+  const setNextTurn = (index) => {
+    nextTurn.value = index
+  }
+
   return {
     condition,
     tagger,
     normalText,
     taggerText,
+    nextLimit,
+    nextTurn,
     isStart,
     isBeforeTrial,
     isConfirm,
+    isRoundStart,
     updateCondition,
     setAnswer,
     incrementConfirm,
+    stageToRoundStart,
+    setNextTurn,
   }
 })

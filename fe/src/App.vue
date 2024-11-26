@@ -1,16 +1,14 @@
 <template>
   <div class="relative">
-    <BaseButton 
+    <BaseButton
       v-if="isRoomsView"
-      class="absolute top-4 right-4" 
+      class="absolute top-4 right-4"
       size="w-16"
       type="white"
       @click="Menu"
-    >☰</BaseButton>
-    <div 
-      v-if="menuVisible" 
-      class="absolute top-20 right-4 bg-white shadow-md rounded p-2"
+      >☰</BaseButton
     >
+    <div v-if="menuVisible" class="absolute top-20 right-4 bg-white shadow-md rounded p-2">
       <BaseButton class="block w-full text-left mb-2" @click="me">내 정보</BaseButton>
       <BaseButton class="block w-full text-left" @click="logout">로그아웃</BaseButton>
     </div>
@@ -23,7 +21,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import BaseButton from './components/BaseButton.vue';
+import BaseButton from './components/BaseButton.vue'
 import Container from './components/BaseContainer.vue'
 import { memberApi } from '@/apis/members'
 
