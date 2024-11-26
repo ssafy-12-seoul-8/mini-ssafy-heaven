@@ -3,7 +3,7 @@ name: 배포 파이프라인
 on:
   push:
     paths:
-      - ./be
+      - be/**
     branches:
       - dev
 
