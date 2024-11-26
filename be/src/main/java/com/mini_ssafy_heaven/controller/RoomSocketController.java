@@ -5,20 +5,25 @@ import com.mini_ssafy_heaven.dto.request.DescriptionReadRequest;
 import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.GameRequest;
+import com.mini_ssafy_heaven.dto.request.GameTryRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
+import com.mini_ssafy_heaven.dto.request.RoundStartRequest;
+import com.mini_ssafy_heaven.dto.request.ScoreRequest;
 import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
+import com.mini_ssafy_heaven.dto.response.AllOverResponse;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
+import com.mini_ssafy_heaven.dto.response.GameTryResponse;
 import com.mini_ssafy_heaven.dto.response.MessageResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
+import com.mini_ssafy_heaven.dto.response.ScoreResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.StompController;
 import com.mini_ssafy_heaven.service.RoomSocketService;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.javassist.runtime.Desc;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -88,6 +93,14 @@ public class RoomSocketController {
     return MessageResponse.start(response);
   }
 
+  @MessageMapping("/{id}/score")
+  @SendTo("/game/{id}")
+  public MessageResponse<ScoreResponse> score(@DestinationVariable("id") Long id, ScoreRequest request) {
+    ScoreResponse response = roomSocketService.score(id, request);
+
+    return MessageResponse.score(response);
+  }
+
   @MessageMapping("/{id}/game/start")
   @SendTo("/game/{id}")
   public MessageResponse<GameResponse<?>> gameStart(
@@ -114,6 +127,39 @@ public class RoomSocketController {
         id, request);
 
     return MessageResponse.game(response);
+  }
+
+  @MessageMapping("/{id}/game/round-start")
+  @SendTo("/game/{id}")
+  public MessageResponse<GameResponse<Void>> roundStart(@DestinationVariable("id") Long id, RoundStartRequest request) {
+    GameResponse<Void> response = roomSocketService.roundStart(request);
+
+    return MessageResponse.game(response);
+  }
+
+  @MessageMapping("/{id}/game/try")
+  @SendTo("/game/{id}")
+  public MessageResponse<GameResponse<GameTryResponse>> gameTry(@DestinationVariable("id") Long id, GameTryRequest request) {
+    GameResponse<GameTryResponse> response = roomSocketService.gameTry(
+        id, request);
+
+    return MessageResponse.game(response);
+  }
+
+  @MessageMapping("/{id}/all-over")
+  @SendTo("/game/{id}")
+  public MessageResponse<AllOverResponse> allOver(@DestinationVariable("id") Long id) {
+    AllOverResponse response = roomSocketService.allOver(id);
+
+    return MessageResponse.allOver(response);
+  }
+
+  @MessageMapping("/{id}/back")
+  @SendTo("/game/{id}")
+  public MessageResponse<ReadyResponse> backRoom(@DestinationVariable("id") Long id, ReadyRequest request) {
+    ReadyResponse response = roomSocketService.backToRoom(id, request);
+
+    return MessageResponse.backToRoom(response);
   }
 
 }

@@ -69,6 +69,16 @@ public class Member {
     }
   }
 
+  public Member persistScore(int score) {
+    return Member.builder()
+        .id(id)
+        .username(username)
+        .password(password)
+        .nickname(nickname)
+        .score(this.score + score)
+        .build();
+  }
+
   private void validateName(String name) {
     if (StringUtils.isBlank(name)) {
       throw new IllegalArgumentException(MemberErrorCode.EMPTY.getMessage());

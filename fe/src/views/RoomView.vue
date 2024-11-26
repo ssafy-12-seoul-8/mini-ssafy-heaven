@@ -5,7 +5,12 @@
       <ChatBox :player="currentPlayer" />
     </div>
     <div id="player-list-container-wrapper" class="w-screen h-5/6 absolute left-0">
-      <PlayerList @ready="toggleReady" @exit="handleExit" @start="handleStart" />
+      <PlayerList
+        @ready="toggleReady"
+        @exit="handleExit"
+        @start="handleStart"
+        @to-room="handleBackToRoom"
+      />
     </div>
   </div>
 </template>
@@ -30,25 +35,16 @@ const roomPlayerStore = useRoomPlayerStore()
 const roomStore = useRoomStore()
 const chatStore = useChatStore()
 const roomGameStore = useRoomGameStore()
-const { currentRoom } = storeToRefs(roomStore)
-const { currentPlayer, manager } = storeToRefs(roomPlayerStore)
+const { currentRoom, isJustOver } = storeToRefs(roomStore)
+const { currentPlayer } = storeToRefs(roomPlayerStore)
 const { roomGames } = storeToRefs(roomGameStore)
 const { updatePlayers } = roomPlayerStore
-const { updateRoomGames } = roomGameStore
+const { updateRoomGames, updateCurrentGame } = roomGameStore
 const { fetchRoomDetail, storeRoomIdInSession, clearCurrentRoom } = roomStore
 const { clearChats } = chatStore
 
 onMounted(() => {
   validatePlayer()
-
-  const storedInSession = sessionStorage.getItem('currentRoomId')
-  const myNickname = JSON.parse(sessionStorage.getItem('me')).nickname
-
-  storedInSession
-    ? roomSocket.enter(params.id)
-    : roomSocket.enter(params.id, { nickname: myNickname })
-
-  storeRoomIdInSession(params.id)
 })
 
 onUnmounted(() => {
@@ -60,6 +56,22 @@ const validatePlayer = () => {
   roomApi
     .getDetail(params.id)
     .then((res) => fetchRoomAndPlayers(res.data))
+    .then(() => {
+      const storedInSession = sessionStorage.getItem('currentRoomId')
+      const myNickname = JSON.parse(sessionStorage.getItem('me')).nickname
+      console.log(storedInSession)
+
+      storedInSession
+        ? roomSocket.enter(params.id)
+        : roomSocket.enter(params.id, { nickname: myNickname })
+
+      storeRoomIdInSession(params.id)
+    })
+    .then(() => {
+      const first = roomGames.value[0]
+
+      updateCurrentGame(first.title)
+    })
     .catch((err) => handleError(err))
 }
 
@@ -90,43 +102,24 @@ const handleExit = async (memberId, nickname) => {
     nickname: nickname,
   }
 
+  isJustOver.value = false
   await roomSocket.exit(currentRoom.value.id, request)
   router.push({ path: '/rooms' })
 }
 
 const handleStart = () => {
   roomSocket.start(currentRoom.value.id)
-  sendCountDown()
 }
 
-const sendCountDown = () => {
-  let count = 3
+const handleBackToRoom = (memberId) => {
   const request = {
-    nickname: manager.value.nickname,
-    chat: count + '...',
+    memberId: memberId,
   }
 
-  const countDown = setInterval(() => {
-    if (!count) {
-      gameStart()
-      clearInterval(countDown)
-    }
+  isJustOver.value = false
 
-    roomSocket.chat(currentRoom.value.id, request)
-
-    count--
-    request.chat = count + '...'
-  }, 1000)
-}
-
-const gameStart = () => {
-  const first = roomGames.value[0]
-
-  const request = {
-    gameType: first.title,
-  }
-
-  roomSocket.gameStart(currentRoom.value.id, request)
+  roomSocket.backRoom(currentRoom.value.id, request)
+  validatePlayer()
 }
 </script>
 

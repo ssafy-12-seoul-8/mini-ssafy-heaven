@@ -4,5 +4,6 @@ public enum GameMessageType {
   START,
   SET_ANSWER,
   CONFIRM,
+  ROUND_START,
   TRY
 }

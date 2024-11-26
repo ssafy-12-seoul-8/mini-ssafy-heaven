@@ -8,6 +8,7 @@ import com.mini_ssafy_heaven.domain.enums.GameMessageType;
 import com.mini_ssafy_heaven.domain.enums.GameType;
 import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
+import com.mini_ssafy_heaven.dto.response.GameTryResponse;
 import com.mini_ssafy_heaven.global.exception.code.InGameErrorCode;
 import com.mini_ssafy_heaven.repository.BaseballConditionRepository;
 import com.mini_ssafy_heaven.repository.DescriptionReadCountRepository;
@@ -46,7 +47,7 @@ public class BaseballPlayService implements GamePlayService<BaseballCondition> {
   }
 
   @Override
-  public GameResponse<DescriptionReadResponse> readDescription(Long roomId) {
+  public GameResponse<DescriptionReadResponse> readDescription(Long roomId, int totalCount) {
     DescriptionReadCount readCount = descriptionReadCountRepository.findById(roomId)
         .orElseGet(() -> new DescriptionReadCount(roomId, 0));
     DescriptionReadCount incremented = readCount.increment();
@@ -55,7 +56,32 @@ public class BaseballPlayService implements GamePlayService<BaseballCondition> {
 
     DescriptionReadResponse response = new DescriptionReadResponse(incremented.getReadCount());
 
+    if (incremented.getReadCount() >= totalCount) {
+      descriptionReadCountRepository.deleteById(roomId);
+    }
+
     return new GameResponse<>(GameType.BASEBALL, GameMessageType.CONFIRM, response);
+  }
+
+  @Override
+  public GameResponse<Void> roundStart() {
+    return new GameResponse<>(GameType.BASEBALL, GameMessageType.ROUND_START, null);
+  }
+
+  @Override
+  public GameResponse<GameTryResponse> attempt(
+      Long roomId, int currentCount, Long memberId, String trial
+  ) {
+    BaseballCondition condition = baseballConditionRepository.findById(roomId)
+        .orElseThrow(
+            () -> new NoSuchElementException(InGameErrorCode.NO_GAME_FOR_ROOM.getMessage()));
+    boolean isAnswer = condition.isHomeRun(trial);
+    boolean isOver = condition.isOver(currentCount);
+    String message = condition.attempt(isOver, trial);
+    GameTryResponse response = GameTryResponse.from(
+        isAnswer, isOver, currentCount + 1, memberId, message);
+
+    return new GameResponse<>(GameType.BASEBALL, GameMessageType.TRY, response);
   }
 
   @Override
@@ -76,7 +102,9 @@ public class BaseballPlayService implements GamePlayService<BaseballCondition> {
   }
 
   private static int calculateMaxCount(int playerCount) {
-    return playerCount % 2 == 0 ? 6 : 4;
+    int limit = playerCount % 2 == 0 ? 6 : 4;
+
+    return limit * (playerCount - 1);
   }
 
   private static RoomPlayer decideTagger(List<RoomPlayer> players) {

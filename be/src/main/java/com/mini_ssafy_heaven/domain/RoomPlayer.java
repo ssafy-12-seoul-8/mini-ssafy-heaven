@@ -75,24 +75,33 @@ public class RoomPlayer {
   }
 
   public RoomPlayer toggleReady() {
+    return update(this.role, this.score, status.isWaiting() ? RoomPlayerStatus.READY : RoomPlayerStatus.WAITING);
+  }
+
+  public RoomPlayer promoteToManager() {
+    return update(RoomPlayerRole.MANAGER, this.score, RoomPlayerStatus.READY);
+  }
+
+  public RoomPlayer startGame() {
+    return update(this.role, this.score, RoomPlayerStatus.IN_GAME);
+  }
+
+  public RoomPlayer earnScore(int score) {
+    return update(this.role, this.score + score, this.status);
+  }
+
+  public RoomPlayer initializeScore() {
+    return update(this.role, 0, this.status);
+  }
+
+  private RoomPlayer update(RoomPlayerRole role, int score, RoomPlayerStatus status) {
     return RoomPlayer.builder()
         .id(id)
         .memberId(memberId)
         .roomId(roomId)
         .role(role)
         .score(score)
-        .status(status.isReady() ? RoomPlayerStatus.WAITING : RoomPlayerStatus.READY)
-        .build();
-  }
-
-  public RoomPlayer promoteToManager() {
-    return RoomPlayer.builder()
-        .id(id)
-        .memberId(memberId)
-        .roomId(roomId)
-        .role(RoomPlayerRole.MANAGER)
-        .score(score)
-        .status(RoomPlayerStatus.READY)
+        .status(status)
         .build();
   }
 

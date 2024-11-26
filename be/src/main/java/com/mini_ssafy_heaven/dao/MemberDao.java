@@ -16,4 +16,6 @@ public interface MemberDao {
 
   Optional<Member> getMemberInfo(String username);
 
+  void update(@Param("member") Member member);
+
 }

@@ -1,11 +1,11 @@
 package com.mini_ssafy_heaven.service;
 
+import com.mini_ssafy_heaven.dao.MemberDao;
 import com.mini_ssafy_heaven.dao.RoomDao;
 import com.mini_ssafy_heaven.dao.RoomGameDao;
 import com.mini_ssafy_heaven.dao.RoomPlayerDao;
-import com.mini_ssafy_heaven.domain.DescriptionReadCount;
+import com.mini_ssafy_heaven.domain.Member;
 import com.mini_ssafy_heaven.domain.Room;
-import com.mini_ssafy_heaven.domain.RoomGameScore;
 import com.mini_ssafy_heaven.domain.RoomPlayer;
 import com.mini_ssafy_heaven.domain.enums.GameType;
 import com.mini_ssafy_heaven.dto.query.RoomPlayerNameDto;
@@ -14,21 +14,25 @@ import com.mini_ssafy_heaven.dto.request.DescriptionReadRequest;
 import com.mini_ssafy_heaven.dto.request.EnterRequest;
 import com.mini_ssafy_heaven.dto.request.ExitRequest;
 import com.mini_ssafy_heaven.dto.request.GameRequest;
+import com.mini_ssafy_heaven.dto.request.GameTryRequest;
 import com.mini_ssafy_heaven.dto.request.ReadyRequest;
+import com.mini_ssafy_heaven.dto.request.RoundStartRequest;
+import com.mini_ssafy_heaven.dto.request.ScoreRequest;
 import com.mini_ssafy_heaven.dto.request.SetAnswerRequest;
+import com.mini_ssafy_heaven.dto.response.AllOverResponse;
 import com.mini_ssafy_heaven.dto.response.ChatResponse;
 import com.mini_ssafy_heaven.dto.response.DescriptionReadResponse;
 import com.mini_ssafy_heaven.dto.response.EnterResponse;
 import com.mini_ssafy_heaven.dto.response.ExitResponse;
 import com.mini_ssafy_heaven.dto.response.GameResponse;
+import com.mini_ssafy_heaven.dto.response.GameTryResponse;
 import com.mini_ssafy_heaven.dto.response.ReadyResponse;
+import com.mini_ssafy_heaven.dto.response.ScoreResponse;
 import com.mini_ssafy_heaven.dto.response.StartResponse;
 import com.mini_ssafy_heaven.global.annotation.Lock;
-import com.mini_ssafy_heaven.global.exception.code.InGameErrorCode;
+import com.mini_ssafy_heaven.global.exception.code.MemberErrorCode;
 import com.mini_ssafy_heaven.global.exception.code.RoomErrorCode;
 import com.mini_ssafy_heaven.global.exception.code.RoomPlayerErrorCode;
-import com.mini_ssafy_heaven.repository.DescriptionReadCountRepository;
-import com.mini_ssafy_heaven.repository.RoomGameScoreRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -43,8 +47,7 @@ public class RoomSocketServiceImpl implements RoomSocketService {
   private final RoomPlayerDao roomPlayerDao;
   private final RoomDao roomDao;
   private final RoomGameDao roomGameDao;
-  private final RoomGameScoreRepository roomGameScoreRepository;
-  private final DescriptionReadCountRepository descriptionReadCountRepository;
+  private final MemberDao memberDao;
 
   @Override
   public EnterResponse enter(Long roomId, EnterRequest request) {
@@ -123,17 +126,32 @@ public class RoomSocketServiceImpl implements RoomSocketService {
 
     roomDao.update(started);
 
-    List<RoomGameScore> cacheScore = buildScoreCache(players);
-
-    roomGameScoreRepository.saveAll(cacheScore);
-
     return new StartResponse(started.getStatus());
+  }
+
+  @Override
+  @Transactional
+  public ScoreResponse score(Long roomId, ScoreRequest request) {
+    RoomPlayer roomPlayer = roomPlayerDao.findByRoomAndMember(roomId, request.memberId())
+        .orElseThrow(() -> new NoSuchElementException(RoomPlayerErrorCode.NOT_JOINED.getMessage()));
+    RoomPlayer scored = roomPlayer.earnScore(request.earn());
+
+    roomPlayerDao.update(scored);
+
+    List<RoomPlayerNameDto> playersWithRank = roomPlayerDao.findAllWithNamesByRoomId(roomId);
+
+    return new ScoreResponse(playersWithRank);
   }
 
   @Override
   public GameResponse<?> gameStart(Long roomId, GameRequest request) {
     GameType gameType = GameType.get(request.gameType());
     GamePlayService<?> gamePlayService = gameType.getGamePlayService();
+
+    roomPlayerDao.findAllByRoomId(roomId)
+        .stream()
+        .map(RoomPlayer::startGame)
+        .forEach(roomPlayerDao::update);
 
     return gamePlayService.start(roomId);
   }
@@ -153,7 +171,64 @@ public class RoomSocketServiceImpl implements RoomSocketService {
     GameType gameType = GameType.get(request.gameType());
     GamePlayService<?> gamePlayService = gameType.getGamePlayService();
 
-    return gamePlayService.readDescription(id);
+    return gamePlayService.readDescription(id, request.totalCount());
+  }
+
+  @Override
+  public GameResponse<Void> roundStart(RoundStartRequest request) {
+    GameType gameType = GameType.get(request.gameType());
+    GamePlayService<?> gamePlayService = gameType.getGamePlayService();
+
+    return gamePlayService.roundStart();
+  }
+
+  @Override
+  public GameResponse<GameTryResponse> gameTry(Long roomId, GameTryRequest request) {
+    GameType gameType = GameType.get(request.gameType());
+    GamePlayService<?> gamePlayService = gameType.getGamePlayService();
+
+    return gamePlayService.attempt(roomId, request.currentCount(), request.memberId(), request.trial());
+  }
+
+  @Override
+  @Transactional
+  public AllOverResponse allOver(Long roomId) {
+    Room room = roomDao.findById(roomId)
+        .orElseThrow(
+            () -> new NoSuchElementException(RoomErrorCode.UNEXPECTED_EMPTY_ROOM.getMessage()));
+    Room over = room.over();
+
+    roomDao.update(over);
+
+    List<RoomPlayerNameDto> playersWithRank = roomPlayerDao.findAllWithNamesByRoomId(roomId);
+    List<RoomPlayer> players = roomPlayerDao.findAllByRoomId(roomId);
+
+    persistMemberScore(players);
+    players.stream()
+        .map(RoomPlayer::initializeScore)
+        .forEach(roomPlayerDao::update);
+
+    return new AllOverResponse(playersWithRank);
+  }
+
+  @Override
+  @Transactional
+  @Lock("PLAYER-READY")
+  public ReadyResponse backToRoom(Long id, ReadyRequest request) {
+    List<RoomPlayer> roomPlayers = roomPlayerDao.findAllByRoomId(id);
+    long readyCount = countReady(roomPlayers);
+    RoomPlayer roomPlayer = roomPlayers.stream()
+        .filter(player -> Objects.equals(request.memberId(), player.getMemberId()))
+        .findFirst()
+        .orElseThrow(() -> new NoSuchElementException(RoomPlayerErrorCode.NOT_JOINED.getMessage()));
+    RoomPlayer back = roomPlayer.isManager() ? roomPlayer.promoteToManager() : roomPlayer.toggleReady();
+
+    roomPlayerDao.update(back);
+
+    int updated = roomPlayerDao.update(back);
+    long updatedReadyCount = back.isReady() ? readyCount + updated : Math.max(readyCount - updated, 0);
+
+    return ReadyResponse.from(back, (int) updatedReadyCount, roomPlayers.size());
   }
 
   private void deleteRoom(Long roomId) {
@@ -167,10 +242,18 @@ public class RoomSocketServiceImpl implements RoomSocketService {
         .count();
   }
 
-  private List<RoomGameScore> buildScoreCache(List<RoomPlayer> players) {
-    return players.stream()
-        .map(RoomGameScore::from)
-        .toList();
+  private void persistMemberScore(List<RoomPlayer> players) {
+    players.stream()
+        .map(this::updateScore)
+        .forEach(memberDao::update);
+  }
+
+  private Member updateScore(RoomPlayer roomPlayer) {
+    Member member = memberDao.findById(roomPlayer.getMemberId())
+        .orElseThrow(
+            () -> new NoSuchElementException(MemberErrorCode.MEMBER_NOT_FOUND.getMessage()));
+
+    return member.persistScore(roomPlayer.getScore());
   }
 
 }

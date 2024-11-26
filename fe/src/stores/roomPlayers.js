@@ -23,6 +23,10 @@ export const useRoomPlayerStore = defineStore('roomPlayer', () => {
     return roomPlayers.value.find((player) => player.memberId === taggerId)
   }
 
+  const getTaggerIndex = (taggerId) => {
+    return roomPlayers.value.findIndex((player) => player.memberId === taggerId)
+  }
+
   // actions
   const updatePlayers = (players) => {
     roomPlayers.value = players
@@ -40,6 +44,7 @@ export const useRoomPlayerStore = defineStore('roomPlayer', () => {
     currentPlayer,
     manager,
     getTagger,
+    getTaggerIndex,
     updatePlayers,
     updateReadyPlayer,
   }

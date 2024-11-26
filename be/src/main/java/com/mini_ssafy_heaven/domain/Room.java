@@ -58,6 +58,10 @@ public class Room {
     return update(this.title, this.capacity, RoomStatus.PLAYING);
   }
 
+  public Room over() {
+    return update(this.title, this.capacity, RoomStatus.WAITING);
+  }
+
   private Room update(String title, Integer capacity, RoomStatus status) {
     if (Objects.isNull(title)) {
       title = this.title;

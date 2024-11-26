@@ -27,10 +27,13 @@
 
 <script setup>
 import { roomSocket } from '@/apis/rooms'
+import { useBaseballStore } from '@/stores/baseball'
 import { useChatStore } from '@/stores/chats'
+import { useRoomGameStore } from '@/stores/roomGames'
+import { useRoomPlayerStore } from '@/stores/roomPlayers'
 import { useRoomStore } from '@/stores/rooms'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const { player } = defineProps({
   player: {
@@ -41,13 +44,29 @@ const { player } = defineProps({
 const text = ref('')
 const chatStore = useChatStore()
 const roomStore = useRoomStore()
+const roomPlayerStore = useRoomPlayerStore()
+const baseballStore = useBaseballStore()
+const roomGameStore = useRoomGameStore()
 const { chats } = storeToRefs(chatStore)
-
 const { currentRoom } = storeToRefs(roomStore)
+const { currentGame } = storeToRefs(roomGameStore)
+const { roomPlayers } = storeToRefs(roomPlayerStore)
+const { currentHit, nextTurn, hasTried, initialClose } = storeToRefs(baseballStore)
+const isMyTurn = computed(() => {
+  if (nextTurn.value === null || nextTurn.value === undefined) {
+    return false
+  }
+
+  return roomPlayers.value[nextTurn.value].memberId === player.memberId
+})
 
 const sendChat = () => {
   if (!text.value) {
     return
+  }
+
+  if (isMyTurn.value && !hasTried.value && !initialClose.value) {
+    attemptAnswer()
   }
 
   const request = {
@@ -58,6 +77,17 @@ const sendChat = () => {
   roomSocket.chat(currentRoom.value.id, request)
 
   text.value = ''
+}
+
+const attemptAnswer = () => {
+  const request = {
+    gameType: currentGame.value.title,
+    currentCount: currentHit.value,
+    memberId: player.memberId,
+    trial: text.value,
+  }
+
+  roomSocket.gameTry(currentRoom.value.id, request)
 }
 </script>
 

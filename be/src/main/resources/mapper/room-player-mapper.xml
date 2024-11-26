@@ -59,7 +59,7 @@
 		WHERE room_id=#{roomId}
 	</select>
 	<select id="findAllWithNamesByRoomId">
-		SELECT m.id, m.nickname, rp.score, m.score, dense_rank() OVER (ORDER BY rp.score DESC), rp.status
+		SELECT m.id, m.nickname, rp.score AS 'room_score', m.score, dense_rank() OVER (ORDER BY rp.score DESC), rp.status
 		FROM room_players rp
 		JOIN members m ON m.id=rp.member_id
 		WHERE rp.room_id=#{roomId}
@@ -68,5 +68,9 @@
 	<delete id="deleteById">
 		DELETE FROM room_players
 		WHERE id=#{id}
+	</delete>
+	<delete id="deleteByRoomId">
+		DELETE FROM room_players
+		WHERE room_id=#{roomId}
 	</delete>
 </mapper>

@@ -22,6 +22,8 @@
       <div class="grow flex flex-col justify-between items-center">
         <LeaderBoard class="w-11/12" />
         <div class="flex flex-col gap-4 justify-center items-center">
+          <BaseButton v-if="isJustOver" @click="onClickToRoom">방으로</BaseButton>
+          <BaseButton v-if="isJustOver" @click="onClickExit" type="white">나가기</BaseButton>
           <BaseButton v-if="!isPlaying" @click="onClickReady" :disabled="startDisabled">{{
             readyButtonText
           }}</BaseButton>
@@ -46,7 +48,7 @@ import { useRoomStore } from '@/stores/rooms'
 
 const roomStore = useRoomStore()
 const roomPlayerStore = useRoomPlayerStore()
-const { isPossibleToStart, isPlaying } = storeToRefs(roomStore)
+const { isPossibleToStart, isPlaying, isJustOver } = storeToRefs(roomStore)
 const { roomPlayers, currentPlayer, manager } = storeToRefs(roomPlayerStore)
 const isReady = computed(() => RoomPlayerStatus.isReady(currentPlayer.value))
 const isManager = computed(
@@ -61,7 +63,7 @@ const readyButtonText = computed(() => {
   return isReady.value ? '취소' : '준비'
 })
 
-const emit = defineEmits(['ready', 'exit', 'start'])
+const emit = defineEmits(['ready', 'exit', 'start', 'toRoom'])
 
 const isInLeft = (index) => {
   return index === 0 || index === 2 || index === 4
@@ -79,6 +81,10 @@ const onClickReady = () => {
 
 const onClickExit = () => {
   emit('exit', currentPlayer.value.memberId, currentPlayer.value.nickname)
+}
+
+const onClickToRoom = () => {
+  emit('toRoom', currentPlayer.value.memberId)
 }
 </script>
 
