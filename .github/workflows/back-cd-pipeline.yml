@@ -2,8 +2,8 @@ name: 배포 파이프라인
 
 on:
   push:
-    paths:
-      - be/**
+    paths-ignore:
+      - fe/**
     branches:
       - dev
 

@@ -2,8 +2,8 @@ name: Java CI with Gradle and MySQL
 
 on:
   push:
-    paths:
-      - be/**
+    paths-ignore:
+      - fe/**
     branches:
       - dev
       - 'feat/**'
