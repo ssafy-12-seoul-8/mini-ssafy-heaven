@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directiory: ./be
+        working-directory: ./be
 
     steps:
       - name: 체크아웃
