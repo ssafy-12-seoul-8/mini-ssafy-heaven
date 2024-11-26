@@ -37,6 +37,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Build Env 생성
         run: |
@@ -49,5 +50,5 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Deploy # S3에 배포하기
+      - name: Deploy
         run: aws s3 sync ./build s3://dev.mini-ssafy-heaven.com --delete
