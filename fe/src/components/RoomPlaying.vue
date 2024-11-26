@@ -11,7 +11,7 @@
       <BaseButton v-if="isBeforeTrial && !hasRead" class="z-50" @click="openDescribtion"
         >{{ currentGame.title }} 설명 보기</BaseButton
       >
-      <RoundStartTimer @next="setNextTurnMember"/>
+      <RoundStartTimer v-if="isRoundStart" @next="setNextTurnMember" />
     </div>
     <ModalGameDescribe :is-open="isDescriptionOpen" :game="game" @ready="handleReady" />
   </div>
@@ -44,8 +44,17 @@ const baseballStore = useBaseballStore()
 const { currentRoom } = storeToRefs(roomStore)
 const { currentGame } = storeToRefs(roomGameStore)
 const { currentPlayer, roomPlayers, manager } = storeToRefs(roomPlayerStore)
-const { isStart, isBeforeTrial, isConfirm, isRoundStart, condition, tagger, normalText, taggerText, nextTurn } =
-  storeToRefs(baseballStore)
+const {
+  isStart,
+  isBeforeTrial,
+  isConfirm,
+  isRoundStart,
+  condition,
+  tagger,
+  normalText,
+  taggerText,
+  nextTurn,
+} = storeToRefs(baseballStore)
 const { getTaggerIndex } = roomPlayerStore
 const { setNextTurn } = baseballStore
 const isManager = computed(() => manager.value.memberId === currentPlayer.value.memberId)
@@ -78,7 +87,7 @@ watchEffect(() => {
   if (isRoundStart.value) {
     content.value = '라운드를 시작합니다!'
 
-    return;
+    return
   }
 
   if (!nextTurn.value) {
@@ -109,6 +118,7 @@ const openDescribtion = () => {
 const handleReady = () => {
   const request = {
     gameType: currentGame.value.title,
+    totalCount: currentRoom.value.totalCount,
   }
 
   roomSocket.gameConfirm(currentRoom.value.id, request)
@@ -120,17 +130,18 @@ const handleReady = () => {
 
 const initRound = () => {
   const request = {
-      gameType: currentGame.value.title
-    }
+    gameType: currentGame.value.title,
+  }
 
-    roomSocket.gameRoundStart(currentRoom.value.id, request)
+  roomSocket.gameRoundStart(currentRoom.value.id, request)
 }
 
 const setNextTurnMember = () => {
   const taggerIndex = getTaggerIndex(tagger.value.memberId)
-    const tempIndex = (taggerIndex + 1) % roomPlayers.value.length
-    const turnIndex = tempIndex === taggerIndex ? (tempIndex + 1) % roomPlayers.value.length : tempIndex
+  const tempIndex = (taggerIndex + 1) % roomPlayers.value.length
+  const turnIndex =
+    tempIndex === taggerIndex ? (tempIndex + 1) % roomPlayers.value.length : tempIndex
 
-    setNextTurn(turnIndex);
+  setNextTurn(turnIndex)
 }
 </script>
