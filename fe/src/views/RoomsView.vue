@@ -1,16 +1,21 @@
 <template>
-  <div
-    id="rooms-container"
-    :class="{ empty: isEmpty }"
-    class="py-2 flex flex-wrap content-start overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
-  >
-    <RoomCard v-for="room in rooms" :key="room.id" :room="room" />
-    <InfiniteLoading
-      target="#rooms-container"
-      @infinite="load"
-      :slots="messages"
-      class="w-full flex justify-center"
-    />
+  <div>
+    <div
+      id="rooms-container"
+      :class="{ empty: isEmpty }"
+      class="py-2 flex flex-wrap content-start overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
+    >
+      <RoomCard v-for="room in rooms" :key="room.id" :room="room" />
+      <InfiniteLoading
+        target="#rooms-container"
+        @infinite="load"
+        :slots="messages"
+        class="w-full flex justify-center"
+      />
+      <BaseButton type="white" size="w-16" @click="refreshRooms" class="absolute top-4 right-24">
+        ⟳
+      </BaseButton>
+    </div>
   </div>
 </template>
 
@@ -21,6 +26,7 @@ import RoomCard from '@/components/RoomCard.vue'
 import { useRoomStore } from '@/stores/rooms'
 import { storeToRefs } from 'pinia'
 import InfiniteLoading from 'v3-infinite-loading'
+import BaseButton from '@/components/BaseButton.vue'
 
 const size = 15
 const cursor = ref(0)
@@ -36,6 +42,14 @@ const messages = ref({
 onBeforeMount(() => {
   clearRooms()
 })
+
+const refreshRooms = async () => {
+  cursor.value = 0
+  hasNext.value = true
+  isEmpty.value = false
+  clearRooms()
+  await fetchAllRooms()
+}
 
 const load = async ($state) => {
   await fetchAllRooms()
