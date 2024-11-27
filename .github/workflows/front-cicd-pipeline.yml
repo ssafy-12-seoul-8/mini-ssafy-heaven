@@ -39,7 +39,7 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
 
-      - name: Build Env 생성
+      - name: Build Env 생성!
         run: |
           touch ./.env
           echo "${{ secrets.FRONT_DEV_ENV }}" > ./.env
