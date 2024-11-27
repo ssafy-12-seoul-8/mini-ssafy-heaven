@@ -51,4 +51,4 @@ jobs:
         run: pnpm build
 
       - name: Deploy
-        run: aws s3 sync ./build s3://dev.mini-ssafy-heaven.com --delete
+        run: aws s3 sync ./dist s3://dev.mini-ssafy-heaven.com --delete
