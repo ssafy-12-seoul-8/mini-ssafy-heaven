@@ -12,7 +12,6 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
-      password: ${REDIS_PASSWORD}
 mybatis:
   type-aliases-package: com.mini_ssafy_heaven.domain
   configuration:
